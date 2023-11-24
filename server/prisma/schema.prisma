@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Organisation {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  courses String[] @db.ObjectId //refeences Course
+  members String[] @db.ObjectId //references User
+}
+
+model Role {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  permissions String[]
+}
+
+model User {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  oAuthId String 
+  roles       String[] @db.ObjectId //references Role
+  email       String
+  first_name   String
+  last_name    String
+  dob         DateTime? @db.Date
+  profile_url String
+}
+
+model Course {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  instructors String[] @db.ObjectId //references User
+  students    String[] @db.ObjectId //references User
+  syllabus    String[] @db.ObjectId //references Unit
+}
+
+model Unit {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  content String[] @db.ObjectId //references CourseContent
+}
+
+model CourseContent {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  owner         String @db.ObjectId //references Organisation
+  title         String
+  type          String
+  markdown_body String
+}
+
+model HelpRequest {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  students     String[] @db.ObjectId //references User
+  status       String
+  instructor   String   @db.ObjectId //references User
+  time_waiting Int
+  time_in_call Int
+}
+
+//Below is not part of MVP
+
+model StudentNotes {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  student String @db.ObjectId //references User
+  notes   String
+}
+
+model StudentFeedback {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  student    String @db.ObjectId //references User
+  assignment String @db.ObjectId //references CourseContent
+  instructor String @db.ObjectId //references User
+  content    String
+}

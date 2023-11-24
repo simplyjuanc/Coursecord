@@ -12,8 +12,10 @@ datasource db {
 
 model Organisation {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  owner   String   @db.ObjectId //references User
   courses String[] @db.ObjectId //refeences Course
   members String[] @db.ObjectId //references User
+  roles   String[] @db.ObjectId
 }
 
 model Role {
@@ -23,14 +25,15 @@ model Role {
 }
 
 model User {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  oAuthId String 
-  roles       String[] @db.ObjectId //references Role
-  email       String
-  first_name   String
-  last_name    String
-  dob         DateTime? @db.Date
-  profile_url String
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  organisations String[]  @db.ObjectId //references Organisation
+  oauth_id      String
+  roles         String[]  @db.ObjectId //references Role
+  email         String
+  first_name    String
+  last_name     String
+  dob           DateTime? @db.Date
+  profile_url   String
 }
 
 model Course {

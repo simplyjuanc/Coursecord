@@ -12,10 +12,11 @@ datasource db {
 
 model Organisation {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  owner   String   @db.ObjectId //references User
-  courses String[] @db.ObjectId //refeences Course
-  members String[] @db.ObjectId //references User
-  roles   String[] @db.ObjectId
+  name    String
+  owner   String //references User
+  courses String[] @default([]) //refeences Course
+  members String[] @default([]) //references User
+  roles   String[] @default([])
 }
 
 model Role {
@@ -26,9 +27,9 @@ model Role {
 
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  organisations String[]  @db.ObjectId //references Organisation
+  organisations String[]  @default([]) //references Organisation
   oauth_id      String
-  roles         String[]  @db.ObjectId //references Role
+  roles         String[]  @default([]) //references Role
   email         String
   first_name    String
   last_name     String
@@ -39,19 +40,19 @@ model User {
 model Course {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
-  instructors String[] @db.ObjectId //references User
-  students    String[] @db.ObjectId //references User
-  syllabus    String[] @db.ObjectId //references Unit
+  instructors String[] @default([]) //references User
+  students    String[] @default([]) //references User
+  syllabus    String[] @default([]) //references Unit
 }
 
 model Unit {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  content String[] @db.ObjectId //references CourseContent
+  content String[] @default([]) //references CourseContent
 }
 
 model CourseContent {
   id            String @id @default(auto()) @map("_id") @db.ObjectId
-  owner         String @db.ObjectId //references Organisation
+  owner         String //references Organisation
   title         String
   type          String
   markdown_body String
@@ -59,9 +60,9 @@ model CourseContent {
 
 model HelpRequest {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  students     String[] @db.ObjectId //references User
+  students     String[] //references User
   status       String
-  instructor   String   @db.ObjectId //references User
+  instructor   String //references User
   time_waiting Int
   time_in_call Int
 }
@@ -70,14 +71,14 @@ model HelpRequest {
 
 model StudentNotes {
   id      String @id @default(auto()) @map("_id") @db.ObjectId
-  student String @db.ObjectId //references User
+  student String //references User
   notes   String
 }
 
 model StudentFeedback {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
-  student    String @db.ObjectId //references User
-  assignment String @db.ObjectId //references CourseContent
-  instructor String @db.ObjectId //references User
+  student    String //references User
+  assignment String //references CourseContent
+  instructor String //references User
   content    String
 }

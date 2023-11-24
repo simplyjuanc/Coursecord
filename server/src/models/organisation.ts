@@ -15,4 +15,9 @@ async function getOrganisations() {
   return orgs;
 }
 
-export default { createOrganisation, getOrganisations };
+async function getOrganisationByName(name: string) {
+  const org = await Organisation.findUnique({where: {name}})
+  return org;
+}
+
+export default { createOrganisation, getOrganisations, getOrganisationByName };

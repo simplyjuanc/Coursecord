@@ -12,7 +12,7 @@ datasource db {
 
 model Organisation {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name    String
+  name    String   @unique
   owner   String //references User
   courses String[] @default([]) //refeences Course
   members String[] @default([]) //references User
@@ -47,7 +47,9 @@ model Course {
 
 model Unit {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
   content String[] @default([]) //references CourseContent
+  order   Int
 }
 
 model CourseContent {
@@ -60,9 +62,11 @@ model CourseContent {
 
 model HelpRequest {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  course       String //references course
   students     String[] //references User
   status       String
   instructor   String //references User
+  content      String
   time_waiting Int
   time_in_call Int
 }

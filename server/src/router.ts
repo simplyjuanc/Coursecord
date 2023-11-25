@@ -1,0 +1,52 @@
+import { Router } from 'express';
+import Organisation from './controllers/organisation';
+import Course from './controllers/course';
+import User from './controllers/user';
+import Role from './controllers/role';
+import Unit from './controllers/unit';
+import Content from './controllers/courseContent';
+
+const router = Router();
+
+router.post('/organisation', Organisation.addOrganisation);
+router.get('/organisation', Organisation.getOrganisations);
+//everything below here has an empty controller currently;
+//I decided to scaffold it to get a general Idea of what
+//functionality we needed to add
+router.get('/organisation/:orgId', Organisation.getOrganisations);
+router.put('/organisation/:orgId', Organisation.editOrganisation);
+router.delete('/organisation/:orgId', Organisation.deleteOrganisation);
+
+router.get('/course', Course.getCourses);
+router.post('/:orgId/course', Course.addCourse);
+router.get('/:orgId/course', Course.getCoursesByOrganisation);
+router.get('/course/:courseId', Course.getCourseById);
+router.post('/course/:courseId', Course.editCourse);
+router.delete('/course/:courseId', Course.deleteCourse);
+
+router.post('/login', User.login);
+router.post('/logout', User.logout);
+router.get('/:orgId/users', User.getUsersByOrg);
+router.get('/:orgId/instructors', User.getInstructorsByOrg);
+router.get('/:orgId/students', User.getStudentsByOrg);
+router.get('/:courseId/instructors', User.getInstructorsByCourse);
+router.get('/:courseId/students', User.getStudentsByOrg);
+router.put('/user/:userId/:roleId', User.assignRoleToUser);
+router.delete('/user/:userId/:roleId', User.removeRoleFromUser);
+router.delete('/user/:userId', User.deleteUser);
+
+router.post('/:orgId/role', Role.addRole);
+router.delete('/role/:roleId', Role.removeRole);
+router.put('/role/:roleId', Role.editRole);
+
+router.post('/:courseId/unit', Unit.addUnit);
+router.put('/unit/:unitId', Unit.editUnit);
+router.delete('/unit/:unitId', Unit.deleteUnit);
+
+router.post('/:orgId/content', Content.addContentToOrganisation);
+router.post('/content/:unitId/:contentId', Content.addContentToUnit);
+router.delete('/content/:unitId/:contentId', Content.deleteContent);
+router.put('/content/:contentId', Content.editContent);
+router.delete('/content/:contentId', Content.deleteContent);
+
+export default router;

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import Organisation from '../models/organisation';
+import Course from '../models/course';
 
 async function addOrganisation(req: Request, res: Response) {
   try {
@@ -32,6 +33,9 @@ async function getOrganisations(req: Request, res: Response) {
 
 async function getOrganisationById(req: Request, res: Response) {
   try {
+    const { orgId } = req.params;
+    const org = await Organisation.getOrganisationById(orgId);
+    res.status(200).send(org);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -40,6 +44,10 @@ async function getOrganisationById(req: Request, res: Response) {
 
 async function editOrganisation(req: Request, res: Response) {
   try {
+    const { orgId } = req.params;
+    const newData = req.body;
+    const updatedOrg = await Organisation.editOrganisation(orgId, newData);
+    res.status(200).send(updatedOrg);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -48,6 +56,10 @@ async function editOrganisation(req: Request, res: Response) {
 
 async function deleteOrganisation(req: Request, res: Response) {
   try {
+    const { orgId } = req.params;
+    await Course.deleteCoursesInOrganisation(orgId);
+    const deletedOrg = await Organisation.deleteOrganisation(orgId);
+    res.status(204).send(deletedOrg);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });

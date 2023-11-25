@@ -10,10 +10,7 @@ const router = Router();
 
 router.post('/organisation', Organisation.addOrganisation);
 router.get('/organisation', Organisation.getOrganisations);
-//everything below here has an empty controller currently;
-//I decided to scaffold it to get a general Idea of what
-//functionality we needed to add
-router.get('/organisation/:orgId', Organisation.getOrganisations);
+router.get('/organisation/:orgId', Organisation.getOrganisationById);
 router.put('/organisation/:orgId', Organisation.editOrganisation);
 router.delete('/organisation/:orgId', Organisation.deleteOrganisation);
 
@@ -22,8 +19,11 @@ router.post('/:orgId/course', Course.addCourse);
 router.get('/:orgId/course', Course.getCoursesByOrganisation);
 router.get('/course/:courseId', Course.getCourseById);
 router.put('/course/:courseId', Course.editCourse);
-router.delete('/course/:courseId', Course.deleteCourse);
+router.delete('/course/:orgId/:courseId', Course.deleteCourse);
 
+//everything below here has an empty controller currently;
+//I decided to scaffold it to get a general Idea of what
+//functionality we needed to add
 router.post('/login', User.login);
 router.post('/logout', User.logout);
 router.get('/:orgId/users', User.getUsersByOrg);

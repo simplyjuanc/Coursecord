@@ -69,7 +69,9 @@ async function editCourse(req: Request, res: Response) {
 
 async function deleteCourse(req: Request, res: Response) {
   try {
-    const { courseId } = req.params;
+    const { orgId, courseId } = req.params;
+    await Organisation.removeCourseFromOrganisation(orgId, courseId);
+
     const deletedCourse = await Course.deleteCourse(courseId);
     res.status(204).send(deletedCourse);
   } catch (error) {

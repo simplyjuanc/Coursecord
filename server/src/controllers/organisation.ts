@@ -30,7 +30,7 @@ async function getOrganisations(req: Request, res: Response) {
   }
 }
 
-async function getOrganisationByID(req: Request, res: Response) {
+async function getOrganisationById(req: Request, res: Response) {
   try {
   } catch (error) {
     console.log(error);
@@ -57,6 +57,7 @@ async function deleteOrganisation(req: Request, res: Response) {
 export default {
   addOrganisation,
   getOrganisations,
+  getOrganisationById,
   editOrganisation,
   deleteOrganisation,
 };

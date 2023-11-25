@@ -1,0 +1,41 @@
+import { Course as CourseType } from '../types';
+import { Course } from './index';
+
+async function createCourse(title: string, description: string) {
+  const course = await Course.create({ data: { title, description } });
+  return course;
+}
+
+async function getCourses() {
+  const courses = await Course.findMany();
+  return courses;
+}
+
+async function getCourseById(id: string) {
+  const course = await Course.findUnique({ where: { id } });
+  return course;
+}
+
+async function getCoursesInOrg(orgCourses: string[]) {
+  const courses = await Course.findMany({ where: { id: { in: orgCourses } } });
+  return courses;
+}
+
+async function editCourse(id: string, newData: Partial<CourseType>) {
+  const updatedCourse = await Course.update({ where: { id }, data: newData });
+  return updatedCourse;
+}
+
+async function deleteCourse(id: string) {
+  const deletedCourse = await Course.delete({ where: { id } });
+  return;
+}
+
+export default {
+  createCourse,
+  getCourses,
+  getCourseById,
+  getCoursesInOrg,
+  editCourse,
+  deleteCourse,
+};

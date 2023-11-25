@@ -16,8 +16,27 @@ async function getOrganisations() {
 }
 
 async function getOrganisationByName(name: string) {
-  const org = await Organisation.findUnique({where: {name}})
+  const org = await Organisation.findUnique({ where: { name } });
   return org;
 }
 
-export default { createOrganisation, getOrganisations, getOrganisationByName };
+async function getOrganisationById(id: string) {
+  const org = await Organisation.findUnique({ where: { id } });
+  return org;
+}
+
+async function addCourseToOrganisation(id: string, course: string) {
+  const updatedOrg = Organisation.update({
+    where: { id },
+    data: { courses: { push: course } },
+  });
+  return updatedOrg;
+}
+
+export default {
+  createOrganisation,
+  getOrganisations,
+  getOrganisationByName,
+  getOrganisationById,
+  addCourseToOrganisation,
+};

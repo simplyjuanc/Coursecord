@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 
 interface CourseInfo {
   id: string;
-  imageUrl: string; // Assuming we only need the ID and the image URL for the CourseList
+  imageUrl: string;
+  name: string;
 }
 
 const CourseList: React.FC = () => {
@@ -15,7 +16,7 @@ const CourseList: React.FC = () => {
   useEffect(() => {
     async function fetchCourses() {
       try {
-        const response = await fetch('/api/courses'); // Adjust this to your actual API endpoint
+        const response = await fetch('/course'); 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

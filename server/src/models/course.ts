@@ -1,5 +1,5 @@
 import { Course as CourseType } from '../types';
-import { Course } from './index';
+import { Course, Organisation } from './index';
 
 async function createCourse(title: string, description: string) {
   const course = await Course.create({ data: { title, description } });
@@ -28,7 +28,17 @@ async function editCourse(id: string, newData: Partial<CourseType>) {
 
 async function deleteCourse(id: string) {
   const deletedCourse = await Course.delete({ where: { id } });
-  return;
+  return deletedCourse;
+}
+
+async function deleteCoursesInOrganisation(orgId: string) {
+  const org = await Organisation.findUnique({ where: { id: orgId } });
+  if (!org) throw new Error('Organisation Not Found');
+
+  const deletedCourses = await Course.deleteMany({
+    where: { id: { in: org.courses } },
+  });
+  return deletedCourses;
 }
 
 export default {
@@ -38,4 +48,5 @@ export default {
   getCoursesInOrg,
   editCourse,
   deleteCourse,
+  deleteCoursesInOrganisation,
 };

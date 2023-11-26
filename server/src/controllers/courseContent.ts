@@ -70,10 +70,10 @@ async function deleteContent(req: Request, res: Response) {
 async function editContent(req: Request, res: Response) {
   try {
     const { contentId } = req.params;
-    const { body } = req.body // TODO : sync with front end on naming of this field
+    const { title, type, markdown_body } = req.body // TODO : sync with front end on naming of this field
     const updatedContent = await CourseUnit.update({
       where: { id: contentId },
-      data: { markdown_body: body }
+      data: { markdown_body, title, type }
     });
     res.status(200).send({ message: `Updated content:\n ${updatedContent}` });
   } catch (error) {

@@ -7,7 +7,7 @@ const User = prisma.user;
 const Role = prisma.role;
 
 const Course = prisma.course;
-const CourseContent = prisma.courseUnit;
+const CourseUnit = prisma.courseUnit;
 const CourseSection = prisma.courseSection;
 
 const HelpRequest = prisma.helpRequest;
@@ -17,7 +17,7 @@ export {
   Course,
   User,
   Role,
-  CourseContent,
+  CourseUnit,
   HelpRequest,
   CourseSection
 }

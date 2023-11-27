@@ -34,7 +34,6 @@ async function deleteContent(req: Request, res: Response) {
 
 async function editContent(req: Request, res: Response) {
   try {
-    
   } catch (error) {
     console.log(error)
     res.status(500).send({message: 'Internal Server Error'})

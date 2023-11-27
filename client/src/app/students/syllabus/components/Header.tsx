@@ -27,23 +27,23 @@ const Header: React.FC = () => {
           </Link>
         </div>
         <div className="flex items-center">
-          <Link href="/student-syllabus">
+          <Link href="/students/syllabus">
             <div className="mx-2">
               <PiStudentFill className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>
           </Link>
-          <Link href="/student-help-request">
+          <Link href="/students/help-request">
             <div className="mx-2">
               <MdLiveHelp className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>
           </Link>
-          <Link href="/student-feedback">
+          <Link href="/students/feedback">
             <div className="mx-2">
               <VscFeedback className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>
           </Link>
           {/* Add a Link for the Home button */}
-          <Link href="/student-classes">
+          <Link href="/students/courses">
             <div className="mx-2">
               <BsHouse className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>

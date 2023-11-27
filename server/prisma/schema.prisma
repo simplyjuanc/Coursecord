@@ -33,7 +33,6 @@ model User {
   email          String   @unique
   name           String
   profile_url    String
-  organisations  String[] @default([]) //references Organisation
   roles          String[] @default([]) //references Role
 }
 

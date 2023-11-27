@@ -18,7 +18,7 @@ async function addSection(req: Request, res: Response) {
 
     const userRoles = (req as RequestWithUser).user.roles;
     if (!(await Role.userRolesIncludeAdmin(userRoles, org.id))) {
-      return res.status(401).send({ message: 'Unauthorised' });
+      return res.status(401).send({ message: 'Missing Permissions' });
     }
     const sectionData = req.body;
 
@@ -32,20 +32,23 @@ async function addSection(req: Request, res: Response) {
 
 async function editSection(req: Request, res: Response) {
   try {
-    const {sectionId} = req.params;
+    const { sectionId } = req.params;
     const org = await Organisation.getOrganisationWithSection(sectionId);
-    if(!org) {
-      return res.status(401).send({message: 'Invalid Organisation'})
+    if (!org) {
+      return res.status(401).send({ message: 'Invalid Section' });
     }
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if(!await Role.userRolesIncludeAdmin(userRoles, org.id)) {
-      return res.status(401).send({message: 'Unauthorised'})
+    if (!(await Role.userRolesIncludeAdmin(userRoles, org.id))) {
+      return res.status(401).send({ message: 'Missing Permissions' });
     }
 
     const sectionData = req.body;
 
-    const updatedSection = await CourseSection.editSection(sectionId, sectionData)
+    const updatedSection = await CourseSection.editSection(
+      sectionId,
+      sectionData
+    );
     res.status(200).send(updatedSection);
   } catch (error) {
     console.log(error);
@@ -55,18 +58,18 @@ async function editSection(req: Request, res: Response) {
 
 async function deleteSection(req: Request, res: Response) {
   try {
-    const {sectionId} = req.params;
+    const { sectionId } = req.params;
     const org = await Organisation.getOrganisationWithSection(sectionId);
-    if(!org) {
-      return res.status(401).send({message: 'Invalid Organisation'})
+    if (!org) {
+      return res.status(401).send({ message: 'Invalid Organisation' });
     }
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if(!await Role.userRolesIncludeAdmin(userRoles, org.id)) {
-      return res.status(401).send({message: 'Unauthorised'})
+    if (!(await Role.userRolesIncludeAdmin(userRoles, org.id))) {
+      return res.status(401).send({ message: 'Missing Permissions' });
     }
 
-    const deletedSection = await CourseSection.deleteSection(sectionId)
+    const deletedSection = await CourseSection.deleteSection(sectionId);
     res.status(204).send(deletedSection);
   } catch (error) {
     console.log(error);

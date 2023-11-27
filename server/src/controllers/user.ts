@@ -59,7 +59,7 @@ async function getUsersByOrg(req: Request, res: Response) {
 async function getInstructorsByOrg(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
-    const instructors = await User.getUsersWithRoleByOrg(orgId, 'Instructor');
+    const instructors = await User.getUsersWithRoleByOrg(orgId, 'instructor');
     res.status(200).send(instructors);
   } catch (error) {
     console.log(error);
@@ -81,7 +81,7 @@ async function getInstructorsByCourse(req: Request, res: Response) {
 async function getStudentsByOrg(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
-    const students = await User.getUsersWithRoleByOrg(orgId, 'Student');
+    const students = await User.getUsersWithRoleByOrg(orgId, 'student');
     res.status(200).send(students);
   } catch (error) {
     console.log(error);

@@ -34,9 +34,6 @@ router.delete(
   Course.deleteCourse
 );
 
-//everything below here has an empty controller currently;
-//I decided to scaffold it to get a general Idea of what
-//functionality we needed to add
 router.post('/signIn', User.signIn);
 router.get('/:orgId/users', User.getUsersByOrg);
 router.get('/:orgId/instructors', User.getInstructorsByOrg);
@@ -55,15 +52,15 @@ router.post('/:courseId/section', Auth.requireAuth, Section.addSection);
 router.put('/section/:sectionId', Auth.requireAuth, Section.editSection);
 router.delete('/section/:sectionId', Auth.requireAuth, Section.deleteSection);
 
-router.post('/content/:orgId/:sectionId', Auth.requireAuth, Unit.addCourseUnit);
+router.post('/unit/:orgId/:sectionId', Auth.requireAuth, Unit.addCourseUnit);
 router.put(
-  '/content/:sectionId/:unitId',
+  '/unit/:sectionId/:unitId',
   Auth.requireAuth,
   Unit.addUnitToSection
 );
-router.put('/content/:contentId', Auth.requireAuth, Unit.editContent);
+router.put('/unit/:unitId', Auth.requireAuth, Unit.editContent);
 router.delete(
-  '/content/:sectionId/:unitId',
+  '/unit/:sectionId/:unitId',
   Auth.requireAuth,
   Unit.removeUnitFromSection
 );

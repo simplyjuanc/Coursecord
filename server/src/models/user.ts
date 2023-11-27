@@ -3,6 +3,7 @@ import { User } from './index';
 import Organisation from './organisation';
 import Role from '../models/role';
 import Course from '../models/course';
+import { Organisation as TOrganisation } from '@prisma/client';
 
 async function getUserByEmail(email: string) {
   const user = await User.findUnique({ where: { email } });
@@ -37,17 +38,6 @@ async function assignRoleToUser(id: string, roleId: string) {
     where: { id },
     data: { roles: { push: roleId } },
   });
-  return updatedUser;
-}
-
-async function addOrgToUser(userId: string, orgId: string) {
-  const updatedUser = await User.update({
-    where: { id: userId },
-    data: {
-      organisations: { push: orgId },
-    },
-  });
-
   return updatedUser;
 }
 
@@ -126,12 +116,24 @@ async function deleteUser(userId: string) {
   return deletedUser;
 }
 
+async function removeAllRolesFromOrgUsers(org: TOrganisation) {
+  const users = await User.findMany({ where: { id: { in: org.members } } });
+  let promises = [];
+  for (const user of users) {
+    promises.push(User.update({
+      where: { id: user.id },
+      data: { roles: user.roles.filter((id) => !org.roles.includes(id)) },
+    }));
+  }
+
+  await Promise.all(promises);
+}
+
 export default {
   getUserByEmail,
   createUser,
   updateUser,
   assignRoleToUser,
-  addOrgToUser,
   userIsOrgOwner,
   getUsersByOrg,
   getUsersWithRoleByOrg,
@@ -140,4 +142,5 @@ export default {
   addRoleToUser,
   removeRoleFromUser,
   deleteUser,
+  removeAllRolesFromOrgUsers,
 };

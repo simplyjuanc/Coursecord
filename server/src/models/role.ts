@@ -33,7 +33,7 @@ async function userRolesIncludeAdmin(userRoles: string[], orgId: string) {
 
   const orgRoles = await Role.findMany({ where: { id: { in: org.roles } } });
   for (const role of orgRoles) {
-    if (role.title === 'Admin' && userRoles.includes(role.id)) {
+    if (role.title === 'admin' && userRoles.includes(role.id)) {
       return true;
     }
   }

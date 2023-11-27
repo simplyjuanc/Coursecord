@@ -75,7 +75,7 @@ async function editCourse(req: Request, res: Response) {
 
     const orgId = course.organisation;
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!await Role.userRolesIncludeAdmin(userRoles, orgId)) {
+    if (!(await Role.userRolesIncludeAdmin(userRoles, orgId))) {
       return res.status(401).send({ message: 'Missing Correct Permissions' });
     }
 
@@ -90,8 +90,15 @@ async function editCourse(req: Request, res: Response) {
 async function deleteCourse(req: Request, res: Response) {
   try {
     const { orgId, courseId } = req.params;
+    const orgWithCourse = await Organisation.getOrganisationWithCourse(
+      courseId
+    );
+    if (!orgWithCourse || orgWithCourse.id !== orgId) {
+      return res.status(401).send('Invalid Organisation or course');
+    }
+    
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!await Role.userRolesIncludeAdmin(userRoles, orgId)) {
+    if (!(await Role.userRolesIncludeAdmin(userRoles, orgId))) {
       return res.status(401).send({ message: 'Missing Correct Permissions' });
     }
 

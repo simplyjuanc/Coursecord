@@ -11,7 +11,6 @@ async function addCourseUnit(req: Request, res: Response) {
     const unitData = req.body;
 
     const userRoles = (req as RequestWithUser).user.roles;
-
     if (!(await Role.userRolesIncludeAdmin(userRoles, orgId))) {
       return res.status(401).send({ message: 'Incorrect Permissions' });
     }

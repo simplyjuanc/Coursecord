@@ -3,6 +3,7 @@ import Organisation from '../models/organisation';
 import Course from '../models/course';
 import { RequestWithUser } from '../types';
 import User from '../models/user';
+import Role from '../models/role';
 
 async function addOrganisation(req: Request, res: Response) {
   try {
@@ -16,8 +17,8 @@ async function addOrganisation(req: Request, res: Response) {
     const ownerId = (req as RequestWithUser).user.id;
     const newOrg = await Organisation.createOrganisation(name, ownerId);
 
-    await User.addOrgToUser(ownerId, newOrg.id);
-    await User.assignRoleToUser(ownerId, newOrg.roles[0]);
+    const adminRole = await Role.getRoleByTitle(newOrg.roles, 'admin')
+    await User.assignRoleToUser(ownerId, adminRole!.id);
 
     res.status(201).send(newOrg);
   } catch (error) {
@@ -71,8 +72,10 @@ async function deleteOrganisation(req: Request, res: Response) {
       return res.status(401).send({message: 'Unauthorised'})
     }
 
+
     await Course.deleteCoursesInOrganisation(orgId);
     const deletedOrg = await Organisation.deleteOrganisation(orgId);
+    await User.removeAllRolesFromOrgUsers(deletedOrg);
     res.status(204).send(deletedOrg);
   } catch (error) {
     console.log(error);

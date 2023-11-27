@@ -1,11 +1,21 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
-import { GoogleUser, RequestWithUser } from '../types';
+import Auth from '../middlewares/auth';
+import { RequestWithUser } from '../types';
+import Organisation from '../models/organisation';
+import Role from '../models/role';
 
 async function signIn(req: Request, res: Response) {
   try {
     const { oauth_id, oauth_provider } = req.body;
-    const user = (req as RequestWithUser).user;
+    const accessToken = req.headers.authorization;
+    if (!accessToken) {
+      return res.status(401).send('Unauthorised');
+    }
+    const user = await Auth.getGoogleUser(accessToken);
+    if (!user) {
+      return res.status(401).send('Unauthorised');
+    }
 
     const userInfo = {
       email: user.email,
@@ -16,7 +26,6 @@ async function signIn(req: Request, res: Response) {
     };
 
     const existingUser = await User.getUserByEmail(userInfo.email);
-
     if (existingUser && existingUser.oauth_provider !== oauth_provider) {
       return res
         .status(409)
@@ -38,6 +47,9 @@ async function signIn(req: Request, res: Response) {
 
 async function getUsersByOrg(req: Request, res: Response) {
   try {
+    const { orgId } = req.params;
+    const users = await User.getUsersByOrg(orgId);
+    res.status(200).send(users);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -46,6 +58,9 @@ async function getUsersByOrg(req: Request, res: Response) {
 
 async function getInstructorsByOrg(req: Request, res: Response) {
   try {
+    const { orgId } = req.params;
+    const instructors = await User.getUsersWithRoleByOrg(orgId, 'instructor');
+    res.status(200).send(instructors);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -54,6 +69,9 @@ async function getInstructorsByOrg(req: Request, res: Response) {
 
 async function getInstructorsByCourse(req: Request, res: Response) {
   try {
+    const { courseId } = req.params;
+    const instructors = await User.getInstructorsByCourse(courseId);
+    res.status(200).send(instructors);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -62,6 +80,9 @@ async function getInstructorsByCourse(req: Request, res: Response) {
 
 async function getStudentsByOrg(req: Request, res: Response) {
   try {
+    const { orgId } = req.params;
+    const students = await User.getUsersWithRoleByOrg(orgId, 'student');
+    res.status(200).send(students);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -70,6 +91,9 @@ async function getStudentsByOrg(req: Request, res: Response) {
 
 async function getStudentsByCourse(req: Request, res: Response) {
   try {
+    const { courseId } = req.params;
+    const students = await User.getStudentsByCourse(courseId);
+    res.status(200).send(students);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -78,6 +102,18 @@ async function getStudentsByCourse(req: Request, res: Response) {
 
 async function assignRoleToUser(req: Request, res: Response) {
   try {
+    const { userId, roleId } = req.params;
+    const org = await Organisation.getOrganisationWithRole(roleId);
+    if (!org) {
+      return res.status(401).send({ message: 'Invalid Role' });
+    }
+    const userRoles = (req as RequestWithUser).user.roles;
+    if (!(await Role.userRolesIncludeAdmin(userRoles, org.id))) {
+      return res.status(401).send({ message: 'Unauthorised' });
+    }
+
+    const updatedUser = await User.addRoleToUser(userId, roleId);
+    res.status(200).send(updatedUser);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -86,6 +122,18 @@ async function assignRoleToUser(req: Request, res: Response) {
 
 async function removeRoleFromUser(req: Request, res: Response) {
   try {
+    const { userId, roleId } = req.params;
+    const org = await Organisation.getOrganisationWithRole(roleId);
+    if (!org) {
+      return res.status(401).send({ message: 'Invalid Role' });
+    }
+    const userRoles = (req as RequestWithUser).user.roles;
+    if (!(await Role.userRolesIncludeAdmin(userRoles, org.id))) {
+      return res.status(401).send({ message: 'Unauthorised' });
+    }
+
+    const updatedUser = await User.removeRoleFromUser(userId, roleId);
+    res.status(200).send(updatedUser);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -94,6 +142,14 @@ async function removeRoleFromUser(req: Request, res: Response) {
 
 async function deleteUser(req: Request, res: Response) {
   try {
+    const { userId } = req.params;
+    const authUserId = (req as RequestWithUser).user.id;
+    if (userId != authUserId) {
+      return res.status(401).send(authUserId);
+    }
+
+    const deletedUser = await User.deleteUser(userId)
+    res.status(204).send(deletedUser)
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });

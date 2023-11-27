@@ -1,4 +1,4 @@
-import { Organisation as Org } from '../types';
+import { Organisation as TOrganisation } from '@prisma/client';
 import { Organisation } from './index';
 import Role from './role';
 
@@ -46,9 +46,13 @@ async function removeCourseFromOrganisation(id: string, course: string) {
   return updatedOrg;
 }
 
-async function editOrganisation(id: string, newData: Partial<Org>) {
+async function editOrganisation(
+  id: string,
+  newData: Partial<TOrganisation>,
+  userId: string
+) {
   const updatedOrg = await Organisation.update({
-    where: { id },
+    where: { id, owner: userId },
     data: newData,
   });
 
@@ -57,7 +61,51 @@ async function editOrganisation(id: string, newData: Partial<Org>) {
 
 async function deleteOrganisation(id: string) {
   const deletedOrg = await Organisation.delete({ where: { id } });
+  await Role.deleteRolesInOrg(deletedOrg.roles)
   return deletedOrg;
+}
+
+async function getOrganisationWithUnit(unitId: string) {
+  const orgs = await Organisation.findFirst({
+    where: { content: { has: unitId } },
+  });
+
+  return orgs;
+}
+
+async function setOrganisationUnits(orgId: string, units: string[]) {
+  const updatedOrg = await Organisation.update({
+    where: { id: orgId },
+    data: {
+      content: units,
+    },
+  });
+
+  return updatedOrg;
+}
+
+async function getOrganisationWithSection(sectionId: string) {
+  const org = await Organisation.findFirst({
+    where: { content: { has: sectionId } },
+  });
+
+  return org;
+}
+
+async function getOrganisationWithCourse(courseId: string) {
+  const org = await Organisation.findFirst({
+    where: { courses: { has: courseId } },
+  });
+
+  return org;
+}
+
+async function getOrganisationWithRole(roleId: string) {
+  const org = await Organisation.findFirst({
+    where: { roles: { has: roleId } },
+  });
+
+  return org
 }
 
 export default {
@@ -69,4 +117,9 @@ export default {
   removeCourseFromOrganisation,
   editOrganisation,
   deleteOrganisation,
+  getOrganisationWithUnit,
+  setOrganisationUnits,
+  getOrganisationWithSection,
+  getOrganisationWithCourse,
+  getOrganisationWithRole
 };

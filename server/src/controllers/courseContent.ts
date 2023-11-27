@@ -1,5 +1,11 @@
 import { Request, Response } from 'express';
-import { CourseUnit, CourseSection } from '../models';
+import { CourseUnit, CourseSection, Organisation } from '../models';
+import { 
+  CourseUnit as TCourseUnit, 
+  CourseSection as TCourseSection, 
+  Organisation as TOrganisation 
+} from '@prisma/client';
+
 
 // REMOVE? 
 async function addCourseUnit(req: Request, res: Response) {
@@ -60,11 +66,37 @@ async function deleteContent(req: Request, res: Response) {
   try {
     const { contentId } = req.params;
     const deletedContent = await CourseUnit.delete({ where: { id: contentId } });
+
+    const sectionsPromise = CourseSection.findMany({ where: { content: { has: deletedContent.id } } })
+    const orgsPromise = Organisation.findMany({ where: { content: { has: deletedContent.id } } })
+    const [sections, orgs] = await Promise.all([sectionsPromise, orgsPromise]);
+
+    const updatedSections = removeCourseRelation(sections, deletedContent.id);
+    const updatedOrgs = removeCourseRelation(orgs, deletedContent.id)
+
+    const updateSectionPromises = updatedSections.map(async section => {
+      await CourseSection.update({where: {id: section.id}, data: {content: {set: section.content}}})
+    })
+
+    const updateOrgPromises = updatedOrgs.map(async org => {
+      await CourseSection.update({where: {id: org.id}, data: {content: {set: org.content}}})
+    })
+
+    await Promise.all([...updateSectionPromises, ...updateOrgPromises]);
+
     res.status(200).send({ message: `Deleted content:\n ${deletedContent}` });
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error:\n', error });
   }
+}
+
+function removeCourseRelation(targetCollection: TCourseSection[] | TOrganisation[], targetId: string) {
+  return targetCollection.map(document => {
+    const idx = document.content.indexOf(targetId);
+    document.content.splice(idx, 1);
+    return document;
+  });
 }
 
 async function editContent(req: Request, res: Response) {

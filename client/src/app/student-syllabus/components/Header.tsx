@@ -3,6 +3,7 @@ import Link from 'next/link'; // Import Link from Next.js
 import { PiStudentFill } from 'react-icons/pi';
 import { MdLiveHelp } from 'react-icons/md'; // Updated import
 import { VscFeedback } from 'react-icons/vsc';
+import { BsHouse } from 'react-icons/bs'; // Import the "Home" icon
 
 const Header: React.FC = () => {
   const [courseName, setCourseName] = useState<string>('');
@@ -31,7 +32,7 @@ const Header: React.FC = () => {
               <PiStudentFill className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>
           </Link>
-          <Link href="/student-helprequest">
+          <Link href="/student-help-request">
             <div className="mx-2">
               <MdLiveHelp className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>
@@ -39,6 +40,12 @@ const Header: React.FC = () => {
           <Link href="/student-feedback">
             <div className="mx-2">
               <VscFeedback className="text-3xl cursor-pointer hover:fill-secondary" />
+            </div>
+          </Link>
+          {/* Add a Link for the Home button */}
+          <Link href="/student-classes">
+            <div className="mx-2">
+              <BsHouse className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>
           </Link>
         </div>

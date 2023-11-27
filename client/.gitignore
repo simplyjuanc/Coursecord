@@ -29,6 +29,7 @@ yarn-error.log*
 .env*.local
 src/app/test-pages/**
 
+.env
 
 # vercel
 .vercel

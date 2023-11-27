@@ -1,8 +1,7 @@
 import express, { Request } from 'express';
 import cors from 'cors';
 // import {createServer} from 'http';
-import { Server } from 'socket.io';
-import { setupHelpRequestWebSockets } from './sockets/index.sockets';
+import setupWebSockets from './sockets/index.sockets';
 import router from './router';
 
 const app = express();
@@ -12,16 +11,7 @@ app.use(express.json());
 app.use(router);
 
 
-// const httpServer = createServer(app);
-export const io = new Server(5001, {
-  cors: {
-    //TODO: check config for deployment and align with Express server
-    origin: process.env.NODE_ENV === 'production' ? false : '*' 
-  }
-});
-
-
-setupHelpRequestWebSockets();
+setupWebSockets();
 
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;

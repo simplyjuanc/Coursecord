@@ -3,7 +3,7 @@ import Organisation from './controllers/organisation';
 import Course from './controllers/course';
 import User from './controllers/user';
 import Role from './controllers/role';
-import Unit from './controllers/unit';
+import Section from './controllers/section';
 import Content from './controllers/courseContent';
 import {requireAuth} from './middlewares/auth'
 
@@ -35,14 +35,14 @@ router.put('/user/:userId/:roleId', User.assignRoleToUser);
 router.delete('/user/:userId/:roleId', User.removeRoleFromUser);
 router.delete('/user/:userId', User.deleteUser);
 
-router.post('/:courseId/unit', Unit.addUnit);
-router.put('/unit/:unitId', Unit.editUnit);
-router.delete('/unit/:unitId', Unit.deleteUnit);
+router.post('/:courseId/section', Section.addSection);
+router.put('/section/:sectionId', Section.editSection);
+router.delete('/section/:sectionId', Section.deleteSection);
 
-router.post('/:orgId/content', Content.addContentToOrganisation);
-router.post('/content/:unitId/:contentId', Content.addContentToUnit);
-router.delete('/content/:unitId/:contentId', Content.deleteContent);
+router.post('/content/:orgId/:sectionId', Content.addCourseUnit);
+router.put('/content/:sectionId/:contentId', Content.addUnitToSection);
 router.put('/content/:contentId', Content.editContent);
+router.delete('/content/:sectionId/:contentId', Content.removeContentFromUnit);
 router.delete('/content/:contentId', Content.deleteContent);
 
 //Not part of MVP

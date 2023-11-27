@@ -17,6 +17,7 @@ model Organisation {
   courses String[] @default([]) //refeences Course
   members String[] @default([]) //references User
   roles   String[] @default([])
+  content String[] @default([]) //references Unit
 }
 
 model Role {
@@ -42,17 +43,17 @@ model Course {
   description String
   instructors String[] @default([]) //references User
   students    String[] @default([]) //references User
-  syllabus    String[] @default([]) //references Unit
+  syllabus    String[] @default([])  //references Unit
 }
 
-model Unit {
+model CourseSection {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   title   String
-  content String[] @default([]) //references CourseContent
+  content String[] @default([]) //references CourseUnit
   order   Int
 }
 
-model CourseContent {
+model CourseUnit {
   id            String @id @default(auto()) @map("_id") @db.ObjectId
   owner         String //references Organisation
   title         String
@@ -62,10 +63,10 @@ model CourseContent {
 
 model HelpRequest {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  course       String //references course
-  students     String[] //references User
+  course       String     //references course
+  students     String[]   //references User
   status       String
-  instructor   String //references User
+  instructor   String     //references User
   content      String
   time_waiting Int
   time_in_call Int

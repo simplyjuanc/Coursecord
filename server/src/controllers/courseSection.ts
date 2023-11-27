@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-async function addUnit(req: Request, res: Response) {
+async function addSection(req: Request, res: Response) {
   try {
   } catch (error) {
     console.log(error);
@@ -8,7 +8,7 @@ async function addUnit(req: Request, res: Response) {
   }
 }
 
-async function editUnit(req: Request, res: Response) {
+async function editSection(req: Request, res: Response) {
   try {
   } catch (error) {
     console.log(error);
@@ -16,7 +16,7 @@ async function editUnit(req: Request, res: Response) {
   }
 }
 
-async function deleteUnit(req: Request, res: Response) {
+async function deleteSection(req: Request, res: Response) {
   try {
   } catch (error) {
     console.log(error);
@@ -24,4 +24,4 @@ async function deleteUnit(req: Request, res: Response) {
   }
 }
 
-export default { addUnit, editUnit, deleteUnit };
+export default { addSection, editSection, deleteSection };

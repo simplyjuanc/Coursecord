@@ -4,7 +4,7 @@ export type Course = {
   id: string;
   title: string;
   description: string;
-  instructorss: string[];
+  instructors: string[];
   students: string[];
   syllabus: string[];
 };

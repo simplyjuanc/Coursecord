@@ -1,5 +1,5 @@
 "use client";
-import Header from "../student-syllabus/components/Header";
+import Header from "../syllabus/components/Header";
 import HelpRequestForm from './components/HelpRequestForm';
 
 const Home = () => {

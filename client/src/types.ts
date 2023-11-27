@@ -1,5 +1,4 @@
 import { Session } from 'next-auth';
-import { JWT } from 'next-auth/jwt';
 
 export interface SessionWithToken extends Session {
   accessToken: string;

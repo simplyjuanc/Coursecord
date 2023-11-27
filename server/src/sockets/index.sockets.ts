@@ -1,30 +1,59 @@
 import { Server } from 'socket.io';
-import { setupHelpRequestWebSockets } from './helpRequests';
+import { instrument } from '@socket.io/admin-ui';
 
+import {
+  setupStudentHelpSockets,
+  setupInstructorHelpSockets
+} from './helpRequests';
+
+type TUserSpace = {
+  organisationId: string
+  role: 'admin' | 'instructor' | 'student'
+}
 
 export default function setupWebSockets() {
+  console.log('Instantiating socket setup ');
+  
   const io = new Server(5001, {
+    //TODO: check config for deployment and align with Express server
     cors: {
-      //TODO: check config for deployment and align with Express server
       origin: process.env.NODE_ENV === 'production' ? false : '*'
     }
   });
-
+  // const orgNamespace = io.of(/\/^[0-9a-fA-F]{24}$/); // regex for Mongo's ObjectId patter
+  // console.log(orgNamespace.name)
 
   io.on('connection', (socket) => {
     console.log('Connection established with user: ', socket.id);
-    
-    setupHelpRequestWebSockets(socket);
+
+    socket.on('join', role => {
+      console.log('role :>> ', role)
+
+      if (role === 'student') {
+        console.log('Joining student room');
+        socket.join('students');
+        setupStudentHelpSockets(socket);
+      } else {
+        console.log('Joining instructor room');
+        socket.join('instructors');
+        setupInstructorHelpSockets(socket);
+      }
+    })  
 
     socket.on('disconnect', () => {
+      socket.disconnect();
       console.log(`User ${socket.id} disconnected`);
     });
-  
-    socket.onAny((event, ...args) => {
-      console.log('event, args :>> ', event, args);
-    });
+
+
   });
 
+
+  instrument(io, {
+    auth: false,
+    mode: "development",
+  });
 }
+
 
 

@@ -27,20 +27,19 @@ model Role {
 }
 
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  organisations String[]  @default([]) //references Organisation
-  oauth_id      String
-  roles         String[]  @default([]) //references Role
-  email         String
-  first_name    String
-  last_name     String
-  dob           DateTime? @db.Date
-  profile_url   String
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  oauth_id       String   @unique
+  oauth_provider String
+  email          String   @unique
+  name           String
+  profile_url    String
+  organisations  String[] @default([]) //references Organisation
+  roles          String[] @default([]) //references Role
 }
 
 model Course {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String 
+  title       String
   description String
   instructors String[] @default([]) //references User
   students    String[] @default([]) //references User

@@ -51,4 +51,11 @@ async function getRoleByTitle(orgRoles: string[], title: string) {
 
   return role;
 }
-export default { createDefaultRoles, userRolesIncludeAdmin, getRoleByTitle };
+
+async function deleteRolesInOrg(orgRoles: string[]) {
+  const deletedRoles = await Role.deleteMany({
+    where: { id: { in: orgRoles } },
+  });
+  return deletedRoles;
+}
+export default { createDefaultRoles, userRolesIncludeAdmin, getRoleByTitle, deleteRolesInOrg };

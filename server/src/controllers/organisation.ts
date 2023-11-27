@@ -54,8 +54,7 @@ async function editOrganisation(req: Request, res: Response) {
 
     const userId = (req as RequestWithUser).user.id;
     const updatedOrg = await Organisation.editOrganisation(orgId, newData, userId);
-    //TODO: Make a more descriptive error saying something like you can't delete this when the 
-    //userId is different to the orgs owner but for now this is enough
+    //TODO: Make a more descriptive error when about unauthorised deletion
     res.status(200).send(updatedOrg);
   } catch (error) {
     console.log(error);
@@ -69,7 +68,6 @@ async function deleteOrganisation(req: Request, res: Response) {
 
     const ownerId = (req as RequestWithUser).user.id;
     if(!await User.userIsOrgOwner(ownerId, orgId)) {
-      console.log('NOT ALLOWED')
       return res.status(401).send({message: 'Unauthorised'})
     }
 

@@ -51,7 +51,6 @@ model CourseSection {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   title   String
   content String[] @default([]) //references CourseUnit
-  order   Int
 }
 
 model CourseUnit {

@@ -51,9 +51,9 @@ router.delete(
 );
 router.delete('/user/:userId', Auth.requireAuth, User.deleteUser);
 
-router.post('/:courseId/section', Section.addSection);
-router.put('/section/:sectionId', Section.editSection);
-router.delete('/section/:sectionId', Section.deleteSection);
+router.post('/:courseId/section', Auth.requireAuth, Section.addSection);
+router.put('/section/:sectionId', Auth.requireAuth, Section.editSection);
+router.delete('/section/:sectionId', Auth.requireAuth, Section.deleteSection);
 
 router.post('/content/:orgId/:sectionId', Auth.requireAuth, Unit.addCourseUnit);
 router.put(

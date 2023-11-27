@@ -21,6 +21,10 @@ export type CourseUnitInfo = {
   markdown_body: string;
 }
 
+export type CourseSectionInfo = {
+  title: string;
+}
+
 export interface RequestWithUser extends Request {
   user: User;
 }

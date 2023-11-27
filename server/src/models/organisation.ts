@@ -61,6 +61,7 @@ async function editOrganisation(
 
 async function deleteOrganisation(id: string) {
   const deletedOrg = await Organisation.delete({ where: { id } });
+  await Role.deleteRolesInOrg(deletedOrg.roles)
   return deletedOrg;
 }
 

@@ -1,4 +1,4 @@
-import { Organisation as Org } from '@prisma/client';
+import { Organisation as TOrganisation } from '@prisma/client';
 import { Organisation } from './index';
 import Role from './role';
 
@@ -46,7 +46,11 @@ async function removeCourseFromOrganisation(id: string, course: string) {
   return updatedOrg;
 }
 
-async function editOrganisation(id: string, newData: Partial<Org>, userId: string) {
+async function editOrganisation(
+  id: string,
+  newData: Partial<TOrganisation>,
+  userId: string
+) {
   const updatedOrg = await Organisation.update({
     where: { id, owner: userId },
     data: newData,
@@ -60,6 +64,32 @@ async function deleteOrganisation(id: string) {
   return deletedOrg;
 }
 
+async function getOrganisationWithUnit(unitId: string) {
+  const orgs = await Organisation.findFirst({
+    where: { content: { has: unitId } },
+  });
+
+  return orgs;
+}
+
+async function setOrganisationUnits(orgId: string, units: string[]) {
+  const updatedOrg = await Organisation.update({
+    where: { id: orgId },
+    data: {
+      content: units,
+    },
+  });
+  return updatedOrg;
+}
+
+async function getOrganisationWithSection(sectionId: string) {
+  const org = await Organisation.findFirst({
+    where: { content: { has: sectionId } },
+  });
+
+  return org;
+}
+
 export default {
   createOrganisation,
   getOrganisations,
@@ -69,4 +99,7 @@ export default {
   removeCourseFromOrganisation,
   editOrganisation,
   deleteOrganisation,
+  getOrganisationWithUnit,
+  setOrganisationUnits,
+  getOrganisationWithSection
 };

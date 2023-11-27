@@ -15,6 +15,12 @@ export type UserInfo = {
   profile_url: string;
 };
 
+export type CourseUnitInfo = {
+  title: string;
+  type: string;
+  markdown_body: string;
+}
+
 export interface RequestWithUser extends Request {
   user: User;
 }

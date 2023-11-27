@@ -33,12 +33,22 @@ async function userRolesIncludeAdmin(userRoles: string[], orgId: string) {
 
   const orgRoles = await Role.findMany({ where: { id: { in: org.roles } } });
   for (const role of orgRoles) {
-    if (role.title === 'Admin' && userRoles.includes(role.id)){
-      return true
+    if (role.title === 'Admin' && userRoles.includes(role.id)) {
+      return true;
     }
   }
 
   return false;
 }
 
-export default { createDefaultRoles, userRolesIncludeAdmin };
+async function getRoleByTitle(orgRoles: string[], title: string) {
+  const role = Role.findFirst({
+    where: {
+      id: { in: orgRoles },
+      title,
+    },
+  });
+
+  return role;
+}
+export default { createDefaultRoles, userRolesIncludeAdmin, getRoleByTitle };

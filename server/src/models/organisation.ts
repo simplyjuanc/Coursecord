@@ -79,6 +79,7 @@ async function setOrganisationUnits(orgId: string, units: string[]) {
       content: units,
     },
   });
+
   return updatedOrg;
 }
 
@@ -88,6 +89,22 @@ async function getOrganisationWithSection(sectionId: string) {
   });
 
   return org;
+}
+
+async function getOrganisationWithCourse(courseId: string) {
+  const org = await Organisation.findFirst({
+    where: { courses: { has: courseId } },
+  });
+
+  return org;
+}
+
+async function getOrganisationWithRole(roleId: string) {
+  const org = await Organisation.findFirst({
+    where: { roles: { has: roleId } },
+  });
+
+  return org
 }
 
 export default {
@@ -101,5 +118,7 @@ export default {
   deleteOrganisation,
   getOrganisationWithUnit,
   setOrganisationUnits,
-  getOrganisationWithSection
+  getOrganisationWithSection,
+  getOrganisationWithCourse,
+  getOrganisationWithRole
 };

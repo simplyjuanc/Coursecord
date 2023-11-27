@@ -16,10 +16,10 @@ router.put('/organisation/:orgId', Auth.requireAuth, Organisation.editOrganisati
 router.delete('/organisation/:orgId', Auth.requireAuth, Organisation.deleteOrganisation);
 
 router.get('/course', Course.getCourses);
-router.post('/:orgId/course', Course.addCourse);
+router.post('/:orgId/course', Auth.requireAuth, Course.addCourse);
 router.get('/:orgId/course', Course.getCoursesByOrganisation);
 router.get('/course/:courseId', Course.getCourseById);
-router.put('/course/:courseId', Course.editCourse);
+router.put('/course/:courseId', Auth.requireAuth, Course.editCourse);
 router.delete('/course/:orgId/:courseId', Course.deleteCourse);
 
 //everything below here has an empty controller currently;

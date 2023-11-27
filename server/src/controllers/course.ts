@@ -1,13 +1,21 @@
 import { Request, Response } from 'express';
 import Organisation from '../models/organisation';
 import Course from '../models/course';
+import { RequestWithUser } from '../types';
+import User from '../models/user';
+import Role from '../models/role';
 
 async function addCourse(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
     const { title, description } = req.body;
+    const userId = (req as RequestWithUser).user.id;
 
-    const newCourse = await Course.createCourse(title, description);
+    if (!(await User.userIsOrgOwner(userId, orgId))) {
+      return res.status(401).send({ message: 'Unauthorised' });
+    }
+
+    const newCourse = await Course.createCourse(title, description, orgId);
     await Organisation.addCourseToOrganisation(orgId, newCourse.id);
 
     res.status(201).send(newCourse);
@@ -59,6 +67,18 @@ async function editCourse(req: Request, res: Response) {
   try {
     const { courseId } = req.params;
     const newData = req.body;
+
+    const course = await Course.getCourseById(courseId);
+    if (!course) {
+      return res.status(404).send({ message: 'Course not found' });
+    }
+
+    const orgId = course.organisation;
+    const userRoles = (req as RequestWithUser).user.roles;
+    if (!await Role.userRolesIncludeAdmin(userRoles, orgId)) {
+      return res.status(401).send({ message: 'Missing Correct Permissions' });
+    }
+
     const updatedCourse = await Course.editCourse(courseId, newData);
     res.status(200).send(updatedCourse);
   } catch (error) {
@@ -70,6 +90,11 @@ async function editCourse(req: Request, res: Response) {
 async function deleteCourse(req: Request, res: Response) {
   try {
     const { orgId, courseId } = req.params;
+    const userRoles = (req as RequestWithUser).user.roles;
+    if (!await Role.userRolesIncludeAdmin(userRoles, orgId)) {
+      return res.status(401).send({ message: 'Missing Correct Permissions' });
+    }
+
     await Organisation.removeCourseFromOrganisation(orgId, courseId);
 
     const deletedCourse = await Course.deleteCourse(courseId);

@@ -38,12 +38,13 @@ model User {
 }
 
 model Course {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  description String
-  instructors String[] @default([]) //references User
-  students    String[] @default([]) //references User
-  syllabus    String[] @default([])  //references Unit
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  organisation String //references organisation
+  title        String
+  description  String
+  instructors  String[] @default([]) //references User
+  students     String[] @default([]) //references User
+  syllabus     String[] @default([]) //references Unit
 }
 
 model CourseSection {
@@ -63,10 +64,10 @@ model CourseUnit {
 
 model HelpRequest {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  course       String     //references course
-  students     String[]   //references User
+  course       String //references course
+  students     String[] //references User
   status       String
-  instructor   String     //references User
+  instructor   String //references User
   content      String
   time_waiting Int
   time_in_call Int

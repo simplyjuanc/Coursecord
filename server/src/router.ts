@@ -3,7 +3,7 @@ import Organisation from './controllers/organisation';
 import Course from './controllers/course';
 import User from './controllers/user';
 import Role from './controllers/role';
-import Section from './controllers/section';
+import Section from './controllers/courseSection';
 import Content from './controllers/courseContent';
 import {requireAuth} from './middlewares/auth'
 

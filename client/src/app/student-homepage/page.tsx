@@ -7,6 +7,8 @@ import { PiStudentFill } from "react-icons/pi";
 import { MdOutlineLiveHelp } from "react-icons/md";
 import { VscFeedback } from "react-icons/vsc";
 import type { NextPage } from 'next';
+import { BsHouse } from "react-icons/bs";
+
 
 interface CourseData {
   name: string;
@@ -56,12 +58,17 @@ const StudentHomePage: NextPage = () => {
             <Link href="/student-syllabus">
               <PiStudentFill className="text-3xl cursor-pointer hover:fill-secondary" />
             </Link>
-            <Link href="/student-helprequest">
+            <Link href="/student-help-request">
               <MdOutlineLiveHelp className="text-3xl cursor-pointer hover:fill-secondary" />
             </Link>
             <Link href="/student-feedback">
               <VscFeedback className="text-3xl cursor-pointer hover:fill-secondary" />
             </Link>
+            <Link href="/student-classes">
+            <div className="mx-2">
+              <BsHouse className="text-3xl cursor-pointer hover:fill-secondary" />
+            </div>
+          </Link>
           </div>
         </div>
       </header>

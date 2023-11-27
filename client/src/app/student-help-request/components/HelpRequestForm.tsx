@@ -1,44 +1,62 @@
-import { useState } from 'react';
+import React, { useState, FormEvent } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const HelpRequestForm = () => {
+const HelpRequestForm: React.FC = () => {
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const maxWords = 80;
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Here you would open the WebSocket connection and send the message
-    // For demonstration, we'll just simulate a successful submission
     setSubmitted(true);
-    // WebSocket sending logic would go here
   };
 
-  if (submitted) {
-    return (
-      <div className="flex justify-center items-center h-full">
-        <div className="text-center p-4 border border-gray-200 shadow-lg rounded-lg">
-          <h1 className="text-lg font-bold">Help is on the way!</h1>
-        </div>
-      </div>
-    );
-  }
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const inputValue = e.target.value;
+    if (inputValue.split(/\s+/).length <= maxWords) {
+      setMessage(inputValue);
+    }
+  };
 
   return (
-    <div className="flex justify-center items-center h-full">
-      <form onSubmit={handleSubmit} className="space-y-4 p-6 border border-gray-200 shadow-lg rounded-lg bg-white">
-        <textarea
-          className="w-full p-2 border rounded"
-          placeholder="What do you need help with?"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          required
-        />
-        <button
-          type="submit"
-          className="w-full p-2 bg-secondary text-white rounded hover:bg-primary"
-        >
-          Send Request
-        </button>
-      </form>
+    <div className="w-full max-w-md">
+      <AnimatePresence>
+        {!submitted ? (
+          <motion.form
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.5 }}
+            onSubmit={handleSubmit}
+            className="p-8 bg-white rounded-lg shadow-xl"
+          >
+            <h1 className="text-3xl font-semibold text-primary mb-6">New Help Request</h1>
+            <textarea
+              className="w-full p-4 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-primary"
+              placeholder={`What do you need help with? (Max ${maxWords} words)`}
+              value={message}
+              onChange={handleInputChange}
+              required
+            />
+            <button
+              type="submit"
+              className="w-full mt-6 p-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary"
+            >
+              Send Request
+            </button>
+          </motion.form>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+            className="text-center p-4 border border-gray-300 shadow-lg rounded-lg bg-white mt-6"
+          >
+            <h1 className="text-3xl font-semibold text-secondary">Help is on the way!</h1>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

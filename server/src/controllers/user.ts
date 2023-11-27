@@ -1,18 +1,35 @@
 import { Request, Response } from 'express';
+import User from '../models/user';
+import { GoogleUser, RequestWithUser } from '../types';
 
-//probably a register controller for the first time oauth happens
-//but i'm unsure of the implementation so...s
-
-async function login(req: Request, res: Response) {
+async function signIn(req: Request, res: Response) {
   try {
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
+    const { oauth_id, oauth_provider } = req.body;
+    const user = (req as RequestWithUser).user;
 
-async function logout(req: Request, res: Response) {
-  try {
+    const userInfo = {
+      email: user.email,
+      name: user.name,
+      profile_url: user.picture,
+      oauth_id,
+      oauth_provider,
+    };
+
+    const existingUser = await User.getUserByEmail(userInfo.email);
+
+    if (existingUser && existingUser.oauth_provider !== oauth_provider) {
+      return res
+        .status(409)
+        .send({ message: 'User account exists with a different provider' });
+    }
+
+    if (existingUser) {
+      const updatedUser = await User.updateUser(userInfo);
+      return res.status(200).send(updatedUser);
+    }
+
+    const newUser = await User.createUser(userInfo);
+    res.status(201).send(newUser);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -84,8 +101,7 @@ async function deleteUser(req: Request, res: Response) {
 }
 
 export default {
-  login,
-  logout,
+  signIn,
   getUsersByOrg,
   getInstructorsByOrg,
   getInstructorsByCourse,
@@ -93,5 +109,5 @@ export default {
   getStudentsByCourse,
   assignRoleToUser,
   removeRoleFromUser,
-  deleteUser
+  deleteUser,
 };

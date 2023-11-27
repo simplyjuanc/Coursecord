@@ -31,7 +31,7 @@ const Header: React.FC = () => {
               <PiStudentFill className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>
           </Link>
-          <Link href="/student-helprequest">
+          <Link href="/student-help-request">
             <div className="mx-2">
               <MdLiveHelp className="text-3xl cursor-pointer hover:fill-secondary" />
             </div>

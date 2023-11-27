@@ -3,8 +3,9 @@ import Organisation from './controllers/organisation';
 import Course from './controllers/course';
 import User from './controllers/user';
 import Role from './controllers/role';
-import Unit from './controllers/unit';
+import Section from './controllers/section';
 import Content from './controllers/courseContent';
+import {requireAuth} from './middlewares/auth'
 
 const router = Router();
 
@@ -23,9 +24,8 @@ router.delete('/course/:orgId/:courseId', Course.deleteCourse);
 
 //everything below here has an empty controller currently;
 //I decided to scaffold it to get a general Idea of what
-//functionality we needed to add
-router.post('/login', User.login);
-router.post('/logout', User.logout);
+//functionality we needed to add 
+router.post('/signIn', requireAuth, User.signIn);
 router.get('/:orgId/users', User.getUsersByOrg);
 router.get('/:orgId/instructors', User.getInstructorsByOrg);
 router.get('/:orgId/students', User.getStudentsByOrg);
@@ -35,14 +35,14 @@ router.put('/user/:userId/:roleId', User.assignRoleToUser);
 router.delete('/user/:userId/:roleId', User.removeRoleFromUser);
 router.delete('/user/:userId', User.deleteUser);
 
-router.post('/:courseId/unit', Unit.addUnit);
-router.put('/unit/:unitId', Unit.editUnit);
-router.delete('/unit/:unitId', Unit.deleteUnit);
+router.post('/:courseId/section', Section.addSection);
+router.put('/section/:sectionId', Section.editSection);
+router.delete('/section/:sectionId', Section.deleteSection);
 
-router.post('/:orgId/content', Content.addContentToOrganisation);
-router.post('/content/:unitId/:contentId', Content.addContentToUnit);
-router.delete('/content/:unitId/:contentId', Content.deleteContent);
+router.post('/content/:orgId/:sectionId', Content.addCourseUnit);
+router.put('/content/:sectionId/:contentId', Content.addUnitToSection);
 router.put('/content/:contentId', Content.editContent);
+router.delete('/content/:sectionId/:contentId', Content.removeContentFromUnit);
 router.delete('/content/:contentId', Content.deleteContent);
 
 //Not part of MVP

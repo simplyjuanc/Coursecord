@@ -1,4 +1,4 @@
-import { Organisation as Org } from '../types';
+import { Organisation as Org } from '@prisma/client';
 import { Organisation } from './index';
 import Role from './role';
 
@@ -46,9 +46,9 @@ async function removeCourseFromOrganisation(id: string, course: string) {
   return updatedOrg;
 }
 
-async function editOrganisation(id: string, newData: Partial<Org>) {
+async function editOrganisation(id: string, newData: Partial<Org>, userId: string) {
   const updatedOrg = await Organisation.update({
-    where: { id },
+    where: { id, owner: userId },
     data: newData,
   });
 

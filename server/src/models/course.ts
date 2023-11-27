@@ -1,4 +1,4 @@
-import { Course as CourseType } from '../types';
+import { Course as CourseType } from '@prisma/client';
 import { Course, Organisation } from './index';
 
 async function createCourse(title: string, description: string) {

@@ -1,11 +1,18 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
-import { GoogleUser, RequestWithUser } from '../types';
+import Auth from '../middlewares/auth';
 
 async function signIn(req: Request, res: Response) {
   try {
     const { oauth_id, oauth_provider } = req.body;
-    const user = (req as RequestWithUser).user;
+    const accessToken = req.headers.authorization;
+    if(!accessToken) {
+      return res.status(401).send('Unauthorised');
+    }
+    const user = await Auth.getGoogleUser(accessToken);
+    if(!user) {
+      return res.status(401).send('Unauthorised');
+    }
 
     const userInfo = {
       email: user.email,
@@ -16,7 +23,6 @@ async function signIn(req: Request, res: Response) {
     };
 
     const existingUser = await User.getUserByEmail(userInfo.email);
-
     if (existingUser && existingUser.oauth_provider !== oauth_provider) {
       return res
         .status(409)

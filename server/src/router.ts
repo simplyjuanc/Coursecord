@@ -3,17 +3,17 @@ import Organisation from './controllers/organisation';
 import Course from './controllers/course';
 import User from './controllers/user';
 import Role from './controllers/role';
-import Section from './controllers/section';
+import Section from './controllers/courseSection';
 import Content from './controllers/courseContent';
-import {requireAuth} from './middlewares/auth'
+import Auth from './middlewares/auth'
 
 const router = Router();
 
-router.post('/organisation', Organisation.addOrganisation);
+router.post('/organisation', Auth.requireAuth, Organisation.addOrganisation);
 router.get('/organisation', Organisation.getOrganisations);
 router.get('/organisation/:orgId', Organisation.getOrganisationById);
-router.put('/organisation/:orgId', Organisation.editOrganisation);
-router.delete('/organisation/:orgId', Organisation.deleteOrganisation);
+router.put('/organisation/:orgId', Auth.requireAuth, Organisation.editOrganisation);
+router.delete('/organisation/:orgId', Auth.requireAuth, Organisation.deleteOrganisation);
 
 router.get('/course', Course.getCourses);
 router.post('/:orgId/course', Course.addCourse);
@@ -25,7 +25,7 @@ router.delete('/course/:orgId/:courseId', Course.deleteCourse);
 //everything below here has an empty controller currently;
 //I decided to scaffold it to get a general Idea of what
 //functionality we needed to add 
-router.post('/signIn', requireAuth, User.signIn);
+router.post('/signIn', User.signIn);
 router.get('/:orgId/users', User.getUsersByOrg);
 router.get('/:orgId/instructors', User.getInstructorsByOrg);
 router.get('/:orgId/students', User.getStudentsByOrg);

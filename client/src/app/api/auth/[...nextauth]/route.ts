@@ -1,5 +1,5 @@
 import { NextAuthOptions } from 'next-auth';
-import { SessionWithToken, UserInfo } from '@/types';
+import { DbUser, SessionWithToken } from '@/types';
 import NextAuth from 'next-auth/next';
 import GoogleProvider from 'next-auth/providers/google';
 import axios from 'axios';
@@ -51,6 +51,13 @@ const authOptions: NextAuthOptions = {
           return false;
         }
 
+        const dbUser: DbUser = response.data;
+
+        (user as DbUser).id = dbUser.id;
+        (user as DbUser).oauth_id = dbUser.oauth_id;
+        (user as DbUser).oauth_provider = dbUser.oauth_provider;
+        (user as DbUser).roles = dbUser.roles;
+
         return true;
       } catch (error) {
         console.log(error);
@@ -60,6 +67,7 @@ const authOptions: NextAuthOptions = {
 
     async jwt({ token, account, user }) {
       if (account && user) {
+        console.log('JWT', user);
         return {
           accessToken: account.access_token,
           accessTokenExpires: account.expires_at! * 1000,
@@ -75,9 +83,11 @@ const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
+      console.log('SESSION', token);
       if (token) {
         (session as SessionWithToken).accessToken = token.accessToken as string;
         (session as SessionWithToken).error = token.error;
+        (session as SessionWithToken).user = token.user as DbUser;
       }
 
       return session;

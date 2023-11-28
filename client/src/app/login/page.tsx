@@ -1,61 +1,71 @@
-'use client';
+"use client";
+
 import React from 'react';
 import Image from 'next/image';
-// import bg from 'client/public/login-bg.svg';
+import wave from "./imgs/Vector 1.png"
+import four from "./imgs/+4.png"
+import hire from "./imgs/110.png"
+import instructors from "./imgs/0 instruc.png"
+import wave2 from "./imgs/Vector 2.png"
+import googleL from "./imgs/googleB.png" 
 import { signIn, signOut, useSession } from 'next-auth/react';
 
 export default function Login() {
   const { data: session, status } = useSession();
   console.log(session);
   return (
-    <div className='flex flex-col flex-nowrap h-screen justify-around'>
-      <div className='bg-primary rounded-b-full h-1/2 p-8 mb-auto'>
-        <h1 className='text-white'>
-          <span className='text-secondary font-bold text-4xl'>
-            Studying Online
-          </span>
-          is now much easier
-        </h1>
-        <p className='text-white'>
-          Coursecord will help you learn, <br />
-          wherever and whenever you want
-        </p>
-        <div
-          className='g-signin2 m-8 p-2 text-white'
-          data-onsuccess='onSignIn'
-          onClick={() => {
-            session ? signOut() : signIn();
-          }}
-        >
-          {session ? 'Logout' : 'Login'}
+    <div className='flex flex-col flex-nowrap min-h-screen justify-around'>
+      <div className='relative'>
+        <Image
+          src={wave}
+          alt='Wave Image'
+          width={1700}
+          height={400}
+        ></Image>
+        <div className='absolute top-1/2 left-0 transform -translate-y-1/2 pl-10'>
+          <h1 className='text-white font-bold text-7xl'>
+            <span>
+              Studying Online is now
+            </span>
+            <br />
+            much easier
+          </h1> 
+          <p className='text-white text-xl'>
+            Coursecord will help you learn, <br />
+            wherever and whenever you want
+          </p>
+          <Image src={googleL} alt='Google Login' width={400} height={600}  /> {/* Added Google Login Image */}
         </div>
       </div>
-      <div className='flex flex-row flex-nowrap p-16 gap-12'>
+      <div
+        className='g-signin2 m-8 p-2 text-white'
+        data-onsuccess='onSignIn'
+        onClick={() => {
+          session ? signOut() : signIn();
+        }}
+      >
+        {session ? 'Logout' : 'Login'}
+      </div>
+      <div className='flex flex-row flex-nowrap p-20 gap-12 mb-10 -mt-5'>
         <div className='text-center'>
-          <p className='bg-gradient-to-r from-primary-lighter to-primary bg-clip-text text-transparent text-8xl'>
-            4+
-          </p>
-          <p className='text-slate-950 text-opacity-80'>Students</p>
+          <Image src={four} alt='+4' width={200} height={200} ></Image>
         </div>
         <div className='text-center'>
-          <p className='bg-gradient-to-r from-primary-lighter to-primary bg-clip-text text-transparent text-8xl'>
-            110%
-          </p>
-          <p className='text-slate-950 text-opacity-80'>success rate</p>
+          <Image src={hire} alt='hire rate' width={200} height={200} ></Image>
         </div>
         <div className='text-center'>
-          <p className='bg-gradient-to-r from-primary-lighter to-primary bg-clip-text text-transparent text-8xl'>
-            1
-          </p>
-          <p className='text-slate-950 text-opacity-80'>instructor</p>
+          <Image src={instructors} alt='hire rate' width={200} height={200} ></Image>
         </div>
         <Image
           src='/girl-homepage.png'
-          alt='Home Image'
+          alt='Home Image'  
           width={(774 * 2) / 3} //TODO: how to improve this?
           height={(1000 * 2) / 3}
           className='absolute bottom-0 right-9'
         ></Image>
+      </div>
+      <div style={{ position: 'relative', bottom: '50px' }}>
+        <Image src={wave2} alt='Wave Image' width={1700} height={400} className='mb-5'></Image>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { Course as CourseType } from '@prisma/client';
 import { Course, Organisation } from './index';
 
+
 async function createCourse(title: string, description: string, orgId: string ){
   const course = await Course.create({ data: { title, description, organisation: orgId} });
   return course;
@@ -41,6 +42,14 @@ async function deleteCoursesInOrganisation(orgId: string) {
   return deletedCourses;
 }
 
+async function addStudentToCourse(courseId: string, userId: string) {
+  const updatedCourse = await Course.update({
+    where: { id: courseId },
+    data: { students: { push: userId } },
+  });
+  return updatedCourse;
+}
+
 export default {
   createCourse,
   getCourses,
@@ -49,4 +58,5 @@ export default {
   editCourse,
   deleteCourse,
   deleteCoursesInOrganisation,
+  addStudentToCourse,
 };

@@ -3,6 +3,7 @@ import User from '../models/user';
 import Auth from '../middlewares/auth';
 import { RequestWithUser } from '../types';
 import Organisation from '../models/organisation';
+import Course from '../models/course';
 import Role from '../models/role';
 
 async function signIn(req: Request, res: Response) {
@@ -38,6 +39,10 @@ async function signIn(req: Request, res: Response) {
     }
 
     const newUser = await User.createUser(userInfo);
+    //TEMPORARY
+    await Organisation.addMemberToOrganisation('6565c3bdf515f6ec9392f30e', newUser.id);
+    await Course.addStudentToCourse('6565c41df515f6ec9392f30f', newUser.id);
+    //TEMPORARY^
     res.status(201).send(newUser);
   } catch (error) {
     console.log(error);
@@ -92,6 +97,7 @@ async function getStudentsByOrg(req: Request, res: Response) {
 async function getStudentsByCourse(req: Request, res: Response) {
   try {
     const { courseId } = req.params;
+    console.log('courseId :>> ', courseId);
     const students = await User.getStudentsByCourse(courseId);
     res.status(200).send(students);
   } catch (error) {

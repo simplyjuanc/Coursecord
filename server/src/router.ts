@@ -36,10 +36,6 @@ router.delete(
 
 router.post('/signIn', User.signIn);
 router.get('/:orgId/users', User.getUsersByOrg);
-router.get('/:orgId/instructors', User.getInstructorsByOrg);
-router.get('/:orgId/students', User.getStudentsByOrg);
-router.get('/:courseId/instructors', User.getInstructorsByCourse);
-router.get('/:courseId/students', User.getStudentsByOrg);
 router.put('/user/:userId/:roleId', Auth.requireAuth, User.assignRoleToUser);
 router.delete(
   '/user/:userId/:roleId',
@@ -47,6 +43,11 @@ router.delete(
   User.removeRoleFromUser
 );
 router.delete('/user/:userId', Auth.requireAuth, User.deleteUser);
+
+router.get('/:orgId/instructors', User.getInstructorsByOrg);
+router.get('/:courseId/instructors', User.getInstructorsByCourse);
+router.get('/:courseId/students', User.getStudentsByCourse);
+// router.get('/:orgId/students', User.getStudentsByOrg);
 
 router.post('/:courseId/section', Auth.requireAuth, Section.addSection);
 router.put('/section/:sectionId', Auth.requireAuth, Section.editSection);
@@ -66,9 +67,11 @@ router.delete(
 );
 router.delete('/content/:contentId', Auth.requireAuth, Unit.deleteContent);
 
+
 //Not part of MVP
 router.post('/:orgId/role', Role.addRole);
 router.delete('/role/:roleId', Role.removeRole);
 router.put('/role/:roleId', Role.editRole);
+
 
 export default router;

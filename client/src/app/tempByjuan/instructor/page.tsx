@@ -1,16 +1,24 @@
 'use client';
-import { THelpRequest } from '@/@types';
+import { DbUser, THelpRequest } from '@/@types';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
+import HelpRequestCard from './components/HelpRequestCard';
 
 let socket: Socket;
 export default function HelpRequestBoard() {
-  const baseUrl = process.env.API_URL || 'http://localhost:5000';
   const [helpRequests, setHelpRequests] = useState<THelpRequest[]>([]);
-
-  const courseId = useEffect(() => {
-    socket = io('http://localhost:5001/');
+  const [instructors, setInstructors] = useState<DbUser[]>();
+  const baseUrl = process.env.API_URL || 'http://localhost:5000';
+  const courseId = '6565c41df515f6ec9392f30f';
+  
+  useEffect(() => {  
+    axios
+      .get<DbUser[]>(`${baseUrl}/${courseId}/instructors`)
+      .then((res) => setInstructors(res.data))
+      .catch((e) => console.error(e));
+    
+    socket = io('http://localhost:5001/', {auth: {}});
     socket.emit('join', 'instructor');
     socket.emit('getRequests', { courseId }, (res: THelpRequest[]) => {
       setHelpRequests(res);
@@ -20,8 +28,6 @@ export default function HelpRequestBoard() {
       socket.disconnect();
     };
   }, [baseUrl]);
-
-  function handleCardChange() {}
 
 
   /* 
@@ -35,9 +41,13 @@ export default function HelpRequestBoard() {
         <h2 className='mb-4 text-center'>Waiting</h2>
         {helpRequests &&
           helpRequests.map((request) => (
-            <div key={request.id}>
-              <p>{request.content.substring(0, 20)}</p>
-            </div>
+            <HelpRequestCard
+              key={request.id}
+              request={request}
+              socket={socket}
+              instructors={instructors}
+              setInstructors={setInstructors}
+            />
           ))}
       </div>
       <div>

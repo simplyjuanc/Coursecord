@@ -18,7 +18,7 @@ export type THelpRequest = {
   id: string;
   course: string;
   students: string[];
-  status: string;
+  status: 'Waiting' | 'Assigned' | 'Finished';
   instructor: string | null;
   content: string;
   created_at: Date;

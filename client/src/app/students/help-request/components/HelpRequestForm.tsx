@@ -1,4 +1,4 @@
-import { UserInfo } from '@/types';
+import { DbUser } from '@/types';
 import axios from 'axios';
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
@@ -9,18 +9,23 @@ type HelpRequestFormProps = {
 
 const HelpRequestForm = ({ setSubmitted }: HelpRequestFormProps) => {
   const [message, setMessage] = useState('');
-  const [students, setStudents] = useState<Partial<UserInfo>[]>([]);
+  const [students, setStudents] = useState<Partial<DbUser>[]>([]);
 
   // TODO get course id
-  const baseUrl = process.env.API_URL || 'http://localhost:5000';
   const courseId = '6564f0ade4eabf777c376253';
-
+  const baseUrl = process.env.API_URL || 'http://localhost:5000';
+  const socket = io('http://localhost:5001/');
+  
   useEffect(() => {
+    socket.emit('join', 'student');  
+
     axios
-      .get<UserInfo[]>(baseUrl + `/${courseId}/students`)
+      .get<DbUser[]>(baseUrl + `/${courseId}/students`)
       .then((res) => setStudents(res.data))
       .catch((e) => console.error(e));
-  }, [baseUrl])
+
+    return () => {socket.disconnect()}
+  }, [baseUrl, socket])
 
 
   const handleMessage = (e:ChangeEvent) => {
@@ -32,18 +37,14 @@ const HelpRequestForm = ({ setSubmitted }: HelpRequestFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!message) return;
-    
-    const target = e.target as HTMLFormElement
-    const socket = io('http://localhost:5001/');
-    
-    socket.emit('join', 'student');
+
+    const target = e.target as HTMLFormElement    
     socket.emit('createRequest', {
       content: message,
       course: courseId,
       students: [target.students.value],
     });
-    
-    console.log('request created');
+
     setSubmitted(true);
   };
 

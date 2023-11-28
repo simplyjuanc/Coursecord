@@ -61,7 +61,7 @@ async function editOrganisation(
 
 async function deleteOrganisation(id: string) {
   const deletedOrg = await Organisation.delete({ where: { id } });
-  await Role.deleteRolesInOrg(deletedOrg.roles)
+  await Role.deleteRolesInOrg(deletedOrg.roles);
   return deletedOrg;
 }
 
@@ -105,7 +105,16 @@ async function getOrganisationWithRole(roleId: string) {
     where: { roles: { has: roleId } },
   });
 
-  return org
+  return org;
+}
+
+async function addMemberToOrganisation(orgId: string, userId: string) {
+  const updatedOrg = await Organisation.update({
+    where: { id: orgId },
+    data: { members: { push: userId } },
+  });
+
+  return updatedOrg
 }
 
 export default {
@@ -121,5 +130,6 @@ export default {
   setOrganisationUnits,
   getOrganisationWithSection,
   getOrganisationWithCourse,
-  getOrganisationWithRole
+  getOrganisationWithRole,
+  addMemberToOrganisation
 };

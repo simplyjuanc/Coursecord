@@ -49,7 +49,7 @@ export default function Sidebar() {
     );
   };
   return (
-    <div className="h-screen min-w-max bg-white shadow-lg">
+    <div className="h-screen min-h-full min-w-max bg-white shadow-lg">
       <div className="flex p-4">
         <div className="w-10 h-10 rounded-full bg-red-500 mr-4"></div>
         <h1 className="my-auto text-3xl text-primary-gray font-semibold">

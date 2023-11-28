@@ -20,7 +20,7 @@ async function signIn(req: Request, res: Response) {
     const userInfo = {
       email: user.email,
       name: user.name,
-      profile_url: user.picture,
+      image: user.picture,
       oauth_id,
       oauth_provider,
     };
@@ -92,6 +92,7 @@ async function getStudentsByOrg(req: Request, res: Response) {
 async function getStudentsByCourse(req: Request, res: Response) {
   try {
     const { courseId } = req.params;
+    console.log('courseId :>> ', courseId);
     const students = await User.getStudentsByCourse(courseId);
     res.status(200).send(students);
   } catch (error) {

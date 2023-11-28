@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import ContentArea from './components/ContentArea';
-import Header from './components/Header';
+import Header from '../components/Header';
 import { IUnit, IContentItem } from './interfaces/types';
 
 const Home: React.FC = () => {
@@ -23,7 +23,6 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <Header />
       <div className="flex flex-grow">
         <Sidebar units={units} onSubunitClick={handleSubunitClick} />
         <ContentArea content={activeContent} />

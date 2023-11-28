@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useState } from 'react';
+import { io } from 'socket.io-client';
 
 type HelpRequestFormProps = {
   setSubmitted: Dispatch<SetStateAction<boolean>>
@@ -11,6 +12,18 @@ const HelpRequestForm = ({setSubmitted}:HelpRequestFormProps) => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!message) return;
+    
+    // TODO course id and student ids
+
+
+    const socket = io('http://localhost:5001/');
+    socket.emit('join','student');
+    socket.emit('createRequest', {
+      content: message,
+      course: '6564f0ade4eabf777c376253',
+      students: ['juan', 'arthur', 'bruno', 'alex'],
+    });
+    console.log('request created');
     
     // Here you would open the WebSocket connection and send the message
     // For demonstration, we'll just simulate a successful submission

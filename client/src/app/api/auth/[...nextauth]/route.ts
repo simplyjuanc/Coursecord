@@ -1,5 +1,5 @@
 import { NextAuthOptions } from 'next-auth';
-import { DbUser, SessionWithToken } from '@/types';
+import { DbUser, SessionWithToken } from '@/@types';
 import NextAuth from 'next-auth/next';
 import GoogleProvider from 'next-auth/providers/google';
 import axios from 'axios';

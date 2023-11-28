@@ -1,31 +1,34 @@
-import { DbUser } from '@/types';
+import { DbUser } from '@/@types';
 import axios from 'axios';
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 
 type HelpRequestFormProps = {
   setSubmitted: Dispatch<SetStateAction<boolean>>;
 };
+
+
+let socket:Socket;
 
 const HelpRequestForm = ({ setSubmitted }: HelpRequestFormProps) => {
   const [message, setMessage] = useState('');
   const [students, setStudents] = useState<Partial<DbUser>[]>([]);
 
   // TODO get course id
-  const courseId = '6564f0ade4eabf777c376253';
+  const courseId = '6565c41df515f6ec9392f30f';
   const baseUrl = process.env.API_URL || 'http://localhost:5000';
-  const socket = io('http://localhost:5001/');
   
   useEffect(() => {
+    socket = io('http://localhost:5001/');
     socket.emit('join', 'student');  
 
     axios
-      .get<DbUser[]>(baseUrl + `/${courseId}/students`)
+      .get<DbUser[]>(`${baseUrl}/${courseId}/students`)
       .then((res) => setStudents(res.data))
       .catch((e) => console.error(e));
 
     return () => {socket.disconnect()}
-  }, [baseUrl, socket])
+  }, [baseUrl])
 
 
   const handleMessage = (e:ChangeEvent) => {
@@ -42,10 +45,12 @@ const HelpRequestForm = ({ setSubmitted }: HelpRequestFormProps) => {
     socket.emit('createRequest', {
       content: message,
       course: courseId,
-      students: [target.students.value],
+      students: [ target.students.value ]
+    }, (res: any) => {
+      console.log(res);
+      setSubmitted(true);
     });
 
-    setSubmitted(true);
   };
 
   return (

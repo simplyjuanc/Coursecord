@@ -13,7 +13,7 @@ datasource db {
 model Organisation {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   name    String   @unique
-  owner   String   //references User
+  owner   String //references User
   courses String[] @default([]) //references Course
   members String[] @default([]) //references User
   roles   String[] @default([])
@@ -32,7 +32,7 @@ model User {
   oauth_provider String
   email          String   @unique
   name           String
-  profile_url    String
+  image          String
   roles          String[] @default([]) //references Role
 }
 
@@ -62,10 +62,10 @@ model CourseUnit {
 
 model HelpRequest {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  course       String   //references course
+  course       String //references course
   students     String[] //references User
   status       String   @default("Pending")
-  instructor   String?   //references User
+  instructor   String? //references User
   content      String
   created_at   DateTime @default(now())
   time_waiting Int      @default(0)

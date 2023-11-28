@@ -14,8 +14,6 @@ import googleL from "./login/imgs/googleB.png";
 
 export default function Login() {
   const { data: session } = useSession();
-  const [isMounted, setIsMounted] = useState(false);
-
    let router = useRouter();
   
 

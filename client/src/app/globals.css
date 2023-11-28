@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 @layer base {
   :root {
     --color-primary: 120, 1, 22;
@@ -11,10 +9,7 @@
     --color-secondary-light: 219, 124, 38;
     --color-secondary-dark: 216, 87, 42;
   }
-
 }
-
-
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -25,8 +20,8 @@
 }
 
 body {
-  color: #000000;
-  background-color: #ffffff;  
+  color: #606060;
+  background-color: #ececec;
   min-height: 100vh;
   min-width: 100vw;
 }

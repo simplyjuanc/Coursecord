@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import Organisation from '../models/organisation';
 import Course from '../models/course';
+import { RequestWithUser } from '../types';
+import User from '../models/user';
+import Role from '../models/role';
 
 async function addOrganisation(req: Request, res: Response) {
   try {
@@ -11,8 +14,11 @@ async function addOrganisation(req: Request, res: Response) {
       return res.status(409).send({ message: 'Organisation name exists' });
     }
 
-    const ownerId = 'placeholder'; //placeholder before oauth
+    const ownerId = (req as RequestWithUser).user.id;
     const newOrg = await Organisation.createOrganisation(name, ownerId);
+
+    const adminRole = await Role.getRoleByTitle(newOrg.roles, 'admin')
+    await User.assignRoleToUser(ownerId, adminRole!.id);
 
     res.status(201).send(newOrg);
   } catch (error) {
@@ -46,7 +52,10 @@ async function editOrganisation(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
     const newData = req.body;
-    const updatedOrg = await Organisation.editOrganisation(orgId, newData);
+
+    const userId = (req as RequestWithUser).user.id;
+    const updatedOrg = await Organisation.editOrganisation(orgId, newData, userId);
+    //TODO: Make a more descriptive error when about unauthorised deletion
     res.status(200).send(updatedOrg);
   } catch (error) {
     console.log(error);
@@ -57,8 +66,16 @@ async function editOrganisation(req: Request, res: Response) {
 async function deleteOrganisation(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
+
+    const ownerId = (req as RequestWithUser).user.id;
+    if(!await User.userIsOrgOwner(ownerId, orgId)) {
+      return res.status(401).send({message: 'Unauthorised'})
+    }
+
+
     await Course.deleteCoursesInOrganisation(orgId);
     const deletedOrg = await Organisation.deleteOrganisation(orgId);
+    await User.removeAllRolesFromOrgUsers(deletedOrg);
     res.status(204).send(deletedOrg);
   } catch (error) {
     console.log(error);

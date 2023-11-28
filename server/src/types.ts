@@ -1,28 +1,5 @@
+import { User } from "@prisma/client";
 import { Request } from "express";
-
-export type Course = {
-  id: string;
-  title: string;
-  description: string;
-  instructors: string[];
-  students: string[];
-  syllabus: string[];
-};
-
-export type Organisation = {
-  id: string;
-  name: string;
-  owner: string;
-  courses: string[];
-  members: string[];
-  roles: string[];
-};
-
-export type UserTokens = {
-  id: string;
-  encrypted_refresh_token: string;
-  hashed_access_token: string;
-};
 
 export type GoogleUser ={
   email: string;
@@ -38,6 +15,16 @@ export type UserInfo = {
   profile_url: string;
 };
 
+export type CourseUnitInfo = {
+  title: string;
+  type: string;
+  markdown_body: string;
+}
+
+export type CourseSectionInfo = {
+  title: string;
+}
+
 export interface RequestWithUser extends Request {
-  user: GoogleUser;
+  user: User;
 }

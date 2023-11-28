@@ -6,6 +6,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 
 export default function Login() {
   const { data: session, status } = useSession();
+  console.log(session);
   return (
     <div className='flex flex-col flex-nowrap h-screen justify-around'>
       <div className='bg-primary rounded-b-full h-1/2 p-8 mb-auto'>

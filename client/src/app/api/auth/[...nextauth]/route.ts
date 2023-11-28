@@ -67,7 +67,6 @@ const authOptions: NextAuthOptions = {
 
     async jwt({ token, account, user }) {
       if (account && user) {
-        console.log('JWT', user);
         return {
           accessToken: account.access_token,
           accessTokenExpires: account.expires_at! * 1000,
@@ -83,7 +82,6 @@ const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      console.log('SESSION', token);
       if (token) {
         (session as SessionWithToken).accessToken = token.accessToken as string;
         (session as SessionWithToken).error = token.error;

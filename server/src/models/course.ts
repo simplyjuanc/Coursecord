@@ -1,14 +1,9 @@
 import { Course as CourseType } from '@prisma/client';
 import { Course, Organisation } from './index';
 
-async function createCourse(
-  title: string,
-  description: string,
-  organisation: string
-) {
-  const course = await Course.create({
-    data: { title, description, organisation },
-  });
+
+async function createCourse(title: string, description: string, orgId: string ){
+  const course = await Course.create({ data: { title, description, organisation: orgId} });
   return course;
 }
 

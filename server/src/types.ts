@@ -12,7 +12,7 @@ export type UserInfo = {
   oauth_provider: string;
   email: string;
   name: string;
-  profile_url: string;
+  image: string;
 };
 
 export type CourseUnitInfo = {

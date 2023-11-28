@@ -20,7 +20,7 @@ async function signIn(req: Request, res: Response) {
     const userInfo = {
       email: user.email,
       name: user.name,
-      profile_url: user.picture,
+      image: user.picture,
       oauth_id,
       oauth_provider,
     };

@@ -33,24 +33,23 @@ model User {
   email          String   @unique
   name           String
   profile_url    String
-  organisations  String[] @default([]) //references Organisation
   roles          String[] @default([]) //references Role
 }
 
 model Course {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  description String
-  instructors String[] @default([]) //references User
-  students    String[] @default([]) //references User
-  syllabus    String[] @default([]) //references Unit
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  organisation String //references organisation
+  title        String
+  description  String
+  instructors  String[] @default([]) //references User
+  students     String[] @default([]) //references User
+  syllabus     String[] @default([]) //references Unit
 }
 
 model CourseSection {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
   title   String
   content String[] @default([]) //references CourseUnit
-  order   Int
 }
 
 model CourseUnit {

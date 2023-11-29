@@ -1,7 +1,7 @@
 'use client';
 import IconButton from '@/components/buttons/iconButton';
-import { useParams, usePathname } from 'next/navigation';
-import React, { use, useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import AddNewUser from './components/AddNewUser';
 import { Course, DbUser, TRole } from '@/@types';

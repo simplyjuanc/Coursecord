@@ -108,7 +108,9 @@ async function getStudentsByCourse(req: Request, res: Response) {
 async function assignRoleToUser(req: Request, res: Response) {
   try {
     const { userId, roleId } = req.params;
+    console.log('{ userId, roleId } :>> ', { userId, roleId });
     const org = await Organisation.getOrganisationWithRole(roleId);
+    console.log('org :>> ', org);
     if (!org) {
       return res.status(401).send({ message: 'Invalid Role' });
     }

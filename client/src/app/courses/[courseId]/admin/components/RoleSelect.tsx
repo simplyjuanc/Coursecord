@@ -9,8 +9,7 @@ export function RoleSelect({ roles, setRole }: RoleSelectProps) {
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     setRole(roles.find((role) => role.id === e.target.value));
   }
-  console.log(roles);
-
+  
   return (
     <select
       name='role'

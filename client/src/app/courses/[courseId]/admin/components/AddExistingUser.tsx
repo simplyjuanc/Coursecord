@@ -1,7 +1,10 @@
-import { DbUser, TRole } from '@/@types';
+import { DbUser, SessionWithToken, TRole } from '@/@types';
 import React, { useEffect, useState } from 'react';
 import { UserSelect } from './UserSelect';
 import { RoleSelect } from './RoleSelect';
+import IconButton from '@/components/buttons/iconButton';
+import { MdOutlinePersonAddAlt } from 'react-icons/md';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -14,9 +17,9 @@ type AddUserProps = {
 export default function AddExistingUser({setShowExistingUser, courseId, roles}:AddUserProps) {
   const [potentialUsers, setPotentialUsers] = useState<DbUser[]>();
   const [selectedUser, setSelectedUser] = useState<DbUser>();
-  
   const [selectedRole, setSelectedRole] = useState<TRole>();
-
+  const session = useSession().data as SessionWithToken;
+  console.log('session :>> ', session.accessToken);
 
   useEffect(() => {
     (async () => {
@@ -43,6 +46,28 @@ export default function AddExistingUser({setShowExistingUser, courseId, roles}:A
   function closeModal() {
     setShowExistingUser(false);
   }
+
+  function handleSubmit() {
+    if (selectedUser && selectedRole) {
+      console.log('selectedUser :>> ', selectedUser);
+      console.log('selectedRole :>> ', selectedRole);
+      console.log(`${process.env.API_URL || 'http://localhost:5000'}/user/${selectedUser.id}/${selectedRole.id}`)
+      fetch(`${process.env.API_URL || 'http://localhost:5000'}/user/${selectedUser.id}/${selectedRole.id}`, {
+        method:'PUT', 
+        headers: {
+          'Authorization': session.accessToken
+        }
+      })
+        .then(res => {
+          console.log('res :>> ', res);
+          if (res.ok) closeModal(); 
+          else throw new Error('Something went wrong!');
+        })
+        .catch(e => console.error(e))
+    } else {
+      window.alert('Please select a user and a role!');
+    }
+  }
   
   return (
     <div className='w-full h-full bg-slate-100 bg-opacity-50 absolute top-0 left-0 flex items-center justify-center'>
@@ -51,9 +76,9 @@ export default function AddExistingUser({setShowExistingUser, courseId, roles}:A
         <div className='cursor-pointer absolute right-6 top-4 text-xl' onClick={closeModal}>X</div>
           <h1 className='mx-auto text-center mt-2 mb-6 font-semibold text-2xl'>Add Existing User</h1>
           { 
-          // (
+          (
             !potentialUsers
-          //  || !potentialUsers.length) 
+           || !potentialUsers.length) 
            ? 
             <p>No new users found!</p> : 
             <div className='flex flex-col gap-4 justify-evenly'>
@@ -61,6 +86,7 @@ export default function AddExistingUser({setShowExistingUser, courseId, roles}:A
               <RoleSelect roles={roles} setRole={setSelectedRole}/>
             </div>
             }
+            <IconButton icon={<MdOutlinePersonAddAlt/>} title='Submit' onClick={handleSubmit}/>
         </div>
       </div> 
     </div>

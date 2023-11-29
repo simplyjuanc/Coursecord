@@ -50,6 +50,16 @@ async function addStudentToCourse(courseId: string, userId: string) {
   return updatedCourse;
 }
 
+async function getCoursesWithStudent(userId: string) {
+  const courses = await Course.findMany({where: {students: {has: userId}}});
+  return courses;
+}
+
+async function getCoursesWithInstructor(userId: string) {
+  const courses = await Course.findMany({where: {instructors: {has: userId}}});
+  return courses;
+}
+
 export default {
   createCourse,
   getCourses,
@@ -59,4 +69,6 @@ export default {
   deleteCourse,
   deleteCoursesInOrganisation,
   addStudentToCourse,
+  getCoursesWithStudent,
+  getCoursesWithInstructor
 };

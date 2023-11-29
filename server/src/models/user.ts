@@ -11,8 +11,13 @@ async function getUserByEmail(email: string) {
 }
 
 async function getUserById(id: string) {
-  const user = await User.findUnique({ where: { id } });
-  return user;
+  console.log(id)
+  try {
+    const user = await User.findUnique({ where: { id } });
+    return user;
+  } catch (error) {
+    
+  }
 }
 
 async function createUser(userInfo: UserInfo) {
@@ -135,6 +140,7 @@ export default {
   updateUser,
   assignRoleToUser,
   userIsOrgOwner,
+  getUserById,
   getUsersByOrg,
   getUsersWithRoleByOrg,
   getInstructorsByCourse,

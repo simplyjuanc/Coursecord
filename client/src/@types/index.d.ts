@@ -36,8 +36,53 @@ export interface Course {
   syllabus: string[];
 }
 
-export interface CourseComponetProps {
-  course: Course;
+export interface Unit {
+  id: string;
+  owner: string;
+  title: string;
+  type: string;
+  markdown_body: string;
+}
+
+export interface Section {
+  id: string;
+  content: string;
+  units: string[];
+}
+
+export interface CompiledSection extends Section{
+  units: Unit[];
+}
+
+export interface CourseInfo {
+  id: string;
+  organisation: string;
+  title: string;
+  description: string;
+  students: string[];
+  instructors: string[];
+}
+
+export interface CourseState {
+  courseInfo?: CourseInfo;
+  syllabus?: CompiledSection[];
+}
+
+export interface UserState {
+  user?: DbUser
+  coursesAsStudent: Course[]
+  coursesAsInstructor: Course[]
+  roles: RoleWithOrg[]
+}
+
+export interface Role {
+  id: string;
+  title: string;
+  permissions: string[];
+}
+
+export interface RoleWithOrg extends Role {
+  organisation: string;
 }
 
 export interface NavItem {
@@ -52,10 +97,4 @@ export interface Unit {
   title: string;
   type: string;
   markdown_body: string;
-}
-
-export interface Section {
-  id: string;
-  title: string;
-  units: Unit[];
 }

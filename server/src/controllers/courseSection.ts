@@ -77,4 +77,16 @@ async function deleteSection(req: Request, res: Response) {
   }
 }
 
-export default { addSection, editSection, deleteSection };
+async function getSectionsByCourse(req: Request, res: Response) {
+  try {
+    const { courseId } = req.params;
+
+    const sections = await CourseSection.getSectionsByCourse(courseId);
+    res.status(200).send(sections);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+export default { addSection, editSection, deleteSection, getSectionsByCourse };

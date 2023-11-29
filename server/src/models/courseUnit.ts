@@ -1,5 +1,6 @@
 import { CourseUnitInfo } from '../types';
 import { CourseUnit } from './index';
+import CourseSection  from '../models/courseSection';
 
 async function createCourseUnit(owner: string, courseUnitData: CourseUnitInfo) {
   const newCourseUnit = await CourseUnit.create({
@@ -25,4 +26,15 @@ async function editCourseUnit(
   return updatedCourseUnit;
 }
 
-export default { createCourseUnit, deleteCourseUnit, editCourseUnit };
+async function getUnitsBySection(sectionId: string) {
+  const section = await CourseSection.getSectionById(sectionId);
+  if (!section) throw new Error('No unique section found');
+
+  const units = await CourseUnit.findMany({
+    where: { id: {in: section.content} } ,
+  });
+
+  return units;
+}
+
+export default { createCourseUnit, deleteCourseUnit, editCourseUnit, getUnitsBySection };

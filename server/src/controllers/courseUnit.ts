@@ -152,10 +152,17 @@ async function sectionAndUnitAreValid(sectionId: string, unitId: string) {
   return { isValid: false, orgId: '' };
 }
 
+async function getUnitsBySection(sectionId: string) {
+  const units = await CourseUnit.getUnitsBySection(sectionId);
+
+  return units;
+}
+
 export default {
   addCourseUnit,
   addUnitToSection,
   removeUnitFromSection,
   deleteContent,
   editContent,
+  getUnitsBySection,
 };

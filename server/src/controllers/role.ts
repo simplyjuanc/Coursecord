@@ -1,12 +1,12 @@
-//This whole file is not part of the MVP
-
 import { Request, Response } from 'express';
-import { Role } from '../models';
+import Role from '../models/role';
+// import { Role } from '../models';
 
 
-async function getRoles(req: Request, res: Response) {
+async function getRolesByOrg(req: Request, res: Response) {
   try {
-    const roles = await Role.findMany(); // TODO: Get roles only for organisation
+    const orgId = req.params.orgId;
+    const roles = await Role.getRolesByOrg(orgId); // TODO: Get roles only for organisation
     if (!roles) {
       return res.status(404).send({ message: 'Roles not found' });
     }
@@ -17,6 +17,18 @@ async function getRoles(req: Request, res: Response) {
   }
 }
 
+async function getRolesByUser(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    const roles = await Role.getRolesByUser(userId);
+    res.status(200).send(roles);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+//This is not part of the MVP
 async function addRole(req: Request, res: Response) {
   try {
   } catch (error) {
@@ -40,5 +52,8 @@ async function editRole(req: Request, res: Response) {
     res.status(500).send({ message: 'Internal Server Error' });
   }
 }
+//until here
 
-export default {getRoles, addRole, removeRole, editRole };
+
+
+export default { getRolesByOrg , addRole, removeRole, editRole, getRolesByUser };

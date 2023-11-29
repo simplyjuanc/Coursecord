@@ -27,6 +27,8 @@ router.get('/:orgId/users', User.getUsersByOrg);
 router.put('/user/:userId/:roleId', Auth.requireAuth, User.assignRoleToUser);
 router.delete('/user/:userId/:roleId',Auth.requireAuth,User.removeRoleFromUser);
 router.delete('/user/:userId', Auth.requireAuth, User.deleteUser);
+router.get('/student/course/:userId', Course.getCoursesWithStudent);
+router.get('/instructor/course/:userId', Course.getCoursesWithInstructor);
 
 // router.get('/:orgId/instructors', User.getInstructorsByOrg);
 router.get('/:courseId/instructors', User.getInstructorsByCourse);
@@ -36,16 +38,19 @@ router.get('/:courseId/students', User.getStudentsByCourse);
 router.post('/:courseId/section', Auth.requireAuth, Section.addSection);
 router.put('/section/:sectionId', Auth.requireAuth, Section.editSection);
 router.delete('/section/:sectionId', Auth.requireAuth, Section.deleteSection);
+router.get('/syllabus/:courseId/', Section.getSectionsByCourse);
 
 router.post('/unit/:orgId/:sectionId', Auth.requireAuth, Unit.addCourseUnit);
 router.put('/unit/:sectionId/:unitId',Auth.requireAuth,Unit.addUnitToSection);
 router.put('/unit/:unitId', Auth.requireAuth, Unit.editContent);
-router.delete('/unit/:sectionId/:unitId',Auth.requireAuth,Unit.removeUnitFromSection);
-router.delete('/content/:contentId', Auth.requireAuth, Unit.deleteContent);
+router.delete('/unit/:sectionId/:unitId', Auth.requireAuth, Unit.removeUnitFromSection);
+router.delete('/unit/:unitId', Auth.requireAuth, Unit.deleteContent);
+router.get('section/units/:sectionId', Unit.getUnitsBySection)
 
 
-router.get('/:orgId/roles', Role.getRoles);
+router.get('/:orgId/roles', Role.getRolesByOrg);
 //Not part of MVP
+router.get('/user/role/:userId', Role.getRolesByUser);
 router.post('/:orgId/role', Role.addRole);
 router.delete('/role/:roleId', Role.removeRole);
 router.put('/role/:roleId', Role.editRole);

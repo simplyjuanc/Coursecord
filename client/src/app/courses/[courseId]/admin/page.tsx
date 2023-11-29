@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import AddNewUser from './components/AddNewUser';
-import { Course, DbUser, TRole } from '@/@types';
+import { Course, DbUser, Role } from '@/@types';
 import AddExistingUser from './components/AddExistingUser';
 
 export default function AdminTable() {
@@ -20,7 +20,7 @@ export default function AdminTable() {
   const [course, setCourse] = useState<Course>();
   const [instructors, setInstructors] = useState<DbUser[]>();
   const [students, setStudents] = useState<DbUser[]>();
-  const [roles, setRoles] = useState<TRole[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -60,9 +60,9 @@ export default function AdminTable() {
 
   return (
     <section className='mt-12'>
-      <div className='flex flex-row justify-evenly gap-4 align-middle'>
+      <div className='flex flex-row gap-4 align-middle justify-evenly'>
         <h1>{course?.title}</h1>
-        <div className='flex flex-row gap-2 w-1/12'>
+        <div className='flex flex-row w-1/12 gap-2'>
           <IconButton
             icon={<MdOutlinePersonAddAlt />}
             title='Add New User'
@@ -92,7 +92,7 @@ export default function AdminTable() {
       )}
 
       {(course?.instructors || course?.students) && (
-        <div className='grid grid-cols-3 p-8 gap-y-1 w-1/2 mx-auto'>
+        <div className='grid w-1/2 grid-cols-3 p-8 mx-auto gap-y-1'>
           <div className='mb-2'>Name</div>
           <div className='mb-2'>Email</div>
           <div className='mb-2'>Role</div>

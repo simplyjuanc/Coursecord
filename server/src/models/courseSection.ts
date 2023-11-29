@@ -1,5 +1,6 @@
 import { CourseSectionInfo } from '../types';
 import { CourseSection } from './index';
+import Course from './course';
 
 //right now course section info is just a title but I am sure that is
 //going to change so I am putting the type there to make it easier to change later
@@ -70,6 +71,17 @@ async function deleteSection(id: string) {
   return deletedSection;
 }
 
+async function getSectionsByCourse(courseId: string) {
+  const course = await Course.getCourseById(courseId);
+  if (!course) throw new Error('No unique course found');
+
+  const sections = await CourseSection.findMany({
+    where: { id: { in: course.syllabus } },
+  });
+
+  return sections;
+}
+
 export default {
   createSection,
   editSection,
@@ -79,4 +91,5 @@ export default {
   setSectionUnits,
   getSectionsWithUnit,
   deleteSection,
+  getSectionsByCourse,
 };

@@ -1,5 +1,7 @@
 import { Role } from './index';
 import Organisation from './organisation';
+import User from '../models/user';
+
 
 async function createDefaultRoles() {
   const newRoles = [];
@@ -42,7 +44,7 @@ async function userRolesIncludeAdmin(userRoles: string[], orgId: string) {
 }
 
 async function getRoleByTitle(orgRoles: string[], title: string) {
-  const role = Role.findFirst({
+  const role = await Role.findFirst({
     where: {
       id: { in: orgRoles },
       title,
@@ -52,10 +54,58 @@ async function getRoleByTitle(orgRoles: string[], title: string) {
   return role;
 }
 
+async function getRoleById(roleId: string) {
+  const role = await Role.findUnique({ where: { id: roleId } });
+  return role;
+}
+
 async function deleteRolesInOrg(orgRoles: string[]) {
   const deletedRoles = await Role.deleteMany({
     where: { id: { in: orgRoles } },
   });
   return deletedRoles;
 }
-export default { createDefaultRoles, userRolesIncludeAdmin, getRoleByTitle, deleteRolesInOrg };
+
+async function getRolesByOrg(orgId: string) {
+  const org = await Organisation.getOrganisationById(orgId);
+  if (!org) throw new Error('Organisation Not Found');
+  const roles = await Role.findMany({ where: { id: { in: org.roles } } });
+  return roles;
+}
+
+async function getRolesByUser(userId: string) {
+  const userPromise = User.getUserById(userId);
+  const orgsWithUserPromise = Organisation.getOrganisationsWithMember(userId);
+  const [user, orgsWithUser] = await Promise.all([
+    userPromise,
+    orgsWithUserPromise,
+  ]);
+  if (!user || !orgsWithUser) throw new Error('User or Organisation Not Found');
+
+  const rolePromises = user.roles.map(async (roleId) => {
+    let organisation = '';
+    for (const org of orgsWithUser) {
+      if (org.roles.includes(roleId)) {
+        organisation = org.id;
+        break;
+      }
+    }
+    return {
+      role: await getRoleById(roleId.replace('\n', '')),
+      organisation,
+    };
+  });
+
+  const roles = await Promise.all(rolePromises);
+
+  return roles;
+}
+
+export default {
+  createDefaultRoles,
+  userRolesIncludeAdmin,
+  getRoleByTitle,
+  deleteRolesInOrg,
+  getRolesByUser,
+  getRolesByOrg
+};

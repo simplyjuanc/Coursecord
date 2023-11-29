@@ -67,7 +67,7 @@ export default function HelpRequestForm({ setSubmitted }:HelpRequestForm) {
   
   return (
     <section className='h-screen flex items-center'>
-      <div className='mx-auto w-3/5 h-2/3 bg-white shadow-lg border-solid border-2 border-grey-600 rounded-lg p- flex flex-col items-center justify-evenly'>
+      <div className='mx-auto w-1/3 min-w-max aspect-square bg-white shadow-lg border-solid border-2 border-grey-600 rounded-lg p- flex flex-col items-center justify-evenly'>
         <div className='flex items-center text-4xl font-bold text-center drop-shadow-lg'>
           <MdOutlineSupportAgent />
           <h2>

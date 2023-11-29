@@ -1,4 +1,4 @@
-import { DbUser, SessionWithToken, TRole } from '@/@types';
+import { DbUser, SessionWithToken, Role } from '@/@types';
 import React, { useEffect, useState } from 'react';
 import { UserSelect } from './UserSelect';
 import { RoleSelect } from './RoleSelect';
@@ -11,27 +11,31 @@ import { useSession } from 'next-auth/react';
 type AddUserProps = {
   courseId: string,
   setShowExistingUser:React.Dispatch<React.SetStateAction<boolean>>
-  roles: TRole[]
+  roles: Role[]
 }
 
 export default function AddExistingUser({setShowExistingUser, courseId, roles}:AddUserProps) {
   const [potentialUsers, setPotentialUsers] = useState<DbUser[]>();
   const [selectedUser, setSelectedUser] = useState<DbUser>();
-  const [selectedRole, setSelectedRole] = useState<TRole>();
+  const [selectedRole, setSelectedRole] = useState<Role>();
   const session = useSession().data as SessionWithToken;
   console.log('session :>> ', session.accessToken);
 
   useEffect(() => {
     (async () => {
       try {
-        const totalUsersRes = await fetch(`http://localhost:5000/6565c3bdf515f6ec9392f30e/users`); // TODO: replace with process.env.API_URL once orgId is dynamic
-        const totalUsers:DbUser[] = await totalUsersRes.json();
+        const [totalUsersRes, instructorsRes, studentsRes] = await Promise.all([
+          fetch(`http://localhost:5000/6565c3bdf515f6ec9392f30e/users`), // TODO: replace with process.env.API_URL once orgId is dynamic
+          fetch(`http://localhost:5000/${courseId}/instructors`),
+          fetch(`http://localhost:5000/${courseId}/students`)
+        ]);
 
-        const instructorsRes = await fetch(`http://localhost:5000/${courseId}/instructors`); 
-        const instructors:DbUser[] = await instructorsRes.json();
-        const studentsRes = await fetch(`http://localhost:5000/${courseId}/students`); 
-        const students:DbUser[] = await studentsRes.json();
-        
+        const [totalUsers, instructors, students]:[DbUser[],DbUser[],DbUser[]] = await Promise.all([
+          totalUsersRes.json(),
+          instructorsRes.json(),
+          studentsRes.json()
+        ]);
+
         const existingUsersIds = [...instructors, ...students].map(user => user.id);
         const potentialUsers = totalUsers.filter(user => !existingUsersIds.includes(user.id));
 

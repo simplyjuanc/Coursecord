@@ -2,21 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RiDashboardFill } from "react-icons/ri";
-import { MdTextSnippet } from "react-icons/md";
-import { IoIosHelpBuoy } from "react-icons/io";
+import { IconType } from "react-icons";
 import IconButton from "../buttons/iconButton";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { IoCaretBackOutline } from "react-icons/io5";
 import { useRouter } from "next/navigation";
-interface NavItem {
-  title: string;
-  href: string;
-  icon: JSX.Element;
-}
+import { NavItem } from "@/types";
+import { signOut } from "next-auth/react";
+import { MdTextSnippet } from "react-icons/md";
+import { IoIosHelpBuoy } from "react-icons/io";
 
 export default function Sidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const NavItems: NavItem[] = [
     {
       title: "Dashboard",
@@ -34,16 +35,16 @@ export default function Sidebar() {
       icon: <IoIosHelpBuoy />,
     },
   ];
-  const pathname = usePathname();
-  const router = useRouter();
+
   const NavItemComponent = (props: { item: NavItem }) => {
-    const isActive = pathname.split("/").slice(-1)[0] === props.item.href;
+    const isActive = pathname.includes(props.item.href);
+    //probably change this to a regex just in case one of the object ids says dashboard or smn
     return (
-      <div className="flex ">
-        {isActive ? (
-          <div className="w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-red bg-opacity-50"></div>
-        ) : (
-          <></>
+      <div className="flex">
+        {isActive && (
+          <div
+            className={`w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-red bg-opacity-50`}
+          ></div>
         )}
         <Link href={props.item.href} className="w-full pr-4 pl-4">
           <button
@@ -55,14 +56,14 @@ export default function Sidebar() {
             }
           >
             <div className="my-auto">{props.item.icon}</div>
-            <h1 className="font-semibold pl-3">{props.item.title}</h1>
+            <h2 className="font-semibold pl-3">{props.item.title}</h2>
           </button>
         </Link>
       </div>
     );
   };
   return (
-    <div className="h-screen min-h-full min-w-max bg-white shadow-lg relative">
+    <div className="h-screen min-h-full min-w-max bg-white shadow-lg relative box-border">
       <div className="flex p-4">
         <div className="w-10 h-10 rounded-full bg-primary-red bg-opacity-50 mr-4"></div>
         <h1 className="my-auto text-3xl text-primary-gray font-semibold">
@@ -81,17 +82,18 @@ export default function Sidebar() {
       <div onClick={() => {}} className="absolute bottom-0 mx-auto w-full p-3">
         <div className="pb-3">
           <IconButton
-            title={"Courses"}
+            title="Courses"
             icon={<IoCaretBackOutline />}
-            onClick={(e: any) => {
-              router.push("/courses");
-            }}
+            onClick={() => {}}
           />
         </div>
         <IconButton
-          title={"Logout"}
+          title="Logout "
           icon={<RiLogoutBoxLine />}
-          onClick={(e: any) => {}}
+          onClick={() => {
+            signOut();
+            router.push("/");
+          }}
         />
       </div>
     </div>

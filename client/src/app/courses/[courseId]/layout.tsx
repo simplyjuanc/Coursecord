@@ -1,10 +1,10 @@
-import Sidebar from "@/components/sidebar/sidebar";
+import NavSidebar from "@/components/navSidebar/navSidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex">
-      <Sidebar />
-      <div className="w-full">{children}</div>
+      <NavSidebar />
+      {children}
     </div>
   );
 }

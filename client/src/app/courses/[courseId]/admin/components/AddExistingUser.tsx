@@ -67,24 +67,23 @@ export default function AddExistingUser({
     setShowExistingUser(false);
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (selectedUser && selectedRole) {
-      fetch(
-        `${process.env.API_URL || 'http://localhost:5000'}/user/${
-          selectedUser.id
-        }/${selectedRole.id}`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: session.accessToken,
-          },
-        }
-      )
-        .then((res) => {
-          if (res.ok) closeModal();
-          else throw new Error('Something went wrong!');
-        })
-        .catch((e) => console.error(e));
+      try {
+        const res = await fetch(
+          `${process.env.API_URL || 'http://localhost:5000'}/user/${selectedUser.id}/${selectedRole.id}`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: session.accessToken,
+            },
+          }
+        );
+        if (res.ok) closeModal();
+        else throw new Error('Something went wrong!');
+      } catch (e) {
+        console.error(e);
+      }
     } else {
       window.alert('Please select a user and a role!');
     }

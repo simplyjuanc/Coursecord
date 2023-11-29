@@ -14,7 +14,6 @@ export default function Courses() {
     const fetchData = async () => {
       const response = await axios.get(`http://localhost:5000/course`);
       setCourses(response.data);
-      console.log(response.data);
     };
     fetchData().catch((err) => {
       console.log(err);

@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import { getServerSession } from 'next-auth';
 import './globals.css';
 import SessionProvider from '@/components/sessionProvider';
-import { getUserData } from '@/services/setInStoreService';
+import { getUserData } from '@/services/reduxFetchService';
 import { SessionWithToken } from '@/types';
 import { authOptions } from './api/auth/[...nextauth]/route';
 import ReduxProvider from '@/components/reduxProvider';
@@ -23,7 +23,6 @@ export default async function RootLayout({
 }) {
 
   const session = await getServerSession(authOptions);
-  console.log(session);
 
   return (
     <html lang='en' className='min-h-screen min-w-full'>

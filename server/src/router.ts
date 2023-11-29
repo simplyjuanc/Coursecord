@@ -69,7 +69,7 @@ router.delete(
   Unit.removeUnitFromSection
 );
 router.delete('/unit/:unitId', Auth.requireAuth, Unit.deleteContent);
-router.get('section/units/:sectionId', Unit.getUnitsBySection)
+router.get('/section/units/:sectionId', Unit.getUnitsBySection)
 
 
 //Not part of MVP

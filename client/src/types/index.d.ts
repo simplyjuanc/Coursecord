@@ -98,3 +98,16 @@ export interface Unit {
   type: string;
   markdown_body: string;
 }
+
+export interface OrgState {
+  orgInfo: OrgInfo
+}
+
+export interface OrgInfo {
+  id: string;
+  name: string;
+  description: string;
+  courses: Course[];
+  members: string[];
+  roles: [];
+}

@@ -44,7 +44,6 @@ export default function HelpRequestForm({ setSubmitted }:HelpRequestForm) {
   }
 
   const handleSelect = (e:ChangeEvent<HTMLSelectElement>) => {
-    console.log([userId, e.target.value]);
     setRequestors([userId, e.target.value])
   }
 
@@ -57,7 +56,6 @@ export default function HelpRequestForm({ setSubmitted }:HelpRequestForm) {
       course: courseId,
       students: requestors
     }, (res: any) => {
-      console.log(res);
       setSubmitted(true);
     });
 

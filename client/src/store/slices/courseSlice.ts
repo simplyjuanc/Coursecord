@@ -22,12 +22,14 @@ const courseSlice = createSlice({
     ) => {
       state.syllabus = payload.syllabus;
     },
+    addSection: (state, { payload }: PayloadAction<{section: CompiledSection}>) => {
+      if (state.syllabus && state.courseInfo) {
+        state.syllabus.push(payload.section);
+      }
+    },
   },
 });
 
-export const {
-  setCourseInfo,
-  setSyllabus,
-} = courseSlice.actions;
+export const { setCourseInfo, setSyllabus, addSection } = courseSlice.actions;
 
 export default courseSlice.reducer;

@@ -1,6 +1,7 @@
 import { CourseSectionInfo } from '../types';
 import { CourseSection } from './index';
 import Course from './course';
+import { CourseSection as TCourseSection } from '@prisma/client';
 
 //right now course section info is just a title but I am sure that is
 //going to change so I am putting the type there to make it easier to change later
@@ -32,8 +33,8 @@ async function addUnitToSection(sectionId: string, unitId: string) {
   return updatedSection;
 }
 
-async function getSectionById(sectionId: string) {
-  const section = await CourseSection.findUnique({ where: { id: sectionId } });
+async function getSectionById(id: string) {
+  const section = await CourseSection.findUnique({ where: { id} });
   return section;
 }
 

@@ -1,10 +1,15 @@
-import Sidebar from "@/components/sidebar/sidebar";
+import Sidebar from '@/components/sidebar/sidebar';
+import { getCourseData } from '@/services/setInStoreService';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex">
+    <div className='flex'>
       <Sidebar />
-      <div className="w-full">{children}</div>
+      <div className='w-full'>{children}</div>
     </div>
   );
 }

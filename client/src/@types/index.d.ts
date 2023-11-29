@@ -39,3 +39,35 @@ export interface Course {
 export interface CourseComponetProps {
   course: Course;
 }
+
+export interface Unit {
+  id: string;
+  owner: string;
+  title: string;
+  type: string;
+  markdown_body: string;
+}
+
+export interface Section {
+  id: string;
+  content: string;
+  units: string[];
+}
+
+export interface CompiledSection extends Section{
+  units: Unit[];
+}
+
+export interface CourseInfo {
+  id: string;
+  organisation: string;
+  title: string;
+  description: string;
+  students: string[];
+  instructors: string[];
+}
+
+export interface CourseState {
+  courseInfo?: CourseInfo;
+  syllabus?: CompiledSection[];
+}

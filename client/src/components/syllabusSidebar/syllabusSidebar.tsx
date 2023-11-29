@@ -1,12 +1,12 @@
 'use client';
-import { Section, Unit } from '@/types';
+import { CompiledSection, Unit } from '../../types';
 import Sidebar from '../sidebar/sidebar';
 import { CgAlbum } from 'react-icons/cg';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 interface SyllabusSidebarProps {
-  sections: Section[];
+  sections: CompiledSection[];
   courseName: string;
   activeId: string;
   selectUnit: (unit: Unit) => void;
@@ -28,7 +28,7 @@ export default function SyllabusSidebar({
     defaultActiveSections
   );
 
-  function SyllabusSection({ section }: { section: Section }) {
+  function SyllabusSection({ section }: { section: CompiledSection }) {
     return (
       <>
         <div className='flex flex-row-reverse'>

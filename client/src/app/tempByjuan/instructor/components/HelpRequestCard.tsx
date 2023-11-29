@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { DbUser, THelpRequest } from '@/@types';
+import { DbUser, THelpRequest } from '@/types';
 import { Socket } from 'socket.io-client';
 
 type HelpRequestCardProps = {

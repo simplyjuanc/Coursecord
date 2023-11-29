@@ -1,24 +1,21 @@
-"use client";
-import SyllabusSidebar from "@/components/syllabusSidebar/syllabusSidebar";
-import { Section, Unit } from "@/@types";
-import { useState } from "react";
-import Markdown from "react-markdown";
-import MarkdownStyle from "./syllabus.module.css";
+'use client';
+import SyllabusSidebar from '@/components/syllabusSidebar/syllabusSidebar';
+import { CompiledSection, Section, Unit } from '@/types';
+import { useState } from 'react';
+import Markdown from 'react-markdown';
+import MarkdownStyle from './syllabus.module.css';
+import { useAppSelector } from '@/store';
 
 export default function Syllabus() {
   const [activeUnit, setActiveUnit] = useState<Unit>();
 
-  const mockSections: Section[] = Array.from({ length: 6 }, (_, i) => ({
-    id: `section${i + 1}`,
-    title: `Section ${i + 1}`,
-    units: Array.from({ length: 5 }, (_, j) => ({
-      id: `unit${j + 1}`,
-      owner: `owner${j + 1}`,
-      title: `Unit ${j + 1}`,
-      type: `type${j + 1}`,
-      markdown_body: `Markdown body ${j + 1}`,
-    })),
-  }));
+  const syllabus: CompiledSection[] | undefined = useAppSelector(
+    (state) => state.course.syllabus
+  );
+
+  const user = useAppSelector((state) => state.user.user);
+  console.log('USER', user);
+  console.log(syllabus);
 
   function selectUnit(unit: Unit) {
     setActiveUnit(unit.id !== activeUnit?.id ? unit : undefined);
@@ -26,9 +23,9 @@ export default function Syllabus() {
 
   return (
     <>
-      <section className="flex flex-grow flex-row border-solid border-black h-screen">
-        <div className="w-[60vw]">
-          <div className="react-markdown px-32 mx-auto">
+      <section className='flex flex-grow flex-row border-solid border-black h-screen'>
+        <div className='w-[60vw] h-screen overflow-y-auto'>
+          <div className='react-markdown px-32 mx-auto'>
             <Markdown className={MarkdownStyle.markdown}>
               {`
 # Docs @ Docker
@@ -88,16 +85,16 @@ Copyright 2013-2023 Docker, Inc., released under the <a href="https://github.com
             </Markdown>
           </div>
         </div>
-        <div className="self-end fixed right-0">
-          <SyllabusSidebar
-            activeId={""}
-            sections={mockSections}
-            courseName="Codeworks"
-            selectUnit={selectUnit}
-            selectedUnit={activeUnit?.id}
-          />
-        </div>
       </section>
+      <div className='self-end'>
+        <SyllabusSidebar
+          activeId={''}
+          sections={syllabus || []}
+          courseName='Codeworks'
+          selectUnit={selectUnit}
+          selectedUnit={activeUnit?.id}
+        />
+      </div>
     </>
   );
 }

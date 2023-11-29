@@ -46,7 +46,7 @@ export interface Unit {
 
 export interface Section {
   id: string;
-  content: string;
+  title: string;
   units: string[];
 }
 

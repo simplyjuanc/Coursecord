@@ -4,7 +4,7 @@ import {
   DbUser,
   RoleWithOrg,
   Section,
-} from '@/@types';
+} from '@/types';
 import axios from 'axios';
 import store from '@/store';
 import { setCourseInfo, setSyllabus } from '@/store/slices/courseSlice';
@@ -64,6 +64,7 @@ export async function getCourseData(courseId: string) {
 }
 
 export async function getUserData(user: DbUser) {
+  console.log(user);
   try {
     const studentPromise = axios.get<Course[]>(
       `${baseUrl}/student/course/${user.id}`

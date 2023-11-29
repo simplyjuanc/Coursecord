@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { MdOutlineSupportAgent } from 'react-icons/md';
 import { Socket, io } from 'socket.io-client';
-import { DbUser, SessionWithToken } from '@/@types';
+import { DbUser, SessionWithToken } from '@/types';
 import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 
@@ -66,7 +66,7 @@ export default function HelpRequestForm({ setSubmitted }:HelpRequestForm) {
 
   
   return (
-    <section className='h-screen flex items-center'>
+    <section className='h-screen w-full flex items-center'>
       <div className='mx-auto w-1/3 min-w-max aspect-square bg-white shadow-lg border-solid border-2 border-grey-600 rounded-lg p- flex flex-col items-center justify-evenly'>
         <div className='flex items-center text-4xl font-bold text-center drop-shadow-lg'>
           <MdOutlineSupportAgent />

@@ -1,4 +1,4 @@
-import { Course, DbUser, RoleWithOrg, UserState } from '@/@types';
+import { Course, DbUser, RoleWithOrg, UserState } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: UserState = {
@@ -14,6 +14,7 @@ const userSlice = createSlice({
   reducers: {
     setUser: (state, { payload }: PayloadAction<{ user: DbUser }>) => {
       state.user = payload.user;
+      console.log('SETTING USER');
     },
     setRoles: (state, { payload }: PayloadAction<{ roles: RoleWithOrg[] }>) => {
       state.roles = payload.roles;

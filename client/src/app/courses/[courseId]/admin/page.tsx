@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import React, { use, useEffect, useState } from 'react';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import AddUser from './AddUser';
-import { Course, DbUser } from '@/@types';
+import { Course, DbUser } from '@/types';
 
 export default function AdminTable() {
   const courseIdRegex = /[0-9a-fA-F]{24}/;

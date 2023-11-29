@@ -1,4 +1,4 @@
-import { CompiledSection, CourseInfo, CourseState } from '@/@types';
+import { CompiledSection, CourseInfo, CourseState } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: CourseState = {

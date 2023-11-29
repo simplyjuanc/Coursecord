@@ -1,6 +1,6 @@
 "use client";
 
-import { Course } from "@/@types";
+import { Course } from "@/types";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

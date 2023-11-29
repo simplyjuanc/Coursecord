@@ -109,7 +109,7 @@ export default function AddExistingUser({
             <>
               <div className='flex flex-col gap-6 px-6 my-8 justify-evenly'>
                 <div className='flex flex-row justify-between mx-12'>
-                  <p className='w-2/3 text-xl font-semibold'>User</p>
+                  <p className='text-xl font-semibold'>User</p>
                   <UserSelect
                     users={potentialUsers}
                     setSelectedUser={setSelectedUser}

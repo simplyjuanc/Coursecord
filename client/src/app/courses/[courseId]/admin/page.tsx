@@ -46,11 +46,11 @@ export default function AdminTable() {
     })();
   }, [courseUrl, instructorUrl, studentUrl]);
 
-  function addNewUser() {
+  function showNewUserModal() {
     setShowNewUser(true);
   }
 
-  function addExistingUser() {
+  function showExistingUserModal() {
     setShowExistingUser(true);
   }
 
@@ -66,12 +66,12 @@ export default function AdminTable() {
           <IconButton
             icon={<MdOutlinePersonAddAlt />}
             title='Add New User'
-            onClick={addNewUser}
+            onClick={showNewUserModal}
           ></IconButton>
           <IconButton
             icon={<MdOutlinePersonAddAlt />}
             title='Add Existing User'
-            onClick={addExistingUser}
+            onClick={showExistingUserModal}
           ></IconButton>
         </div>
       </div>

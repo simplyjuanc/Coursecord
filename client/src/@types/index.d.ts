@@ -13,6 +13,19 @@ export interface DbUser extends User {
   roles: string[];
 }
 
+
+export type THelpRequest = {
+  id: string;
+  course: string;
+  students: string[];
+  status: 'Waiting' | 'Assigned' | 'Finished';
+  instructor: string | null;
+  content: string;
+  created_at: Date;
+  time_waiting: number;
+  time_in_call: number | null
+}
+
 export interface Course {
   id: string;
   organisation: string;

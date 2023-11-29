@@ -36,10 +36,6 @@ export interface Course {
   syllabus: string[];
 }
 
-export interface CourseComponetProps {
-  course: Course;
-}
-
 export interface Unit {
   id: string;
   owner: string;
@@ -70,4 +66,21 @@ export interface CourseInfo {
 export interface CourseState {
   courseInfo?: CourseInfo;
   syllabus?: CompiledSection[];
+}
+
+export interface UserState {
+  user?: DbUser
+  coursesAsStudent: Course[]
+  coursesAsInstructor: Course[]
+  roles: RoleWithOrg[]
+}
+
+export interface Role {
+  id: string;
+  title: string;
+  permissions: string[];
+}
+
+export interface RoleWithOrg extends Role {
+  organisation: string;
 }

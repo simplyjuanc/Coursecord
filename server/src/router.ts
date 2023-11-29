@@ -43,6 +43,8 @@ router.delete(
   User.removeRoleFromUser
 );
 router.delete('/user/:userId', Auth.requireAuth, User.deleteUser);
+router.get('/student/course/:userId', Course.getCoursesWithStudent);
+router.get('/instructor/course/:userId', Course.getCoursesWithInstructor);
 
 // router.get('/:orgId/instructors', User.getInstructorsByOrg);
 router.get('/:courseId/instructors', User.getInstructorsByCourse);
@@ -71,6 +73,7 @@ router.get('section/units/:sectionId', Unit.getUnitsBySection)
 
 
 //Not part of MVP
+router.get('/user/role/:userId', Role.getRolesByUser);
 router.post('/:orgId/role', Role.addRole);
 router.delete('/role/:roleId', Role.removeRole);
 router.put('/role/:roleId', Role.editRole);

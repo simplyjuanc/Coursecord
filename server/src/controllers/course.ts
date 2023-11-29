@@ -96,7 +96,7 @@ async function deleteCourse(req: Request, res: Response) {
     if (!orgWithCourse || orgWithCourse.id !== orgId) {
       return res.status(401).send('Invalid Organisation or course');
     }
-    
+
     const userRoles = (req as RequestWithUser).user.roles;
     if (!(await Role.userRolesIncludeAdmin(userRoles, orgId))) {
       return res.status(401).send({ message: 'Missing Correct Permissions' });
@@ -112,6 +112,28 @@ async function deleteCourse(req: Request, res: Response) {
   }
 }
 
+async function getCoursesWithStudent(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    const courses = await Course.getCoursesWithStudent(userId);
+    res.status(200).send(courses)
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+async function getCoursesWithInstructor(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    const courses = await Course.getCoursesWithInstructor(userId);
+    res.status(200).send(courses)
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
 export default {
   addCourse,
   getCourses,
@@ -119,4 +141,6 @@ export default {
   getCoursesByOrganisation,
   editCourse,
   deleteCourse,
+  getCoursesWithStudent,
+  getCoursesWithInstructor
 };

@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import { getServerSession } from "next-auth";
 import "./globals.css";
 import SessionProvider from "@/components/sessionProvider";
+import { getUserData } from "@/services/setInStoreService";
+import { SessionWithToken } from "@/@types";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 const inter = Inter({ subsets: ["latin"] });
 const viewportClasses = "min-h-screen min-w-full";
@@ -17,7 +20,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
+  // console.log(session)
+  if((session as SessionWithToken).user.name){
+    await getUserData((session as SessionWithToken).user)
+  } 
 
   return (
     <html lang="en" className="min-h-screen min-w-full">

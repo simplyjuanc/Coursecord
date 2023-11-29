@@ -117,6 +117,14 @@ async function addMemberToOrganisation(orgId: string, userId: string) {
   return updatedOrg
 }
 
+async function getOrganisationsWithMember(userId: string) {
+  const org = await Organisation.findMany({
+    where: { members: { has: userId } },
+  });
+
+  return org;
+}
+
 export default {
   createOrganisation,
   getOrganisations,
@@ -131,5 +139,6 @@ export default {
   getOrganisationWithSection,
   getOrganisationWithCourse,
   getOrganisationWithRole,
-  addMemberToOrganisation
+  addMemberToOrganisation,
+  getOrganisationsWithMember
 };

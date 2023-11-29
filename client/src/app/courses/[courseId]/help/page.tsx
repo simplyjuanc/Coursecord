@@ -1,5 +1,9 @@
-import { MdOutlineSupportAgent } from 'react-icons/md';
+  'use client';
+  import { useState } from 'react';
+  import HelpRequestForm from './HelpRequestForm';
+  import HelpRequestModal from './HelpRequestConfirmation';
 
+<<<<<<< HEAD
 export default function Help() {
   return (
     <section className='h-screen w-full flex items-center'>
@@ -26,3 +30,19 @@ export default function Help() {
     </section>
   );
 }
+=======
+  const HelpRequest = () => {
+    const [submitted, setSubmitted] = useState(false);
+    return (
+      <>
+        {submitted ? (
+          <HelpRequestModal />
+        ) : (
+          <HelpRequestForm setSubmitted={setSubmitted} />
+        )}
+      </>
+    );
+  };
+
+  export default HelpRequest;
+>>>>>>> dev

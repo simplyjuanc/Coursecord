@@ -44,7 +44,7 @@ router.delete(
 );
 router.delete('/user/:userId', Auth.requireAuth, User.deleteUser);
 
-router.get('/:orgId/instructors', User.getInstructorsByOrg);
+// router.get('/:orgId/instructors', User.getInstructorsByOrg);
 router.get('/:courseId/instructors', User.getInstructorsByCourse);
 router.get('/:courseId/students', User.getStudentsByCourse);
 // router.get('/:orgId/students', User.getStudentsByOrg);

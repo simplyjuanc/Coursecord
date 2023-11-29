@@ -1,27 +1,27 @@
-import { NextAuthOptions } from 'next-auth';
-import { DbUser, SessionWithToken } from '@/types';
-import NextAuth from 'next-auth/next';
-import GoogleProvider from 'next-auth/providers/google';
-import axios from 'axios';
-import { JWT } from 'next-auth/jwt';
-import { headers } from '../../../../../next.config';
+import { NextAuthOptions } from "next-auth";
+import { DbUser, SessionWithToken } from "@/@types";
+import NextAuth from "next-auth/next";
+import GoogleProvider from "next-auth/providers/google";
+import axios from "axios";
+import { JWT } from "next-auth/jwt";
+import { headers } from "../../../../../next.config";
 
 const GOOGLE_ID = process.env.GOOGLE_ID!;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET!;
 
 const GOOGLE_AUTHORISATION_URL =
-  'https://accounts.google.com/o/oauth2/v2/auth?' +
+  "https://accounts.google.com/o/oauth2/v2/auth?" +
   new URLSearchParams({
-    prompt: 'consent',
-    access_type: 'offline',
-    response_type: 'code',
+    prompt: "consent",
+    access_type: "offline",
+    response_type: "code",
   });
 
 const API_URL = process.env.API_URL;
 
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   providers: [
     GoogleProvider({
@@ -39,7 +39,7 @@ const authOptions: NextAuthOptions = {
           `${API_URL}/signIn`,
           {
             oauth_id: user.id,
-            oauth_provider: 'google',
+            oauth_provider: "google",
           },
           {
             headers: { Authorization: account.access_token },
@@ -47,7 +47,7 @@ const authOptions: NextAuthOptions = {
         );
 
         if (response.status !== 200 && response.status !== 201) {
-          console.log('User could not be created');
+          console.log("User could not be created");
           return false;
         }
 
@@ -95,11 +95,11 @@ const authOptions: NextAuthOptions = {
 
 async function refreshAccessToken(token: JWT) {
   const url =
-    'https://oauth2.googleapis.com/token?' +
+    "https://oauth2.googleapis.com/token?" +
     new URLSearchParams({
       client_id: GOOGLE_ID,
       client_secret: GOOGLE_SECRET,
-      grant_type: 'refresh_token',
+      grant_type: "refresh_token",
       refresh_token: token.refreshToken as string,
     });
 

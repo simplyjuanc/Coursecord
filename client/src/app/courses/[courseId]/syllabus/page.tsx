@@ -1,6 +1,6 @@
 "use client";
 import SyllabusSidebar from "@/components/syllabusSidebar/syllabusSidebar";
-import { Section, Unit } from "@/types";
+import { Section, Unit } from "@/@types";
 import { useState } from "react";
 import Markdown from "react-markdown";
 import MarkdownStyle from "./syllabus.module.css";

@@ -6,10 +6,11 @@ import {
   setupInstructorHelpSockets
 } from './helpRequests';
 
-type TUserSpace = {
-  organisationId: string
-  role: 'admin' | 'instructor' | 'student'
-}
+
+// type TUserSpace = {
+//   organisationId: string
+//   role: 'admin' | 'instructor' | 'student'
+// }
 
 export default function setupWebSockets() {
   console.log('Instantiating socket setup ');

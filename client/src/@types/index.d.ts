@@ -84,3 +84,17 @@ export interface Role {
 export interface RoleWithOrg extends Role {
   organisation: string;
 }
+
+export interface NavItem {
+  title: string;
+  href: string;
+  icon: JSX.Element;
+}
+
+export interface Unit {
+  id: string;
+  owner: string;
+  title: string;
+  type: string;
+  markdown_body: string;
+}

@@ -1,9 +1,9 @@
-'use client';
-import SyllabusSidebar from '@/components/syllabusSidebar/syllabusSidebar';
-import { Section, Unit } from '@/types';
-import { useState } from 'react';
-import Markdown from 'react-markdown';
-import './syllabus.css';
+"use client";
+import SyllabusSidebar from "@/components/syllabusSidebar/syllabusSidebar";
+import { Section, Unit } from "@/types";
+import { useState } from "react";
+import Markdown from "react-markdown";
+import MarkdownStyle from "./syllabus.module.css";
 
 export default function Syllabus() {
   const [activeUnit, setActiveUnit] = useState<Unit>();
@@ -26,67 +26,73 @@ export default function Syllabus() {
 
   return (
     <>
-      <section className='flex border-solid w-full border-black h-screen'>
-        <div className='flex-grow flex flex-col items-center'>
-          <h2>{activeUnit != null ? activeUnit.title : 'Select a unit'}</h2>
-          <div className=' self-start max-w-full'>
-            <Markdown className='react-markdown'>{`
-# Docker
-Purpose: It's a way in which you can configure images of the environment and requirements required to run an application. It eliminates all potential dependency errors.
-
-- The main difference between Docker and a Virtual Machine is that containers are lighter as there's a base shared infrastructure layer (that still isolates the dependencies - up to the OS, but not the kernel) .
-  ![[Pasted image 20231129080750.png]]
-
-Basic structure of a containerised service:
-![[Pasted image 20231129081044.png]]
+      <section className="flex flex-grow flex-row border-solid border-black h-screen">
+        <div className="w-[60vw]">
+          <div className="react-markdown px-32 mx-auto">
+            <Markdown className={MarkdownStyle.markdown}>
+              {`
+# Docs @ Docker
 
 
-- Terminology
-	- **An image is a snapshot of an environment, and a container runs the software**. Both containers and images allow users to specify application dependencies and configurations and to describe everything necessary for a machine to run that application. However, containers and images have different lifecycles. [^1]
-		- An image is the output of the *Dockerfile*, which can in turn generate the container.
-		- A container is like a VM running within your machine, but without the OS (therefore much lighter).
+Welcome to the Docker Documentation repository. This is the source for
+[https://docs.docker.com/](https://docs.docker.com/).
 
-[^1]: ['Docker image versus container: What are the differences?' | CircleCI](https://circleci.com/blog/docker-image-vs-container/#:~:text=An%20image%20is%20a%20snapshot,and%20images%20have%20different%20lifecycles)
+Feel free to send us pull requests and file issues. Our docs are completely
+open source, and we deeply appreciate contributions from the Docker community!
+
+## Provide feedback
+
+We’d love to hear your feedback. Please file documentation issues only in the
+Docs GitHub repository. You can file a new issue to suggest improvements or if
+you see any errors in the existing documentation.
+
+Before submitting a new issue, check whether the issue has already been
+reported. You can join the discussion using an emoji, or by adding a comment to
+an existing issue. If possible, we recommend that you suggest a fix to the issue
+by creating a pull request.
+
+You can ask general questions and get community support through the [Docker
+Community Slack](https://dockr.ly/comm-slack). Personalized support is available
+through the Docker Pro, Team, and Business subscriptions. See [Docker
+Pricing](https://www.docker.com/pricing) for details.
+
+If you have an idea for a new feature or behavior change in a specific aspect of
+Docker or have found a product bug, file that issue in the project's code
+repository.
+
+We've made it easy for you to file new issues.
+
+- Click **[New issue](https://github.com/docker/docs/issues/new)** on the docs repository and fill in the details, or
+- Click **Request docs changes** in the right column of every page on
+  [docs.docker.com](https://docs.docker.com/) and add the details, or
+
+  ![Request changes link](/static/assets/images/docs-site-feedback.png)
+
+- Click the **Give feedback** link on the side of every page in the docs.
+
+  ![Docs feedback on each page](/static/assets/images/feedback-widget.png)
+
+## Contribute to Docker docs
+
+We value your contribution. We want to make it as easy as possible to submit
+your contributions to the Docker docs repository. Changes to the docs are
+handled through pull requests against the main branch. To learn how towwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwtowwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+contribute, see our [Contribute section](https://docs.docker.com/contribute/overview/).
+
+## Copyright and license
+
+Copyright 2013-2023 Docker, Inc., released under the <a href="https://github.com/docker/docs/blob/main/LICENSE">Apache 2.0 license</a> .
 
 
-
-
-- Process 
-	1. In a Dockerfile you store the config of the environment 
-	2. You then compile that file into a Docker image
-		- Once an image has been written and registered, it can be summoned from the container registry as follows: 
-		\`\`\` bash
-		docker ps
-		
-		# Pick the container id and use it in 
-		docker exec -it CONTAINER_ID /bin/bash
-		\`\`\`
-	1. Which gets mounted on a disk, where the application runs with a controlled environment.
-- [Basic removal commands for images, container, and volumes](https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes)
-- \`docker-compose.yml\` -> Needs to be called as such.
-	- It's a multi-container tool so that you can use a single Docker image to run multiple separate environments, which share the same network.
-		- E.g. for *Airflow*, you can create multiple machines for multiple images, which correspond to different nodes in the architecture .
-		- You use these mappings to establish shared drives between different containers ![[Pasted image 20221206145259.png]]
-	- You first need to build the independent images, and then compose them into a network. E.g.:
-		 \`\`\` bash
-		docker build -t hadoop-base docker/hadoop/hadoop-base && \
-		docker build -t hive-base docker/hive/hive-base && \
-		docker build -t spark-base docker/spark/spark-base && \
-		docker-compose up -d --build
-		\`\`\`
-
-
-
-
-## Source
-`}</Markdown>
+`}
+            </Markdown>
           </div>
         </div>
-        <div className='self-end'>
+        <div className="self-end fixed right-0">
           <SyllabusSidebar
-            activeId={''}
+            activeId={""}
             sections={mockSections}
-            courseName='Codeworks'
+            courseName="Codeworks"
             selectUnit={selectUnit}
             selectedUnit={activeUnit?.id}
           />

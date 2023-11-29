@@ -5,34 +5,51 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import io from 'socket.io-client';
 import HelpRequestBox from './HelpRequestBox';
 import HelpRequestHeader from "./imgs/headerHelp.png";
-import Image from 'next/image'
-
+import Image from 'next/image';
 
 interface HelpRequest {
   id: string;
-  studentName: string;
-  question: string;
+  content: string;  // The message from the form
+  course: string;   // Course ID from the form
+  students: string[]; // Requestors from the form
   status: 'waiting' | 'assigned' | 'completed';
 }
+
+// Define the array of status types
+const helpRequestStatuses: ('waiting' | 'assigned' | 'completed')[] = ['waiting', 'assigned', 'completed'];
 
 const InstructorHelpRequestPage = () => {
   const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
   const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5001');
 
   useEffect(() => {
-    socket.on('requestCreated', (newRequest: Omit<HelpRequest, 'status'>) => {
+    socket.emit('join', 'instructor');
+
+    socket.emit('getRequests', { courseId: 'YOUR_COURSE_ID' }, (requests: HelpRequest[]) => {
+      setHelpRequests(requests);
+    });
+
+    
+    socket.on('createRequest', (newRequest) => {
       setHelpRequests((prevRequests) => [
         ...prevRequests,
-        { ...newRequest, status: 'waiting' }, // Default new requests to waiting
+        {
+          id: newRequest.id, 
+          content: newRequest.content,
+          course: newRequest.course,
+          students: newRequest.students,
+          status: 'waiting', 
+        }
       ]);
     });
 
     return () => {
-      socket.off('requestCreated');
+      socket.off('createRequest');
       socket.disconnect();
     };
   }, []);
 
+  // Function to handle drag end event
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
 
@@ -44,27 +61,28 @@ const InstructorHelpRequestPage = () => {
     setHelpRequests(items);
   };
 
+  // Function to render help requests based on their status
   const renderHelpRequests = (status: 'waiting' | 'assigned' | 'completed') => {
     return helpRequests
-      .filter((req) => req.status === status)
-      .map((request, index) => (
-        <Draggable key={request.id} draggableId={request.id} index={index}>
-          {(provided) => (
-            <div
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              className="mb-2"
-            >
-              <HelpRequestBox
-                id={request.id}
-                studentName={request.studentName}
-                question={request.question}
-              />
-            </div>
-          )}
-        </Draggable>
-      ));
+    .filter((req) => req.status === status)
+    .map((request, index) => (
+      <Draggable key={request.id} draggableId={request.id} index={index}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            className="mb-2"
+          >
+            <HelpRequestBox
+              content={request.content}
+              course={request.course}
+              students={request.students}
+            />
+          </div>
+        )}
+      </Draggable>
+    )); 
   };
 
   return (
@@ -82,7 +100,7 @@ const InstructorHelpRequestPage = () => {
       </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex justify-around p-4 bg-gray-100" style={{ height: 'calc(100vh - 4rem)' }}>
-          {['waiting', 'assigned', 'completed'].map((status) => (
+          {helpRequestStatuses.map((status) => (
             <Droppable key={status} droppableId={status}>
               {(provided, snapshot) => (
                 <div
@@ -95,7 +113,7 @@ const InstructorHelpRequestPage = () => {
                 >
                   <h3 className="text-xl font-bold capitalize mb-4">{status}</h3>
                   <div className="flex flex-col space-y-4 overflow-auto">
-                    {renderHelpRequests(status as 'waiting' | 'assigned' | 'completed')}
+                    {renderHelpRequests(status)}
                     {provided.placeholder}
                   </div>
                 </div>

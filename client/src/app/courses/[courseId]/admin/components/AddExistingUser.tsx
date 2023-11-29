@@ -1,20 +1,26 @@
-import { DbUser } from '@/@types';
+import { DbUser, TRole } from '@/@types';
 import React, { useEffect, useState } from 'react';
+import { UserSelect } from './UserSelect';
+import { RoleSelect } from './RoleSelect';
 
 
 
 type AddUserProps = {
   courseId: string,
   setShowExistingUser:React.Dispatch<React.SetStateAction<boolean>>
+  roles: TRole[]
 }
 
-export default function AddExistingUser({setShowExistingUser, courseId}:AddUserProps) {
+export default function AddExistingUser({setShowExistingUser, courseId, roles}:AddUserProps) {
   const [potentialUsers, setPotentialUsers] = useState<DbUser[]>();
+  const [selectedUser, setSelectedUser] = useState<DbUser>();
+  
+  const [selectedRole, setSelectedRole] = useState<TRole>();
+
 
   useEffect(() => {
     (async () => {
       try {
-        console.log('courseId :>> ', courseId);
         const totalUsersRes = await fetch(`http://localhost:5000/6565c3bdf515f6ec9392f30e/users`); // TODO: replace with process.env.API_URL once orgId is dynamic
         const totalUsers:DbUser[] = await totalUsersRes.json();
 
@@ -44,16 +50,15 @@ export default function AddExistingUser({setShowExistingUser, courseId}:AddUserP
         <div>
         <div className='cursor-pointer absolute right-6 top-4 text-xl' onClick={closeModal}>X</div>
           <h1 className='mx-auto text-center mt-2 mb-6 font-semibold text-2xl'>Add Existing User</h1>
-          { !potentialUsers ? 
-            <p>No users found!</p> : 
-            <div>
-              {UserOptions(potentialUsers) }
-              <select name='role' placeholder='Student' className='ml-auto'>
-                <option value="">Select role</option>
-                <option value="student">Student</option>
-                <option value="instructor">Instructor</option>
-                <option value="admin">Admin</option>
-              </select>
+          { 
+          // (
+            !potentialUsers
+          //  || !potentialUsers.length) 
+           ? 
+            <p>No new users found!</p> : 
+            <div className='flex flex-col gap-4 justify-evenly'>
+              <UserSelect users={potentialUsers} setSelectedUser={setSelectedUser}/> 
+              <RoleSelect roles={roles} setRole={setSelectedRole}/>
             </div>
             }
         </div>
@@ -62,15 +67,4 @@ export default function AddExistingUser({setShowExistingUser, courseId}:AddUserP
   );
 }
 
-
-function UserOptions(users: DbUser[]): React.ReactNode {
-  return (
-    <>
-    <select name="users" id="users">
-      <option value="">Select user</option>
-      {users.map(user => <option key={user.id} value={user.id}>{user.name}</option>)}
-    </select>
-    </>
-  );
-}
 

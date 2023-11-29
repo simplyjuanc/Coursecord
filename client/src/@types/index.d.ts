@@ -39,3 +39,9 @@ export interface Course {
 export interface CourseComponetProps {
   course: Course;
 }
+
+export type TRole = {
+  id: string;
+  title: string;
+  permissions: string[];
+}

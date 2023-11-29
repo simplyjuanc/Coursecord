@@ -1,15 +1,19 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { RoleSelect } from './RoleSelect';
+import { TRole } from '@/@types';
 
 
 type AddUserProps = {
   courseId: string,
-  setShowNewUser:React.Dispatch<React.SetStateAction<boolean>>
+  setShowNewUser:React.Dispatch<React.SetStateAction<boolean>>,
+  roles: TRole[]
 }
 
 
-export default function AddNewUser({setShowNewUser, courseId}:AddUserProps) {
-  const [formState, setFormState] = React.useState({ name: '', email: '', role: '' });
-  
+export default function AddNewUser({setShowNewUser, courseId, roles}:AddUserProps) {
+  const [formState, setFormState] = useState({ name: '', email: '', role: '' });
+  const [selectedRole, setSelectedRole] = useState<TRole>();
+
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setFormState({
       ...formState,
@@ -20,7 +24,9 @@ export default function AddNewUser({setShowNewUser, courseId}:AddUserProps) {
 
   // TODO: Fetch request to add new user to course, looking for their email or their name
   // TODO: Add new user to the course (need to create addUser route and controller in backend)
-  
+
+
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     
@@ -54,12 +60,7 @@ export default function AddNewUser({setShowNewUser, courseId}:AddUserProps) {
 
             <div className='flex flex-row flex-nowrap justify-around px-4'>
               <label htmlFor='role'>Role</label>
-              <select name='role' onChange={handleInputChange} placeholder='Student' className='ml-auto'>
-                <option value="">Select role</option>
-                <option value="student">Student</option>
-                <option value="instructor">Instructor</option>
-                <option value="admin">Admin</option>
-              </select>
+              <RoleSelect roles={roles} setRole={setSelectedRole} />
             </div>
 
             <button type='submit' className='cursor-pointer'>

@@ -3,43 +3,48 @@ import IconButton from '@/components/buttons/iconButton';
 import { useParams, usePathname } from 'next/navigation';
 import React, { use, useEffect, useState } from 'react';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
-import AddNewUser from './AddNewUser';
-import { Course, DbUser } from '@/@types';
-import AddExistingUser from './AddExistingUser';
+import AddNewUser from './components/AddNewUser';
+import { Course, DbUser, TRole } from '@/@types';
+import AddExistingUser from './components/AddExistingUser';
 
 export default function AdminTable() {
   const courseId = useParams()['courseId'] as string;
-  
+
   const baseUrl = process.env.API_URL || 'http://localhost:5000';
   const courseUrl = `${baseUrl}/course/${courseId}`;
   const instructorUrl = `${baseUrl}/${courseId}/instructors`;
   const studentUrl = `${baseUrl}/${courseId}/students`;
-  
+
   const [showNewUser, setShowNewUser] = useState(false);
   const [showExistingUser, setShowExistingUser] = useState(false);
   const [course, setCourse] = useState<Course>();
   const [instructors, setInstructors] = useState<DbUser[]>();
   const [students, setStudents] = useState<DbUser[]>();
-  // const [roles, setRoles] = useState<string[]>();
+  const [roles, setRoles] = useState<TRole[]>([]);
 
   useEffect(() => {
-    fetch(courseUrl)
-      .then((res) => res.json())
-      .then((data) => setCourse(data))
-      .catch((error) => console.error(error));
-  }, [courseUrl]);
+    (async () => {
+      const [courseRes, rolesRes, instructorRes, studentRes] =
+        await Promise.all([
+          fetch(courseUrl),
+          fetch(`http://localhost:5000/6565c3bdf515f6ec9392f30e/roles`), //TODO: replace with orgId once it's dynamic
+          fetch(instructorUrl),
+          fetch(studentUrl),
+        ]);
 
-  useEffect(() => {
-    fetch(instructorUrl)
-      .then((res) => res.json())
-      .then((data) => setInstructors(data))
-      .catch((error) => console.error(error));
+      const [course, roles, instructors, students] = await Promise.all([
+        courseRes.json(),
+        rolesRes.json(),
+        instructorRes.json(),
+        studentRes.json(),
+      ]);
 
-    fetch(studentUrl)
-      .then((res) => res.json())
-      .then((data) => setStudents(data))
-      .catch((error) => console.error(error));
-  }, [instructorUrl, studentUrl]);
+      setCourse(course);
+      setRoles(roles);
+      setInstructors(instructors);
+      setStudents(students);
+    })();
+  }, [courseUrl, instructorUrl, studentUrl]);
 
   function addNewUser() {
     setShowNewUser(true);
@@ -48,34 +53,43 @@ export default function AdminTable() {
   function addExistingUser() {
     setShowExistingUser(true);
   }
-  
-  // NEXT: 
-  // Set up the AddExistingUser components
+
+  // NEXT:
   // Add button to remove user from course
-  // Add button to change user role 
+  // Add button to change user role
 
   return (
     <section className='mt-12'>
       <div className='flex flex-row justify-evenly gap-4 align-middle'>
         <h1>{course?.title}</h1>
         <div className='flex flex-row gap-2 w-1/12'>
-        <IconButton
-          icon={<MdOutlinePersonAddAlt />}
-          title='Add Existing User'
-          onClick={addNewUser}
-        ></IconButton>
-        <IconButton
-          icon={<MdOutlinePersonAddAlt />}
-          title='Add New User'
-          onClick={addExistingUser}
-        ></IconButton>
-
+          <IconButton
+            icon={<MdOutlinePersonAddAlt />}
+            title='Add New User'
+            onClick={addNewUser}
+          ></IconButton>
+          <IconButton
+            icon={<MdOutlinePersonAddAlt />}
+            title='Add Existing User'
+            onClick={addExistingUser}
+          ></IconButton>
         </div>
       </div>
 
-      {showNewUser && <AddNewUser courseId={courseId} setShowNewUser={setShowNewUser} />}
-      {showExistingUser && <AddExistingUser courseId={courseId} setShowExistingUser={setShowExistingUser} />}
-
+      {showNewUser && (
+        <AddNewUser 
+          courseId={courseId} 
+          setShowNewUser={setShowNewUser} 
+          roles={roles}
+        />
+      )}
+      {showExistingUser && (
+        <AddExistingUser
+          courseId={courseId}
+          setShowExistingUser={setShowExistingUser}
+          roles={roles}
+        />
+      )}
 
       {(course?.instructors || course?.students) && (
         <div className='grid grid-cols-3 p-8 gap-y-1 w-1/2 mx-auto'>

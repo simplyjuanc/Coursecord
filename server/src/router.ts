@@ -12,36 +12,20 @@ const router = Router();
 router.post('/organisation', Auth.requireAuth, Organisation.addOrganisation);
 router.get('/organisation', Organisation.getOrganisations);
 router.get('/organisation/:orgId', Organisation.getOrganisationById);
-router.put(
-  '/organisation/:orgId',
-  Auth.requireAuth,
-  Organisation.editOrganisation
-);
-router.delete(
-  '/organisation/:orgId',
-  Auth.requireAuth,
-  Organisation.deleteOrganisation
-);
+router.put('/organisation/:orgId', Auth.requireAuth, Organisation.editOrganisation);
+router.delete('/organisation/:orgId', Auth.requireAuth, Organisation.deleteOrganisation);
 
 router.get('/course', Course.getCourses);
 router.post('/:orgId/course', Auth.requireAuth, Course.addCourse);
 router.get('/:orgId/course', Course.getCoursesByOrganisation);
 router.get('/course/:courseId', Course.getCourseById);
 router.put('/course/:courseId', Auth.requireAuth, Course.editCourse);
-router.delete(
-  '/course/:orgId/:courseId',
-  Auth.requireAuth,
-  Course.deleteCourse
-);
+router.delete('/course/:orgId/:courseId', Auth.requireAuth, Course.deleteCourse);
 
 router.post('/signIn', User.signIn);
 router.get('/:orgId/users', User.getUsersByOrg);
 router.put('/user/:userId/:roleId', Auth.requireAuth, User.assignRoleToUser);
-router.delete(
-  '/user/:userId/:roleId',
-  Auth.requireAuth,
-  User.removeRoleFromUser
-);
+router.delete('/user/:userId/:roleId',Auth.requireAuth,User.removeRoleFromUser);
 router.delete('/user/:userId', Auth.requireAuth, User.deleteUser);
 
 // router.get('/:orgId/instructors', User.getInstructorsByOrg);
@@ -54,20 +38,13 @@ router.put('/section/:sectionId', Auth.requireAuth, Section.editSection);
 router.delete('/section/:sectionId', Auth.requireAuth, Section.deleteSection);
 
 router.post('/unit/:orgId/:sectionId', Auth.requireAuth, Unit.addCourseUnit);
-router.put(
-  '/unit/:sectionId/:unitId',
-  Auth.requireAuth,
-  Unit.addUnitToSection
-);
+router.put('/unit/:sectionId/:unitId',Auth.requireAuth,Unit.addUnitToSection);
 router.put('/unit/:unitId', Auth.requireAuth, Unit.editContent);
-router.delete(
-  '/unit/:sectionId/:unitId',
-  Auth.requireAuth,
-  Unit.removeUnitFromSection
-);
+router.delete('/unit/:sectionId/:unitId',Auth.requireAuth,Unit.removeUnitFromSection);
 router.delete('/content/:contentId', Auth.requireAuth, Unit.deleteContent);
 
 
+router.get('/:orgId/roles', Role.getRoles);
 //Not part of MVP
 router.post('/:orgId/role', Role.addRole);
 router.delete('/role/:roleId', Role.removeRole);

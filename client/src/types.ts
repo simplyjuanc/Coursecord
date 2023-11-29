@@ -26,3 +26,23 @@ export interface Course {
 export interface CourseComponetProps {
   course: Course;
 }
+
+export interface NavItem {
+  title: string;
+  href: string;
+  icon: JSX.Element;
+}
+
+export interface Unit {
+  id: string;
+  owner: string;
+  title: string;
+  type: string;
+  markdown_body: string;
+}
+
+export interface Section {
+  id: string;
+  title: string;
+  units: Unit[];
+}

@@ -2,8 +2,8 @@ import { MdOutlineSupportAgent } from 'react-icons/md';
 
 export default function Help() {
   return (
-    <section className='h-screen flex items-center'>
-      <div className='mx-auto w-3/5 h-2/3 bg-white shadow-lg border-solid border-2 border-grey-600 rounded-lg p- flex flex-col items-center justify-evenly'>
+    <section className='h-screen w-full flex items-center'>
+      <div className='mx-auto min-w-max w-1/3 aspect-square bg-white shadow-lg border-solid border-2 border-grey-600 rounded-lg flex flex-col items-center justify-evenly'>
         <div className='flex items-center text-4xl font-bold text-center drop-shadow-lg'>
           <MdOutlineSupportAgent />
           <h2>

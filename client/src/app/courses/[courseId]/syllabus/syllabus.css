@@ -1,0 +1,27 @@
+.react-markdown > * {
+  max-width: 100%;
+}
+
+.react-markdown h1 {
+  font-size: 2em;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+}
+
+.react-markdown p {
+  font-size: 1rem;
+}
+
+.react-markdown 
+
+.react-markdown ul {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  max-width: 100%;
+}
+
+.reactmarkdown ul li {
+  margin-left: 2em;
+  display: list-item;
+  text-align: -webkit-match-parent;
+}

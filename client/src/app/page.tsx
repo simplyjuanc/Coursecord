@@ -16,20 +16,18 @@ export default function Login() {
   const { data: session } = useSession();
    let router = useRouter();
   
-
   useEffect(() => {
       (async function () {
         if (session) {
           try {
-            const response = await axios.get(`${process.env.API_URL}/course`);
+            const response = await axios.get(`${process.env.API_URL || 'http://localhost:5000'}/course`);
             const courseId = response.data[0].id;
-            router.push(`/course/${courseId}/homepage`);
+            router.push(`/courses/${courseId}/dashboard`);
           } catch (error) {
             console.error(error);
           }
         }
       })();
-    // }
   }, [session]);
 
   return (

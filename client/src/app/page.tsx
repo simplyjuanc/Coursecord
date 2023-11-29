@@ -14,20 +14,10 @@ import googleL from "/public/login/googleB.png";
 
 export default function Login() {
   const { data: session } = useSession();
-  let router = useRouter();
-
-  useEffect(() => {
-    (async function () {
-      if (session) {
-        const response = await axios.get(`http://localhost:5000/course`);
-        const courseId = response.data[0].id;
-
-        router.push(`/courses/${courseId}/dashboard`);
-      }
-    })();
-    // }
-  }, [session]);
-
+  const router = useRouter();
+  const handleCourses = () => {
+    router.push("/courses");
+  };
   return (
     <div className="flex flex-col flex-nowrap min-h-screen justify-around">
       <div className="relative">
@@ -42,14 +32,25 @@ export default function Login() {
             Coursecord will help you learn, <br />
             wherever and whenever you want
           </p>
-          <Image
-            src={googleL}
-            alt="Google Login"
-            width={400}
-            height={600}
-            onClick={() => signIn("google")}
-            style={{ cursor: "pointer" }}
-          />
+          {session ? (
+            <div className="pt-6">
+              <button
+                onClick={(e) => handleCourses()}
+                className="bg-white hover:bg-gray-100 rounded-xl text-2xl text-primary-red px-6 py-3"
+              >
+                Courses
+              </button>
+            </div>
+          ) : (
+            <Image
+              src={googleL}
+              alt="Google Login"
+              width={400}
+              height={600}
+              onClick={() => signIn("google")}
+              style={{ cursor: "pointer" }}
+            />
+          )}
         </div>
       </div>
       <div className="flex flex-row flex-nowrap p-20 gap-12 mb-10 -mt-5">

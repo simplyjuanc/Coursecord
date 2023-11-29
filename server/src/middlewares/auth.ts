@@ -12,17 +12,17 @@ async function requireAuth(
     const accessToken = req.headers.authorization;
 
     if (!accessToken) {
-      return res.status(401).send({ message: 'Unauthorised' });
+      return res.status(401).send({ message: 'No access token found' });
     }
 
     const googleUser = await getGoogleUser(accessToken);
     if(!googleUser) {
-      return res.status(401).send({message: 'Unauthorised'});
+      return res.status(401).send({message: 'No Google user found'});
     }
 
     const user = await User.getUserByEmail(googleUser.email);
     if (!user) {
-      return res.status(404).send({message: 'User not found'});
+      return res.status(404).send({message: 'No user email found'});
     }
 
     (req as RequestWithUser).user = user;

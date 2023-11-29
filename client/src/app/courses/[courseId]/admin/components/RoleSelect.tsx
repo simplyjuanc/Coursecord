@@ -1,9 +1,9 @@
-import { TRole } from '@/@types';
+import { Role } from '@/@types';
 import React from 'react';
 
 type RoleSelectProps = {
-  roles: TRole[];
-  setRole: React.Dispatch<React.SetStateAction<TRole | undefined>>;
+  roles: Role[];
+  setRole: React.Dispatch<React.SetStateAction<Role | undefined>>;
 };
 export function RoleSelect({ roles, setRole }: RoleSelectProps) {
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -14,7 +14,7 @@ export function RoleSelect({ roles, setRole }: RoleSelectProps) {
     <select
       name='role'
       placeholder='Student'
-      className='ml-auto'
+      className='px-5 text-center rounded-md'
       onChange={handleChange}
     >
       <option value=''>Select role</option>

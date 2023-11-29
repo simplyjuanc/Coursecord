@@ -11,7 +11,7 @@ export function UserSelect({ users, setSelectedUser }: UserSelectProps) {
   }
 
   return (
-    <select name="users" id="users" onChange={handleChange}>
+    <select className='text-center rounded-md' name="users" id="users" onChange={handleChange}>
       <option value="">Select user</option>
       {users.map(user => <option key={user.id} value={user.id}>{user.name}</option>)}
     </select>

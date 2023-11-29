@@ -8,10 +8,10 @@ export default function IconButton(props: {
   return (
     <button
       onClick={(e) => props.onClick(e)}
-      className='text-3xl flex bg-primary-red bg-opacity-20 text-primary-red px-4 py-2 rounded-xl min-w-full'
+      className='flex min-w-full px-4 py-2 text-2xl bg-primary-red bg-opacity-20 text-primary-red rounded-xl'
     >
       <div className='my-auto mr-6'>{props.icon}</div>
-      <h1 className='my-auto text font-semibold'>{props.title}</h1>
+      <h1 className='my-auto font-semibold text'>{props.title}</h1>
     </button>
   );
 }

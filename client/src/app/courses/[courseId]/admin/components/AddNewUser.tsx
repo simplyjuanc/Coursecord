@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { RoleSelect } from './RoleSelect';
 import {  Role } from '@/@types';
 
@@ -21,6 +21,14 @@ export default function AddNewUser({setShowNewUser, courseId, roles}:AddUserProp
     });
   }
 
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setShowNewUser(false);
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return (() => window.removeEventListener('keydown', handleKeyDown));
+
+  },[setShowNewUser]);
 
   // TODO: Fetch request to add new user to course, looking for their email or their name
   // TODO: Add new user to the course (need to create addUser route and controller in backend)

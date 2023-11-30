@@ -7,6 +7,7 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import IconButton from '../buttons/iconButton';
 import SectionForm from '../syllabusForms/sectionForm';
+import UnitForm from '../syllabusForms/unitForm';
 
 interface SyllabusSidebarProps {
   sections: CompiledSection[];
@@ -29,10 +30,20 @@ export default function SyllabusSidebar({
     defaultActiveSections[section.id] = false;
   });
 
-  const [formOpen, setFormOpen] = useState(false);
+  const [sectionFormOpen, setSectionFormOpen] = useState(false);
+  const [unitFormsOpen, setUnitFormsOpen] = useState<Record<string, boolean>>(
+    defaultActiveSections
+  );
   const [activeSections, setActiveSections] = useState<Record<string, boolean>>(
     defaultActiveSections
   );
+
+  function closeSectionForm() {
+    setSectionFormOpen(false);
+  }
+  function closeUnitForm(sectionId: string) {
+    setUnitFormsOpen((prev) => ({ ...prev, [sectionId]: false }));
+  }
 
   function SyllabusSection({ section }: { section: CompiledSection }) {
     return (
@@ -46,10 +57,10 @@ export default function SyllabusSidebar({
           <div className='w-full pr-4 pl-4'>
             <button
               onClick={() =>
-                setActiveSections({
-                  ...activeSections,
-                  [section.id]: !activeSections[section.id],
-                })
+                setActiveSections((prev) => ({
+                  ...prev,
+                  [section.id]: !prev[section.id],
+                }))
               }
               className={
                 `flex text-3xl p-2 min-w-full rounded-xl` +
@@ -91,10 +102,16 @@ export default function SyllabusSidebar({
                     title={'Unit'}
                     icon={<CgAddR />}
                     onClick={() => {
-                      console.log('add unit');
+                      setUnitFormsOpen((prev) => ({
+                        ...prev,
+                        [section.id]: !prev[section.id],
+                      }));
                     }}
                   />
                 </div>
+              )}
+              {unitFormsOpen[section.id] && (
+                <UnitForm sectionId={section.id} closeForm={closeUnitForm} />
               )}
             </ol>
           </div>
@@ -126,12 +143,12 @@ export default function SyllabusSidebar({
                 title={'Section'}
                 icon={<CgAddR />}
                 onClick={() => {
-                  setFormOpen((prev) => !prev);
+                  setSectionFormOpen((prev) => !prev);
                 }}
               />
             </div>
           )}
-          {formOpen && <SectionForm />}
+          {sectionFormOpen && <SectionForm closeForm={closeSectionForm} />}
         </div>
       </div>
     </div>

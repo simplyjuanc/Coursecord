@@ -14,7 +14,6 @@ const userSlice = createSlice({
   reducers: {
     setUser: (state, { payload }: PayloadAction<{ user: DbUser }>) => {
       state.user = payload.user;
-      console.log('SETTING USER');
     },
     setRoles: (state, { payload }: PayloadAction<{ roles: RoleWithOrg[] }>) => {
       state.roles = payload.roles;

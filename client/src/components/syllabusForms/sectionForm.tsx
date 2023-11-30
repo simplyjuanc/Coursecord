@@ -9,7 +9,7 @@ import { useDispatch } from 'react-redux';
 
 const baseUr = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
 
-export default function SectionForm() {
+export default function SectionForm({ closeForm }: { closeForm: () => void }) {
   const dispatch = useDispatch();
   const { data: session } = useSession();
   const course = useAppSelector((state) => state.course.courseInfo);
@@ -37,6 +37,8 @@ export default function SectionForm() {
         },
       })
     );
+    setTitle('');
+    closeForm()
   }
 
 

@@ -19,7 +19,6 @@ const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
 export async function getCourseData(courseId: string) {
   try {
-    console.log('GETTING COURSE DATA');
     const coursePromise = axios.get<Course>(`${baseUrl}/course/${courseId}`);
     const syllabusPromise = axios.get<Section[]>(
       `${baseUrl}/syllabus/${courseId}`
@@ -28,7 +27,6 @@ export async function getCourseData(courseId: string) {
       coursePromise,
       syllabusPromise,
     ]);
-    console.log('COURSE', courseResponse.data, 'SYLLABUS', syllabusResponse.data)
     if (courseResponse.status !== 200 || syllabusResponse.status !== 200) {
       throw new Error('Error fetching course data');
     }
@@ -46,7 +44,6 @@ export async function getCourseData(courseId: string) {
     );
     
     const compiledSections = await Promise.all(compiledSectionPromises);
-    console.log('AFTER');
     const course = courseResponse.data;
 
     const info = {
@@ -61,7 +58,6 @@ export async function getCourseData(courseId: string) {
 
     store.dispatch(setCourseInfo({ info }));
     store.dispatch(setSyllabus({ syllabus }));
-    console.log('SYLLABUS', syllabus);
   } catch (error) {
     console.log(error);
   }

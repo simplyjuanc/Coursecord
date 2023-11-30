@@ -11,7 +11,6 @@ async function getUserByEmail(email: string) {
 }
 
 async function getUserById(id: string) {
-  console.log(id)
   try {
     const user = await User.findUnique({ where: { id } });
     return user;

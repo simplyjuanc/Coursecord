@@ -1,7 +1,7 @@
-import { Role } from "./index";
-import Organisation from "./organisation";
-import User from "../models/user";
-import role from "../controllers/role";
+import { Role } from './index';
+import Organisation from './organisation';
+import User from '../models/user';
+
 
 async function createDefaultRoles() {
   const newRoles = [];
@@ -70,6 +70,13 @@ async function deleteRolesInOrg(orgRoles: string[]) {
   return deletedRoles;
 }
 
+async function getRolesByOrg(orgId: string) {
+  const org = await Organisation.getOrganisationById(orgId);
+  if (!org) throw new Error('Organisation Not Found');
+  const roles = await Role.findMany({ where: { id: { in: org.roles } } });
+  return roles;
+}
+
 async function getRolesByUser(userId: string) {
   const userPromise = User.getUserById(userId);
   const orgsWithUserPromise = Organisation.getOrganisationsWithMember(userId);
@@ -97,10 +104,12 @@ async function getRolesByUser(userId: string) {
 
   return roles;
 }
+
 export default {
   createDefaultRoles,
   userRolesIncludes,
   getRoleByTitle,
   deleteRolesInOrg,
   getRolesByUser,
+  getRolesByOrg
 };

@@ -1,13 +1,11 @@
 "use client";
 import { DbUser, SessionWithToken, THelpRequest } from "@/types";
 import axios from "axios";
-import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { MdSupportAgent } from "react-icons/md";
 import { Socket, io } from "socket.io-client";
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
+import React from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
@@ -49,7 +47,7 @@ export default function Help() {
         <div className="p-2">
           <div className="flex">
             <div className="my-auto">
-              <img
+              <Image
                 src={props.item.students[0].image ?? ""}
                 alt={""}
                 width={30}

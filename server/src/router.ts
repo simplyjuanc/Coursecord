@@ -72,13 +72,14 @@ router.delete(
   Auth.requireAuth,
   Unit.removeUnitFromSection
 );
-router.delete("/unit/:unitId", Auth.requireAuth, Unit.deleteContent);
-router.get("/section/units/:sectionId", Unit.getUnitsBySection);
+router.delete('/unit/:unitId', Auth.requireAuth, Unit.deleteContent);
+router.get('/section/units/:sectionId', Unit.getUnitsBySection);
 
+router.get('/:orgId/roles', Role.getRolesByOrg);
+router.get('/user/role/:userId', Role.getRolesByUser);
 //Not part of MVP
-router.get("/user/role/:userId", Role.getRolesByUser);
-router.post("/:orgId/role", Role.addRole);
-router.delete("/role/:roleId", Role.removeRole);
-router.put("/role/:roleId", Role.editRole);
+router.post('/:orgId/role', Role.addRole);
+router.delete('/role/:roleId', Role.removeRole);
+router.put('/role/:roleId', Role.editRole);
 
 export default router;

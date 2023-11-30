@@ -1,5 +1,6 @@
 import { Organisation as TOrganisation } from '@prisma/client';
 import { Organisation } from './index';
+import Course from './course';
 import Role from './role';
 
 async function createOrganisation(name: string, owner: string) {
@@ -84,9 +85,11 @@ async function setOrganisationUnits(orgId: string, units: string[]) {
   return updatedOrg;
 }
 
-async function getOrganisationWithSection(sectionId: string) {
+async function getOrgWithSection(sectionId: string) {
+  const course = await Course.getCourseWithSection(sectionId);
+  if(!course) throw new Error('Course not found');
   const org = await Organisation.findFirst({
-    where: { content: { has: sectionId } },
+    where: { courses: { has: course.id } },
   });
 
   return org;
@@ -136,9 +139,9 @@ export default {
   deleteOrganisation,
   getOrganisationWithUnit,
   setOrganisationUnits,
-  getOrganisationWithSection,
   getOrganisationWithCourse,
   getOrganisationWithRole,
   addMemberToOrganisation,
-  getOrganisationsWithMember
+  getOrganisationsWithMember,
+  getOrgWithSection
 };

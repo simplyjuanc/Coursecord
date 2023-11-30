@@ -82,17 +82,21 @@ async function removeUnitFromSection(req: Request, res: Response) {
 async function deleteContent(req: Request, res: Response) {
   try {
     const { unitId } = req.params;
+    console.log('UNIT', unitId)
     const org = await Organisation.getOrganisationWithUnit(unitId);
+    console.log('ORG', org);
     if (!org) {
       return res.status(401).send({ message: "Invalid unit" });
     }
 
+
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
-      return res.status(401).send({ message: "Unauthorised" });
+    if (!(await Role.userRolesIncludes(userRoles, 'admin', org.id))) {
+      return res.status(401).send({ message: 'Missing Permission' });
     }
 
     const deletedUnit = await CourseUnit.deleteCourseUnit(unitId);
+    console.log('DELETED', deletedUnit);
     const sections = await CourseSection.getSectionsWithUnit(unitId);
 
     const updateSectionPromises = sections.map(async (section) => {
@@ -119,6 +123,7 @@ async function editContent(req: Request, res: Response) {
   try {
     const { unitId } = req.params;
     const org = await Organisation.getOrganisationWithUnit(unitId);
+    console.log(org)
     if (!org) {
       return res.status(401).send({ message: "Invalid Unit" });
     }
@@ -138,7 +143,7 @@ async function editContent(req: Request, res: Response) {
 
 async function sectionAndUnitAreValid(sectionId: string, unitId: string) {
   const orgWithSectionPromise =
-    Organisation.getOrganisationWithSection(sectionId);
+    Organisation.getOrgWithSection(sectionId);
   const orgWithUnitPromise = Organisation.getOrganisationWithUnit(unitId);
   const [orgWithSection, orgWithUnit] = await Promise.all([
     orgWithSectionPromise,

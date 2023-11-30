@@ -40,9 +40,10 @@ export interface Unit {
   id: string;
   owner: string;
   title: string;
-  type: string;
+  type: 'lesson' | 'excercise' | 'test'
   markdown_body: string;
 }
+
 
 export interface Section {
   id: string;

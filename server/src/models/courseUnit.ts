@@ -1,10 +1,14 @@
 import { CourseUnitInfo } from '../types';
-import { CourseUnit } from './index';
-import CourseSection  from '../models/courseSection';
+import { CourseUnit, Organisation } from './index';
+import CourseSection from '../models/courseSection';
 
 async function createCourseUnit(owner: string, courseUnitData: CourseUnitInfo) {
   const newCourseUnit = await CourseUnit.create({
     data: { ...courseUnitData, owner },
+  });
+  await Organisation.update({
+    where: { id: owner },
+    data: { content: { push: newCourseUnit.id } },
   });
   return newCourseUnit;
 }
@@ -31,10 +35,15 @@ async function getUnitsBySection(sectionId: string) {
   if (!section) throw new Error('No unique section found');
 
   const units = await CourseUnit.findMany({
-    where: { id: {in: section.content} } ,
+    where: { id: { in: section.content } },
   });
 
   return units;
 }
 
-export default { createCourseUnit, deleteCourseUnit, editCourseUnit, getUnitsBySection };
+export default {
+  createCourseUnit,
+  deleteCourseUnit,
+  editCourseUnit,
+  getUnitsBySection,
+};

@@ -31,13 +31,13 @@ export default function EditUser({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setShowUser]);
 
-  function handleInputs(e: React.MouseEvent<HTMLInputElement>) {
+  function handleInputs(e: React.ChangeEvent<HTMLInputElement>) {
     const { value, checked } = e.target as HTMLInputElement;
-    console.log('target :>> ', checked ? value : 'empty');
+    console.log('value, checked :>> ', value, checked);
     setSelectedRoles((prevRoles) =>
-      checked
-        ? [...prevRoles, value]
-        : prevRoles.filter((role) => role !== value)
+      checked ? 
+        [...prevRoles, value] : 
+        prevRoles.filter((role) => role !== value)
     );
     console.log('selectedRoles :>> ', selectedRoles);
   }
@@ -54,7 +54,9 @@ export default function EditUser({
           })
       });
 
-      await Promise.all(roleDeletion);
+      const deletedRoles = await Promise.all(roleDeletion);
+      const deletionOk = deletedRoles.every((role) => role.ok);
+      if (!deletionOk) throw new Error('Not all roles could be deleted.');
 
       const results = selectedRoles.map(async (role) => {
         return fetch(`${baseUrl}/user/${user.id}/${role}`, {
@@ -66,11 +68,9 @@ export default function EditUser({
       });
 
       const newRoles = await Promise.all(results);
-      console.log('newRoles :>> ', newRoles);
-      const ok = newRoles.every((role) => role.ok);
-      console.log('ok :>> ', ok);
+      const additionOk = newRoles.every((role) => role.ok);
 
-      if (ok) closeModal();
+      if (additionOk) closeModal();
       else throw new Error('Not all roles could be assigned.');
     } catch (e) {
       console.error(e);
@@ -113,7 +113,7 @@ export default function EditUser({
                     <input
                       value={role.id}
                       type='checkbox'
-                      onClick={handleInputs}
+                      onChange={handleInputs}
                       checked={selectedRoles?.includes(role.id)}
                     />
                     <label>

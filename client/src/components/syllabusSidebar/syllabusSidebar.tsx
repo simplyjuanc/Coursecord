@@ -1,13 +1,19 @@
 'use client';
-import { CompiledSection, Unit } from '../../types';
-import Sidebar from '../sidebar/sidebar';
+import { CompiledSection, SessionWithToken, Unit } from '../../types';
 import { CgAlbum } from 'react-icons/cg';
 import { CgAddR } from 'react-icons/cg';
-import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import IconButton from '../buttons/iconButton';
 import SectionForm from '../syllabusForms/sectionForm';
 import UnitForm from '../syllabusForms/unitForm';
+import { RiBook2Line } from 'react-icons/ri';
+import { FaPencilRuler } from 'react-icons/fa';
+import { IoDocumentTextOutline } from 'react-icons/io5';
+import { IoIosClose } from 'react-icons/io';
+import { useAppDispatch } from '@/store';
+import { deleteSection as deleteSectionReducer } from '@/store/slices/courseSlice';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
 interface SyllabusSidebarProps {
   sections: CompiledSection[];
@@ -18,13 +24,14 @@ interface SyllabusSidebarProps {
   isAdmin: boolean;
 }
 
-export default function SyllabusSidebar({
-  isAdmin,
-  sections,
-  courseName,
-  selectUnit,
-  selectedUnit,
-}: SyllabusSidebarProps) {
+const baseUrl = process.env.API_URL || 'http://localhost:5000';
+
+export default function SyllabusSidebar(props: SyllabusSidebarProps) {
+  const { isAdmin, sections, courseName, selectUnit, selectedUnit } = props;
+  const {data: session} = useSession()
+
+  const dispatch = useAppDispatch();
+
   const defaultActiveSections: Record<string, boolean> = {};
   sections.forEach((section) => {
     defaultActiveSections[section.id] = false;
@@ -45,7 +52,21 @@ export default function SyllabusSidebar({
     setUnitFormsOpen((prev) => ({ ...prev, [sectionId]: false }));
   }
 
+  async function deleteSection(sectionId: string) {
+    dispatch(deleteSectionReducer({sectionId}))
+    await axios.delete(`${baseUrl}/section/${sectionId}`, {
+      headers: {
+        Authorization: (session as SessionWithToken)!.accessToken,
+      }
+    })
+  }
+
   function SyllabusSection({ section }: { section: CompiledSection }) {
+    const unitIcons = {
+      lesson: <RiBook2Line />,
+      excercise: <FaPencilRuler />,
+      test: <IoDocumentTextOutline />,
+    };
     return (
       <>
         <div className='flex flex-row-reverse'>
@@ -73,6 +94,16 @@ export default function SyllabusSidebar({
                 <CgAlbum />
               </div>
               <h2 className='font-semibold pl-3'>{section.title}</h2>
+              <div
+                onClick={() => {deleteSection(section.id)}}
+                className={`ml-auto hover:${
+                  activeSections[section.id]
+                    ? 'text-primary-black'
+                    : 'text-primary-red'
+                }`}
+              >
+                <IoIosClose />
+              </div>
             </button>
           </div>
         </div>
@@ -85,13 +116,14 @@ export default function SyllabusSidebar({
                   <li key={index}>
                     <button
                       onClick={() => selectUnit(unit)}
-                      className={`flex text-3xl p-2 min-w-full rounded-xl mt-2 ${
+                      className={`flex items-center text-3xl p-2 min-w-full rounded-xl mt-2 ${
                         selectedUnit === unit.id
                           ? 'bg-primary-red bg-opacity-10 text-primary-red'
                           : 'hover:bg-primary-red hover:bg-opacity-5 rounded-xl p-2 w-full'
                       }`}
                     >
-                      {unit.title}
+                      {unitIcons[unit.type]}
+                      <div className='ml-2'>{unit.title}</div>
                     </button>
                   </li>
                 );

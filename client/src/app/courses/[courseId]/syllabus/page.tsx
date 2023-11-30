@@ -3,13 +3,14 @@ import SyllabusSidebar from '@/components/syllabusSidebar/syllabusSidebar';
 import { CompiledSection, Section, SessionWithToken, Unit } from '@/types';
 import { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { FaPen } from 'react-icons/fa';
-import { FaRegSave } from 'react-icons/fa';
+import { MdOutlineEdit } from 'react-icons/md';
+import { AiOutlineSave } from 'react-icons/ai';
+import { RiDeleteBin4Line } from 'react-icons/ri';
 import Markdown from '@/components/markdown-render/markdownRenderer';
 import MarkdownForm from '@/components/syllabusForms/markdownForm';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { updateUnit } from '@/store/slices/courseSlice';
+import { deleteUnit as deleteUnitReducer, updateUnit } from '@/store/slices/courseSlice';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
 
@@ -29,7 +30,6 @@ export default function Syllabus() {
   const user = useAppSelector((state) => state.user);
   const isAdmin =
     user && user.roles.map((role) => role.title).includes('admin');
-
 
   function selectUnit(unit: Unit) {
     setActiveUnit(unit.id !== activeUnit?.id ? unit : undefined);
@@ -60,6 +60,15 @@ export default function Syllabus() {
     setSaving('done');
   }
 
+  async function deleteUnit() {
+    dispatch(deleteUnitReducer({ unitId: activeUnit!.id }));
+    setActiveUnit(undefined);
+    await axios.delete(`${baseUrl}/unit/${activeUnit!.id}`, {
+      headers: {
+        Authorization: (session as SessionWithToken)!.accessToken,
+      },
+    });
+  }
 
   return (
     <>
@@ -72,19 +81,27 @@ export default function Syllabus() {
                 : 'Choose a unit to view from the right!'}
             </h2>
             {isAdmin && editMode && (
-              <button
-                onClick={saveChanges}
-                className='mx-4 my-4 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
-              >
-                <FaRegSave />
-              </button>
+              <>
+                <button
+                  onClick={deleteUnit}
+                  className='mx-4 my-4 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                >
+                  <RiDeleteBin4Line />
+                </button>
+                <button
+                  onClick={saveChanges}
+                  className='mx-4 my-4 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                >
+                  <AiOutlineSave />
+                </button>
+              </>
             )}
-            {isAdmin && (
+            {isAdmin && activeUnit != null && (
               <button
                 onClick={() => setEditMode((prev) => !prev)}
                 className='mx-4 my-4 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
               >
-                <FaPen />
+                <MdOutlineEdit />
               </button>
             )}
           </div>

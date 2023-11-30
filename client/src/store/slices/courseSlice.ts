@@ -60,6 +60,29 @@ const courseSlice = createSlice({
         return { ...state, syllabus: newSyllabus };
       }
     },
+    deleteUnit: (state, { payload }: PayloadAction<{ unitId: string }>) => {
+      if (state.syllabus && state.courseInfo) {
+        const newSyllabus = state.syllabus.map((section) => {
+          const units = section.units.filter(
+            (unit) => unit.id !== payload.unitId
+          );
+
+          return {
+            ...section,
+            units,
+          };
+        });
+        return { ...state, syllabus: newSyllabus };
+      }
+    },
+    deleteSection: (state, { payload }: PayloadAction<{ sectionId: string }>) => {
+      if (state.syllabus && state.courseInfo) {
+        const newSyllabus = state.syllabus.filter(
+          (section) => section.id !== payload.sectionId
+        );
+        return { ...state, syllabus: newSyllabus };
+      }
+    }
   },
 });
 
@@ -69,6 +92,8 @@ export const {
   addSection,
   addUnitToSection,
   updateUnit,
+  deleteUnit,
+  deleteSection,
 } = courseSlice.actions;
 
 export default courseSlice.reducer;

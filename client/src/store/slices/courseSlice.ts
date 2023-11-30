@@ -26,11 +26,12 @@ const courseSlice = createSlice({
     addSection: (
       state,
       { payload }: PayloadAction<{ section: CompiledSection }>
-
+    ) => {
       if (state.syllabus && state.courseInfo) {
         state.syllabus.push(payload.section);
       }
     },
+
     addUnitToSection: (
       state,
       { payload }: PayloadAction<{ sectionId: string; unit: Unit }>

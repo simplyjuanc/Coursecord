@@ -49,7 +49,8 @@ export default function SectionForm({ closeForm }: { closeForm: () => void }) {
         type='text'
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className='border-solid border-gray-500 border-2 rounded-md h-10 max-w-full my-2 px-2'
+        required
+        className='border-solid border-primary-gray border-opacity-50 border-2 rounded-md h-10 w-full my-2 px-2'
       />
       <button
         type='submit'

@@ -34,7 +34,7 @@ async function addSection(req: Request, res: Response) {
 async function editSection(req: Request, res: Response) {
   try {
     const { sectionId } = req.params;
-    const org = await Organisation.getOrganisationWithSection(sectionId);
+    const org = await Organisation.getOrgWithSection(sectionId);
     if (!org) {
       return res.status(401).send({ message: 'Invalid Section' });
     }
@@ -60,7 +60,8 @@ async function editSection(req: Request, res: Response) {
 async function deleteSection(req: Request, res: Response) {
   try {
     const { sectionId } = req.params;
-    const org = await Organisation.getOrganisationWithSection(sectionId);
+    const org = await Organisation.getOrgWithSection(sectionId);
+    console.log(org);
     if (!org) {
       return res.status(401).send({ message: 'Invalid Organisation' });
     }

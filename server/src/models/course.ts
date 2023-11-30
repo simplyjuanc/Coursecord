@@ -68,6 +68,14 @@ async function addSectionToCourse(courseId: string, sectionId: string) {
   return updatedCourse;
 }
 
+async function getCourseWithSection(sectionId: string) {
+  const course = await Course.findFirst({
+    where: { syllabus: { has: sectionId } },
+  });
+
+  return course;
+}
+
 export default {
   createCourse,
   getCourses,
@@ -79,5 +87,6 @@ export default {
   addStudentToCourse,
   getCoursesWithStudent,
   getCoursesWithInstructor,
-  addSectionToCourse
+  addSectionToCourse,
+  getCourseWithSection
 };

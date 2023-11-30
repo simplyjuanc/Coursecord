@@ -7,6 +7,11 @@ import { SessionWithToken } from '@/types';
 import axios from 'axios';
 import { addUnitToSection } from '@/store/slices/courseSlice';
 
+import { RiBook2Line } from 'react-icons/ri';
+import { FaPencilRuler } from 'react-icons/fa';
+import { IoDocumentTextOutline } from 'react-icons/io5';
+
+
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
 
 export default function UnitForm({
@@ -39,8 +44,7 @@ export default function UnitForm({
     );
     if (unitResponse.status === 201) {
       const newUnit = unitResponse.data.newUnit;
-      dispatch(addUnitToSection({sectionId,unit: newUnit})
-      );
+      dispatch(addUnitToSection({ sectionId, unit: newUnit }));
     }
 
     setTitle('');
@@ -55,12 +59,13 @@ export default function UnitForm({
         type='text'
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className='border-solid border-gray-500 border-2 rounded-md h-10 max-w-full my-2 px-2'
+        required
+        className='border-solid border-primary-gray border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2'
       />
-      <select value={type} onChange={(e) => setType(e.target.value)}>
-        <option value='lesson'>Lesson</option>
-        <option value='excercise'>Excecise</option>
-        <option value='test'>Test</option>
+      <select className='p-2 mb-2 font-semibold border-solid border-primary-gray border-opacity-30 border-2 rounded-lg' value={type} onChange={(e) => setType(e.target.value)}>
+        <option value='lesson'><RiBook2Line />Lesson</option>
+        <option value='excercise'><FaPencilRuler />Excercse</option>
+        <option value='test'><IoDocumentTextOutline />Test</option>
       </select>
       <button
         type='submit'

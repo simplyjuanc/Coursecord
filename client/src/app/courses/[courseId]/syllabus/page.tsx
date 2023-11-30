@@ -10,7 +10,10 @@ import Markdown from '@/components/markdown-render/markdownRenderer';
 import MarkdownForm from '@/components/syllabusForms/markdownForm';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { deleteUnit as deleteUnitReducer, updateUnit } from '@/store/slices/courseSlice';
+import {
+  deleteUnit as deleteUnitReducer,
+  updateUnit,
+} from '@/store/slices/courseSlice';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
 
@@ -24,6 +27,8 @@ export default function Syllabus() {
     (state) => state.course.syllabus
   );
   const [editText, setEditText] = useState<string>('');
+  const [unitTitle, setUnitTitle] = useState<string>('');
+  const [unitType, setUnitType] = useState<string>('lesson');
   const [saving, setSaving] = useState<'saving' | 'done'>();
   const { data: session } = useSession();
 
@@ -34,13 +39,21 @@ export default function Syllabus() {
   function selectUnit(unit: Unit) {
     setActiveUnit(unit.id !== activeUnit?.id ? unit : undefined);
     setEditText(unit.markdown_body);
+    setUnitTitle(unit.title);
+    setUnitType(unit.type);
     setSaving(undefined);
+    setEditMode(false);
   }
 
   if (!activeUnit && editMode) setEditMode(false);
 
   async function saveChanges() {
-    setActiveUnit((prev) => ({ ...prev!, markdown_body: editText }));
+    setActiveUnit((prev) => ({
+      ...prev!,
+      title: unitTitle,
+      markdown_body: editText,
+      type: unitType as 'lesson' | 'excercise' | 'test',
+    }));
     setEditMode(false);
     setSaving('saving');
     await axios.put(
@@ -55,7 +68,14 @@ export default function Syllabus() {
       }
     );
     dispatch(
-      updateUnit({ newUnit: { ...activeUnit!, markdown_body: editText } })
+      updateUnit({
+        newUnit: {
+          ...activeUnit!,
+          title: unitTitle,
+          markdown_body: editText,
+          type: unitType as 'lesson' | 'excercise' | 'test',
+        },
+      })
     );
     setSaving('done');
   }
@@ -76,9 +96,19 @@ export default function Syllabus() {
         <div className='flex flex-col w-[60vw] mx-auto h-screen overflow-y-auto'>
           <div className='flex w-full justify-end'>
             <h2 className='text-4xl pl-4 py-1 my-4 mx-auto border-l-primary-red border-opacity-30 border-l-[0.5rem] border-l-solid rounded-tl rounded-bl align-middle font-semibold'>
-              {activeUnit != null
-                ? activeUnit.title
-                : 'Choose a unit to view from the right!'}
+              {activeUnit != null ? (
+                editMode ? (
+                  <input
+                    className='rounded-lg p-1'
+                    onChange={(e) => setUnitTitle(e.target.value)}
+                    value={unitTitle}
+                  />
+                ) : (
+                  <span className='p-1'>{activeUnit.title}</span>
+                )
+              ) : (
+                'Choose a unit to view from the right!'
+              )}
             </h2>
             {isAdmin && editMode && (
               <>
@@ -106,7 +136,12 @@ export default function Syllabus() {
             )}
           </div>
           {activeUnit != null && editMode ? (
-            <MarkdownForm text={editText} setText={setEditText} />
+            <MarkdownForm
+              text={editText}
+              type={unitType!}
+              setText={setEditText}
+              setType={setUnitType}
+            />
           ) : (
             activeUnit && <Markdown markdown={activeUnit.markdown_body} />
           )}

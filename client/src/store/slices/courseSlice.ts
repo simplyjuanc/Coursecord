@@ -82,7 +82,16 @@ const courseSlice = createSlice({
         );
         return { ...state, syllabus: newSyllabus };
       }
+    },
+    updateSection: (state, { payload }: PayloadAction<{ newSection: CompiledSection }>) => {
+      if (state.syllabus && state.courseInfo) {
+        const newSyllabus = state.syllabus.map((section) =>
+          section.id === payload.newSection.id ? payload.newSection : section
+        );
+        return { ...state, syllabus: newSyllabus };
+      }
     }
+
   },
 });
 
@@ -94,6 +103,7 @@ export const {
   updateUnit,
   deleteUnit,
   deleteSection,
+  updateSection
 } = courseSlice.actions;
 
 export default courseSlice.reducer;

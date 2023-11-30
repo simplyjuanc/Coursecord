@@ -10,7 +10,7 @@ async function requireAuth(
 ) {
   try {
     const accessToken = req.headers.authorization;
-
+    console.log(accessToken);
     if (!accessToken) {
       return res.status(401).send({ message: 'Unauthorised' });
     }
@@ -26,6 +26,7 @@ async function requireAuth(
     }
 
     (req as RequestWithUser).user = user;
+    console.log('through auth')
     next();
   } catch (error) {
     console.log(error);

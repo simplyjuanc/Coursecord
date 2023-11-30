@@ -119,6 +119,7 @@ async function editContent(req: Request, res: Response) {
   try {
     const { unitId } = req.params;
     const org = await Organisation.getOrganisationWithUnit(unitId);
+    console.log(org)
     if (!org) {
       return res.status(401).send({ message: 'Invalid Unit' });
     }

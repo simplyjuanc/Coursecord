@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation"; // Corrected 'next/navigation' to 'next/router'
+import { useRouter } from "next/navigation";
 
 import wave from "/public/login/Vector 1.png";
 import googleL from "/public/login/googleB.png";
@@ -71,23 +71,24 @@ export default function Login() {
       <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex space-x-5">
         <div className="bg-white rounded-lg shadow-lg p-8" style={{ width: '300px', height: '150px' }}>
           <div className="flex flex-col items-center justify-center h-full">
-            <span className="text-red-600 font-bold text-4xl">4+</span>
+            <span className="text-red-600 font-bold text-4xl">300+</span>
             <p className="text-gray-800 text-lg">STUDENTS</p>
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-8" style={{ width: '300px', height: '150px' }}>
           <div className="flex flex-col items-center justify-center h-full">
-            <span className="text-red-600 font-bold text-4xl">110%</span>
+            <span className="text-red-600 font-bold text-4xl">97%</span>
             <p className="text-gray-800 text-lg">HIRE RATE</p>
           </div>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-8" style={{ width: '300px', height: '150px' }}>
           <div className="flex flex-col items-center justify-center h-full">
-            <span className="text-red-600 font-bold text-4xl">0</span>
+            <span className="text-red-600 font-bold text-4xl">32</span>
             <p className="text-gray-800 text-lg">INSTRUCTORS</p>
           </div>
         </div>
       </div>
     </div>
+
   );
 }

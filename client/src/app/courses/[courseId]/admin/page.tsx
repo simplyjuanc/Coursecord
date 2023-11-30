@@ -1,15 +1,12 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import {
-  MdOutlinePersonAddAlt,
-  MdOutlineModeEdit,
-  MdOutlineRestoreFromTrash,
-} from 'react-icons/md';
+import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import IconButton from '@/components/buttons/iconButton';
 import { Course, DbUser, Role } from '@/types';
 import AddNewUser from './components/AddNewUser';
 import AddExistingUser from './components/AddExistingUser';
+import UserRow from './components/UserRow';
 
 export default function AdminTable() {
   const courseId = useParams()['courseId'] as string;
@@ -64,19 +61,23 @@ export default function AdminTable() {
 
   return (
     <section className='mt-12'>
-      <div className='flex flex-row gap-4 align-middle justify-evenly'>
-        <h1>{course?.title}</h1>
-        <div className='flex flex-row w-1/12 gap-2'>
-          <IconButton
-            icon={<MdOutlinePersonAddAlt />}
-            title='Add New User'
-            onClick={showNewUserModal}
-          ></IconButton>
-          <IconButton
-            icon={<MdOutlinePersonAddAlt />}
-            title='Add Existing User'
-            onClick={showExistingUserModal}
-          ></IconButton>
+      <div className='flex flex-row gap-4 align-middle justify-around'>
+        <h1 className='text-2xl font-bold text-center my-auto'>{course?.title} Course </h1>
+        <div className='flex flex-col gap-2 align-middle justify-evenly w-1/4'>
+          <div>
+            <IconButton
+              icon={<MdOutlinePersonAddAlt />}
+              title='Add New User'
+              onClick={showNewUserModal}
+            ></IconButton>
+          </div>
+          <div>
+            <IconButton
+              icon={<MdOutlinePersonAddAlt />}
+              title='Add Existing User'
+              onClick={showExistingUserModal}
+            ></IconButton>
+          </div>
         </div>
       </div>
 
@@ -112,48 +113,15 @@ export default function AdminTable() {
             Role
           </div>
           {instructors &&
-            instructors.map((instructor) => UserRow(instructor, roles))}
-          {students && students.map((student) => UserRow(student, roles))}
+            instructors.map((instructor) => (
+              <UserRow key={instructor.id} user={instructor} roles={roles} courseId={courseId}/>
+            ))}
+          {students &&
+            students.map((student) => (
+              <UserRow key={student.id} user={student} roles={roles} courseId={courseId}/>
+            ))}
         </div>
       )}
     </section>
   );
-}
-
-function UserRow(user: DbUser, roles: Role[]): React.JSX.Element {
-  const userRoles = user.roles.map((id) => {
-    const userRole = roles.find((role) => role.id === id);
-    if (!userRole) return;
-    return userRole.title[0].toUpperCase() + userRole.title.slice(1);
-  });
-
-  function handleEdit() {
-    console.log('edit');
-  }
-
-  function handleDelete() {
-    console.log('delete');
-  }
-
-  return (
-    // <div key={user.id} className='grid grid-cols-4 col-span-4'>
-    <>
-      <div className='flex flex-row justify-center col-span-1 gap-2 py-2'>
-        <div className='cursor-pointer' onClick={handleEdit}>
-          <MdOutlineModeEdit />{' '}
-        </div>
-        <div className='cursor-pointer' onClick={handleDelete}>
-          <MdOutlineRestoreFromTrash />
-        </div>
-      </div>
-      <div className='col-span-2 py-2 text-center'>{user.name}</div>
-      <div className='col-span-2 py-2 text-center'>{user.email}</div>
-      <div className='col-span-2 py-2 text-center'>
-        {userRoles && userRoles.join(', ')}
-      </div>
-    </>
-  );
-  {
-    /* </div> */
-  }
 }

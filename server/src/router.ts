@@ -49,8 +49,8 @@ router.get('/section/units/:sectionId', Unit.getUnitsBySection)
 
 
 router.get('/:orgId/roles', Role.getRolesByOrg);
-//Not part of MVP
 router.get('/user/role/:userId', Role.getRolesByUser);
+//Not part of MVP
 router.post('/:orgId/role', Role.addRole);
 router.delete('/role/:roleId', Role.removeRole);
 router.put('/role/:roleId', Role.editRole);

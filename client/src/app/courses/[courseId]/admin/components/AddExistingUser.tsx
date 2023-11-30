@@ -1,4 +1,4 @@
-import { DbUser, SessionWithToken, Role } from '@/@types';
+import { DbUser, SessionWithToken, Role } from '@/types';
 import React, { useEffect, useState } from 'react';
 import { UserSelect } from './UserSelect';
 import { RoleSelect } from './RoleSelect';

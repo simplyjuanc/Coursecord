@@ -1,21 +1,24 @@
 'use client';
 import React from 'react';
-import {
-  MdOutlineModeEdit,
-  MdOutlineRestoreFromTrash
-} from 'react-icons/md';
+import { MdOutlineModeEdit, MdOutlineRestoreFromTrash } from 'react-icons/md';
 import { DbUser, Role, SessionWithToken } from '@/types';
 import { useSession } from 'next-auth/react';
+import EditUser from './EditUser';
 
 type UserRowProps = {
   user: DbUser;
   roles: Role[];
+  courseId: string;
 };
 
-
-export default function UserRow({user, roles}:UserRowProps): React.JSX.Element {
+export default function UserRow({
+  user,
+  roles,
+  courseId
+}: UserRowProps): React.JSX.Element {
   const baseUrl = process.env.API_URL || 'http://localhost:5000';
   const session = useSession().data as SessionWithToken;
+  const [showUser, setShowUser] = React.useState(false);
 
   const userRoles = user.roles
     .map((id) => {
@@ -26,11 +29,15 @@ export default function UserRow({user, roles}:UserRowProps): React.JSX.Element {
     .sort((a, b) => a!.localeCompare(b!) || 0);
 
   async function handleEdit() {
+    setShowUser(true);
   }
 
   async function handleDelete() {
     try {
-      const res = await fetch(`${baseUrl}/user/${user.id}`, { method: 'DELETE', headers: { 'Authorization': session.accessToken } });
+      const res = await fetch(`${baseUrl}/user/${user.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: session.accessToken },
+      });
       if (res.ok) console.log(user);
       else window.alert('Something went wrong');
     } catch (error) {
@@ -53,6 +60,14 @@ export default function UserRow({user, roles}:UserRowProps): React.JSX.Element {
       <div className='col-span-2 py-2 text-center'>
         {userRoles && userRoles.join(', ')}
       </div>
+      {showUser && (
+        <EditUser
+          user={user}
+          courseId={courseId}
+          setShowUser={setShowUser}
+          roles={roles}
+        />
+      )}
     </>
   );
 }

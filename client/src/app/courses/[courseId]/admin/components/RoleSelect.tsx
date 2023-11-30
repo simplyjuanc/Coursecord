@@ -1,4 +1,4 @@
-import { Role } from '@/@types';
+import { Role } from '@/types';
 import React from 'react';
 
 type RoleSelectProps = {

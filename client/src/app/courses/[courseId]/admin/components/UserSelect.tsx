@@ -1,4 +1,4 @@
-import { DbUser } from '@/@types';
+import { DbUser } from '@/types';
 import React from 'react';
 
 type UserSelectProps = {

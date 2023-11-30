@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { RoleSelect } from './RoleSelect';
-import { Role } from '@/@types';
+import { Role } from '@/types';
 import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 

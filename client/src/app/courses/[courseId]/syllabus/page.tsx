@@ -30,6 +30,7 @@ export default function Syllabus() {
   const isAdmin =
     user && user.roles.map((role) => role.title).includes('admin');
 
+
   function selectUnit(unit: Unit) {
     setActiveUnit(unit.id !== activeUnit?.id ? unit : undefined);
     setEditText(unit.markdown_body);
@@ -58,6 +59,7 @@ export default function Syllabus() {
     );
     setSaving('done');
   }
+
 
   return (
     <>

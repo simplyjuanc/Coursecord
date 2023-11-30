@@ -1,19 +1,25 @@
 'use client';
-import { Section, Unit } from '@/types';
+import { CompiledSection, Unit } from '../../types';
 import Sidebar from '../sidebar/sidebar';
 import { CgAlbum } from 'react-icons/cg';
+import { CgAddR } from 'react-icons/cg';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import IconButton from '../buttons/iconButton';
+import SectionForm from '../syllabusForms/sectionForm';
+import UnitForm from '../syllabusForms/unitForm';
 
 interface SyllabusSidebarProps {
-  sections: Section[];
+  sections: CompiledSection[];
   courseName: string;
   activeId: string;
   selectUnit: (unit: Unit) => void;
   selectedUnit?: string;
+  isAdmin: boolean;
 }
 
 export default function SyllabusSidebar({
+  isAdmin,
   sections,
   courseName,
   selectUnit,
@@ -24,11 +30,22 @@ export default function SyllabusSidebar({
     defaultActiveSections[section.id] = false;
   });
 
+  const [sectionFormOpen, setSectionFormOpen] = useState(false);
+  const [unitFormsOpen, setUnitFormsOpen] = useState<Record<string, boolean>>(
+    defaultActiveSections
+  );
   const [activeSections, setActiveSections] = useState<Record<string, boolean>>(
     defaultActiveSections
   );
 
-  function SyllabusSection({ section }: { section: Section }) {
+  function closeSectionForm() {
+    setSectionFormOpen(false);
+  }
+  function closeUnitForm(sectionId: string) {
+    setUnitFormsOpen((prev) => ({ ...prev, [sectionId]: false }));
+  }
+
+  function SyllabusSection({ section }: { section: CompiledSection }) {
     return (
       <>
         <div className='flex flex-row-reverse'>
@@ -40,10 +57,10 @@ export default function SyllabusSidebar({
           <div className='w-full pr-4 pl-4'>
             <button
               onClick={() =>
-                setActiveSections({
-                  ...activeSections,
-                  [section.id]: !activeSections[section.id],
-                })
+                setActiveSections((prev) => ({
+                  ...prev,
+                  [section.id]: !prev[section.id],
+                }))
               }
               className={
                 `flex text-3xl p-2 min-w-full rounded-xl` +
@@ -62,9 +79,8 @@ export default function SyllabusSidebar({
 
         {activeSections[section.id] && (
           <div className='w-full pr-4 pl-4'>
-            <ol>
+            <ol className='border-solid border-2 border-primary-gray border-opacity-20 mt-2 rounded-lg p-2'>
               {section.units.map((unit, index) => {
-                console.log(selectedUnit, unit.id);
                 return (
                   <li key={index}>
                     <button
@@ -80,6 +96,23 @@ export default function SyllabusSidebar({
                   </li>
                 );
               })}
+              {isAdmin && (
+                <div className='mt-2'>
+                  <IconButton
+                    title={'Unit'}
+                    icon={<CgAddR />}
+                    onClick={() => {
+                      setUnitFormsOpen((prev) => ({
+                        ...prev,
+                        [section.id]: !prev[section.id],
+                      }));
+                    }}
+                  />
+                </div>
+              )}
+              {unitFormsOpen[section.id] && (
+                <UnitForm sectionId={section.id} closeForm={closeUnitForm} />
+              )}
             </ol>
           </div>
         )}
@@ -90,7 +123,7 @@ export default function SyllabusSidebar({
   return (
     <div className='h-screen min-h-full min-w-max bg-white shadow-lg relative box-border flex flex-col'>
       <div className='flex p-4'>
-        <h2 className='my-auto text-3xl text-primary-gray font-semibold'>
+        <h2 className='my-auto text-3xl text-primary-gray font-semibold w-[12vw]'>
           {courseName}
         </h2>
         <div className='w-10 h-10 rounded-full bg-primary-red bg-opacity-50 ml-4'></div>
@@ -103,11 +136,21 @@ export default function SyllabusSidebar({
             </li>
           ))}
         </ul>
+        <div className='px-4'>
+          {isAdmin && (
+            <div className='mt-4'>
+              <IconButton
+                title={'Section'}
+                icon={<CgAddR />}
+                onClick={() => {
+                  setSectionFormOpen((prev) => !prev);
+                }}
+              />
+            </div>
+          )}
+          {sectionFormOpen && <SectionForm closeForm={closeSectionForm} />}
+        </div>
       </div>
-      <div
-        onClick={() => {}}
-        className='absolute bottom-0 mx-auto w-full p-3'
-      ></div>
     </div>
   );
 }

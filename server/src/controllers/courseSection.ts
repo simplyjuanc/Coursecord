@@ -23,6 +23,7 @@ async function addSection(req: Request, res: Response) {
     const sectionData = req.body;
 
     const newSection = await CourseSection.createSection(sectionData);
+    await Course.addSectionToCourse(courseId, newSection.id);
     res.status(201).send(newSection);
   } catch (error) {
     console.log(error);
@@ -82,6 +83,7 @@ async function getSectionsByCourse(req: Request, res: Response) {
     const { courseId } = req.params;
 
     const sections = await CourseSection.getSectionsByCourse(courseId);
+    console.log(sections);
     res.status(200).send(sections);
   } catch (error) {
     console.log(error);

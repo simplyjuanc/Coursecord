@@ -1,4 +1,4 @@
-import { DbUser } from '@/@types';
+import { DbUser } from '@/types';
 import axios from 'axios';
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Socket, io } from 'socket.io-client';

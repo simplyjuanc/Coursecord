@@ -152,10 +152,16 @@ async function sectionAndUnitAreValid(sectionId: string, unitId: string) {
   return { isValid: false, orgId: '' };
 }
 
-async function getUnitsBySection(sectionId: string) {
-  const units = await CourseUnit.getUnitsBySection(sectionId);
-
-  return units;
+async function getUnitsBySection(req: Request, res: Response) {
+  try {
+    const { sectionId } = req.params;
+    const units = await CourseUnit.getUnitsBySection(sectionId);
+  
+    res.status(200).send(units);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error:\n', error });
+  }
 }
 
 export default {

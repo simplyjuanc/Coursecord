@@ -7,7 +7,7 @@ import {
   MdOutlineRestoreFromTrash,
 } from 'react-icons/md';
 import IconButton from '@/components/buttons/iconButton';
-import { Course, DbUser, Role } from '@/@types';
+import { Course, DbUser, Role } from '@/types';
 import AddNewUser from './components/AddNewUser';
 import AddExistingUser from './components/AddExistingUser';
 
@@ -59,7 +59,7 @@ export default function AdminTable() {
   }
 
   // NEXT:
-  // Add edit and delete functinality for each user
+  // Add edit and delete functionality for each user
   // After that, style the table
 
   return (

@@ -60,6 +60,14 @@ async function getCoursesWithInstructor(userId: string) {
   return courses;
 }
 
+async function addSectionToCourse(courseId: string, sectionId: string) {
+  const updatedCourse = await Course.update({
+    where: { id: courseId },
+    data: { syllabus: { push: sectionId } },
+  });
+  return updatedCourse;
+}
+
 export default {
   createCourse,
   getCourses,
@@ -70,5 +78,6 @@ export default {
   deleteCoursesInOrganisation,
   addStudentToCourse,
   getCoursesWithStudent,
-  getCoursesWithInstructor
+  getCoursesWithInstructor,
+  addSectionToCourse
 };

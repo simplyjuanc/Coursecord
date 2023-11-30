@@ -1,4 +1,4 @@
-import { Course, DbUser, RoleWithOrg, UserState } from '@/@types';
+import { Course, DbUser, RoleWithOrg, UserState } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: UserState = {

@@ -91,7 +91,7 @@ async function getRolesByUser(userId: string) {
       }
     }
     return {
-      role: await getRoleById(roleId.replace('\n', '')),
+      ...(await getRoleById(roleId.replace('\n', ''))),
       organisation,
     };
   });

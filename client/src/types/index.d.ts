@@ -47,7 +47,7 @@ export interface Unit {
 
 export interface Section {
   id: string;
-  content: string;
+  title: string;
   units: string[];
 }
 
@@ -98,4 +98,17 @@ export interface Unit {
   title: string;
   type: string;
   markdown_body: string;
+}
+
+export interface OrgState {
+  orgInfo: OrgInfo
+}
+
+export interface OrgInfo {
+  id: string;
+  name: string;
+  description: string;
+  courses: Course[];
+  members: string[];
+  roles: [];
 }

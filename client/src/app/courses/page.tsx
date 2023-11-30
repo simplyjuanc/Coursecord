@@ -1,6 +1,6 @@
 "use client";
 
-import { Course } from "@/@types";
+import { Course } from "@/types";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,7 +14,6 @@ export default function Courses() {
     const fetchData = async () => {
       const response = await axios.get(`http://localhost:5000/course`);
       setCourses(response.data);
-      console.log(response.data);
     };
     fetchData().catch((err) => {
       console.log(err);

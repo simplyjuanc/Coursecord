@@ -1,5 +1,5 @@
 'use client';
-import { DbUser, THelpRequest } from '@/@types';
+import { DbUser, THelpRequest } from '@/types';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Socket, io } from 'socket.io-client';

@@ -1,129 +1,144 @@
 "use client";
+import { DbUser, SessionWithToken, THelpRequest } from "@/types";
+import axios from "axios";
+import { getToken } from "next-auth/jwt";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { MdSupportAgent } from "react-icons/md";
+import { Socket, io } from "socket.io-client";
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import Image from "next/image";
+import { formatDistanceToNow } from "date-fns";
 
-import React, { useState, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import io from 'socket.io-client';
-import HelpRequestBox from './HelpRequestBox';
-import HelpRequestHeader from "./imgs/headerHelp.png";
-import Image from 'next/image';
-
-interface HelpRequest {
-  id: string;
-  content: string;  // The message from the form
-  course: string;   // Course ID from the form
-  students: string[]; // Requestors from the form
-  status: 'waiting' | 'assigned' | 'completed';
-}
-
-// Define the array of status types
-const helpRequestStatuses: ('waiting' | 'assigned' | 'completed')[] = ['waiting', 'assigned', 'completed'];
-
-const InstructorHelpRequestPage = () => {
-  const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
-  const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5001');
-
+let socket: Socket;
+export default function Help() {
+  const [helpRequests, setHelpRequests] = useState<THelpRequest[]>([]);
+  const [instructors, setInstructors] = useState<DbUser[]>();
+  const baseUrl = process.env.API_URL || "http://localhost:5000";
+  const courseId = "6565c41df515f6ec9392f30f";
+  const { data: session } = useSession();
   useEffect(() => {
-    socket.emit('join', 'instructor');
+    axios
+      .get<DbUser[]>(`${baseUrl}/${courseId}/instructors`)
+      .then((res) => setInstructors(res.data))
+      .catch((e) => console.error(e));
 
-    socket.emit('getRequests', { courseId: 'YOUR_COURSE_ID' }, (requests: HelpRequest[]) => {
-      setHelpRequests(requests);
+    socket = io("http://localhost:5000/", {
+      auth: {
+        accessToken: (session as SessionWithToken).accessToken,
+      },
     });
-
-    
-    socket.on('createRequest', (newRequest) => {
-      setHelpRequests((prevRequests) => [
-        ...prevRequests,
-        {
-          id: newRequest.id, 
-          content: newRequest.content,
-          course: newRequest.course,
-          students: newRequest.students,
-          status: 'waiting', 
-        }
-      ]);
+    socket.emit("join", courseId, (res: THelpRequest[]) => {
+      console.log(res);
+      setHelpRequests(res);
+    });
+    socket.on("requestsUpdated", (res: THelpRequest[]) => {
+      console.log("req updated", res);
+      setHelpRequests(res);
     });
 
     return () => {
-      socket.off('createRequest');
       socket.disconnect();
     };
-  }, []);
-
-  // Function to handle drag end event
-  const onDragEnd = (result: any) => {
-    if (!result.destination) return;
-
-    const items = Array.from(helpRequests);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    reorderedItem.status = result.destination.droppableId as 'waiting' | 'assigned' | 'completed';
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    setHelpRequests(items);
+  }, [baseUrl]);
+  const ItemComponent = (props: { item: THelpRequest }) => {
+    return (
+      <div className="border-primary-red border-2 rounded-xl select-none">
+        <div className="p-2">
+          <div className="flex">
+            <div className="my-auto">
+              <img
+                src={props.item.students[0].image ?? ""}
+                alt={""}
+                width={30}
+                height={30}
+                className="rounded-full pr-1"
+              />
+            </div>
+            <h1 className="text-xl font-semibold my-auto">
+              {props.item.students[0].name}
+            </h1>
+          </div>
+          <h2 className="py-2 font-medium">{props.item.content}</h2>
+          <div>
+            <h3 className="">
+              {formatDistanceToNow(new Date(props.item.created_at), {
+                addSuffix: true,
+              })}
+            </h3>
+          </div>
+        </div>
+      </div>
+    );
   };
-
-  // Function to render help requests based on their status
-  const renderHelpRequests = (status: 'waiting' | 'assigned' | 'completed') => {
-    return helpRequests
-    .filter((req) => req.status === status)
-    .map((request, index) => (
-      <Draggable key={request.id} draggableId={request.id} index={index}>
-        {(provided) => (
+  const BoardComponent = (props: { status: string }) => {
+    return (
+      <Droppable droppableId={props.status}>
+        {(droppableProvided, snapshot) => (
           <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            className="mb-2"
+            className="bg-white w-full rounded-xl p-6"
+            ref={droppableProvided.innerRef}
+            {...droppableProvided.droppableProps}
           >
-            <HelpRequestBox
-              content={request.content}
-              course={request.course}
-              students={request.students}
-            />
+            <div className="">
+              {helpRequests.map((item, index) =>
+                item.status === props.status ? (
+                  <Draggable key={item.id} draggableId={item.id} index={index}>
+                    {(provided, snapshot) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <ItemComponent item={item} />
+                      </div>
+                    )}
+                  </Draggable>
+                ) : (
+                  <></>
+                )
+              )}
+            </div>
+            {droppableProvided.placeholder}
           </div>
         )}
-      </Draggable>
-    )); 
+      </Droppable>
+    );
   };
 
   return (
-    <>
-      <div className="flex justify-center my-4">
-        <div className="w-80">
-          <Image 
-            src={HelpRequestHeader}
-            alt="Help Request Header"
-            width={256} 
-            height={80} 
-            layout="responsive" 
-          />
+    <div className="w-full h-full px-32 py-12">
+      <div className="bg-white flex text-5xl font-semibold px-8 py-4 mx-auto rounded-xl">
+        <div className="my-auto mr-4 text-primary-red text-6xl">
+          <MdSupportAgent />
         </div>
+        <h1 className="my-auto">Help Requests</h1>
       </div>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex justify-around p-4 bg-gray-100" style={{ height: 'calc(100vh - 4rem)' }}>
-          {helpRequestStatuses.map((status) => (
-            <Droppable key={status} droppableId={status}>
-              {(provided, snapshot) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={`w-1/4 mx-2 mt-7 p-4 rounded-lg border shadow-sm ${
-                    snapshot.isDraggingOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white'
-                  }`}
-                  style={{ minHeight: '50vh' }}
-                >
-                  <h3 className="text-xl font-bold capitalize mb-4">{status}</h3>
-                  <div className="flex flex-col space-y-4 overflow-auto">
-                    {renderHelpRequests(status)}
-                    {provided.placeholder}
-                  </div>
-                </div>
-              )}
-            </Droppable>
+      <div className="grid pt-12 grid-cols-3 h-screen gap-x-32 overflow-y-scroll">
+        <DragDropContext
+          onDragEnd={(source, destination) => {
+            let newHelpRequests = helpRequests;
+            let req = newHelpRequests.find(
+              (value) => value.id == source.draggableId
+            );
+            if (req && source.destination) {
+              (req as any).status = source.destination.droppableId;
+            }
+            setHelpRequests(newHelpRequests);
+            socket.emit("updateStatus", {
+              course: courseId,
+              request: source.draggableId,
+              destination: source.destination?.droppableId,
+            });
+          }}
+        >
+          {["WAITING", "ASSIGNED", "FINISHED"].map((item) => (
+            <BoardComponent status={item} />
           ))}
-        </div>
-      </DragDropContext>
-    </>
+        </DragDropContext>
+      </div>
+    </div>
   );
-};
-
-export default InstructorHelpRequestPage;
+}

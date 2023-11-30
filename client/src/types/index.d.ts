@@ -1,4 +1,4 @@
-import { Session, User } from 'next-auth';
+import { Session, User } from "next-auth";
 
 export interface SessionWithToken extends Session {
   accessToken: string;
@@ -11,20 +11,20 @@ export interface DbUser extends User {
   oauth_id: string;
   oauth_provider: string;
   roles: string[];
+  image: string?;
 }
-
 
 export type THelpRequest = {
   id: string;
   course: string;
-  students: string[];
-  status: 'Waiting' | 'Assigned' | 'Finished';
+  students: DbUser[];
+  status: "WAITING" | "ASSIGNED" | "FINISHED";
   instructor: string | null;
   content: string;
   created_at: Date;
   time_waiting: number;
-  time_in_call: number | null
-}
+  time_in_call: number | null;
+};
 
 export interface Course {
   id: string;
@@ -50,7 +50,7 @@ export interface Section {
   units: string[];
 }
 
-export interface CompiledSection extends Section{
+export interface CompiledSection extends Section {
   units: Unit[];
 }
 
@@ -69,10 +69,10 @@ export interface CourseState {
 }
 
 export interface UserState {
-  user?: DbUser
-  coursesAsStudent: Course[]
-  coursesAsInstructor: Course[]
-  roles: RoleWithOrg[]
+  user?: DbUser;
+  coursesAsStudent: Course[];
+  coursesAsInstructor: Course[];
+  roles: RoleWithOrg[];
 }
 
 export interface Role {
@@ -100,7 +100,7 @@ export interface Unit {
 }
 
 export interface OrgState {
-  orgInfo: OrgInfo
+  orgInfo: OrgInfo;
 }
 
 export interface OrgInfo {

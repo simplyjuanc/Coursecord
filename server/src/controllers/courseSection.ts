@@ -1,9 +1,9 @@
-import { Request, Response } from 'express';
-import Organisation from '../models/organisation';
-import { RequestWithUser } from '../types';
-import Role from '../models/role';
-import Course from '../models/course';
-import CourseSection from '../models/courseSection';
+import { Request, Response } from "express";
+import Organisation from "../models/organisation";
+import { RequestWithUser } from "../types";
+import Role from "../models/role";
+import Course from "../models/course";
+import CourseSection from "../models/courseSection";
 
 async function addSection(req: Request, res: Response) {
   try {
@@ -13,12 +13,12 @@ async function addSection(req: Request, res: Response) {
 
     const [org, course] = await Promise.all([orgPromise, coursePromise]);
     if (!org || !course) {
-      return res.status(401).send('Invalid Course');
+      return res.status(401).send("Invalid Course");
     }
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludeAdmin(userRoles, org.id))) {
-      return res.status(401).send({ message: 'Missing Permissions' });
+    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
+      return res.status(401).send({ message: "Missing Permissions" });
     }
     const sectionData = req.body;
 
@@ -27,7 +27,7 @@ async function addSection(req: Request, res: Response) {
     res.status(201).send(newSection);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
+    res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -36,12 +36,12 @@ async function editSection(req: Request, res: Response) {
     const { sectionId } = req.params;
     const org = await Organisation.getOrganisationWithSection(sectionId);
     if (!org) {
-      return res.status(401).send({ message: 'Invalid Section' });
+      return res.status(401).send({ message: "Invalid Section" });
     }
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludeAdmin(userRoles, org.id))) {
-      return res.status(401).send({ message: 'Missing Permissions' });
+    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
+      return res.status(401).send({ message: "Missing Permissions" });
     }
 
     const sectionData = req.body;
@@ -53,7 +53,7 @@ async function editSection(req: Request, res: Response) {
     res.status(200).send(updatedSection);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
+    res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -62,19 +62,19 @@ async function deleteSection(req: Request, res: Response) {
     const { sectionId } = req.params;
     const org = await Organisation.getOrganisationWithSection(sectionId);
     if (!org) {
-      return res.status(401).send({ message: 'Invalid Organisation' });
+      return res.status(401).send({ message: "Invalid Organisation" });
     }
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludeAdmin(userRoles, org.id))) {
-      return res.status(401).send({ message: 'Missing Permissions' });
+    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
+      return res.status(401).send({ message: "Missing Permissions" });
     }
 
     const deletedSection = await CourseSection.deleteSection(sectionId);
     res.status(204).send(deletedSection);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
+    res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -87,7 +87,7 @@ async function getSectionsByCourse(req: Request, res: Response) {
     res.status(200).send(sections);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
+    res.status(500).send({ message: "Internal Server Error" });
   }
 }
 

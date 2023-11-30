@@ -120,7 +120,7 @@ async function assignRoleToUser(req: Request, res: Response) {
     const updatedUser = await User.addRoleToUser(userId, roleId);
     res.status(200).send(updatedUser);
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
   }
 }

@@ -9,13 +9,10 @@ async function requireAuth(
   next: NextFunction
 ) {
   try {
-    const accessToken = req.headers.authorization;
-    console.log('ACCESS');
-    console.log(accessToken);
     if (!accessToken) {
       return res.status(401).send({ message: 'No access token found' });
     }
-
+    
     const googleUser = await getGoogleUser(accessToken);
     if(!googleUser) {
       return res.status(401).send({message: 'No Google user found'});
@@ -27,7 +24,6 @@ async function requireAuth(
     }
 
     (req as RequestWithUser).user = user;
-    console.log('through auth')
     next();
   } catch (error) {
     console.log(error);

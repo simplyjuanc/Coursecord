@@ -4,7 +4,7 @@ import {
   DbUser,
   RoleWithOrg,
   Section,
-} from '@/@types';
+} from '@/types';
 import axios from 'axios';
 import store from '@/store';
 import { setCourseInfo, setSyllabus } from '@/store/slices/courseSlice';
@@ -42,7 +42,7 @@ export async function getCourseData(courseId: string) {
         };
       }
     );
-
+    
     const compiledSections = await Promise.all(compiledSectionPromises);
     const course = courseResponse.data;
 

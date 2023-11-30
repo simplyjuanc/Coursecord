@@ -56,9 +56,9 @@ router.put('/section/:sectionId', Auth.requireAuth, Section.editSection);
 router.delete('/section/:sectionId', Auth.requireAuth, Section.deleteSection);
 router.get('/syllabus/:courseId/', Section.getSectionsByCourse);
 
-router.post('/unit/:orgId/:sectionId', Auth.requireAuth, Unit.addCourseUnit);
+router.post('/unit/org/:orgId/:sectionId', Auth.requireAuth, Unit.addCourseUnit);
 router.put(
-  '/unit/:sectionId/:unitId',
+  '/unit/section/:sectionId/:unitId',
   Auth.requireAuth,
   Unit.addUnitToSection
 );
@@ -69,7 +69,7 @@ router.delete(
   Unit.removeUnitFromSection
 );
 router.delete('/unit/:unitId', Auth.requireAuth, Unit.deleteContent);
-router.get('section/units/:sectionId', Unit.getUnitsBySection)
+router.get('/section/units/:sectionId', Unit.getUnitsBySection)
 
 
 //Not part of MVP

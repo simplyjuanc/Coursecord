@@ -1,6 +1,6 @@
 'use client';
 import { useAppSelector } from '@/store';
-import { addSection } from '@/store/slices/courseSlice';
+import { addSection, updateSection } from '@/store/slices/courseSlice';
 import { SessionWithToken } from '@/types';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -9,14 +9,29 @@ import { useDispatch } from 'react-redux';
 
 const baseUr = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
 
-export default function SectionForm({ closeForm }: { closeForm: () => void }) {
+type SectionFormProps = {
+  closeForm: () => void;
+  setSaving(saving?: 'saving' | 'done' |'error'): void;
+};
+
+
+export default function SectionForm(props: SectionFormProps) {
+  const { closeForm, setSaving } = props;
   const dispatch = useDispatch();
   const { data: session } = useSession();
   const course = useAppSelector((state) => state.course.courseInfo);
   const [title, setTitle] = useState<string>('');
 
   async function submitForm(e: React.FormEvent<HTMLFormElement>) {
+    setSaving('saving');
     e.preventDefault();
+    const newSection =  {
+      id: 'placeholder',
+      title,
+      units: [],
+    };
+
+    dispatch(addSection({section: newSection}));
     const response = await axios.post(
       `${baseUr}/${course?.id}/section`,
       {
@@ -28,15 +43,20 @@ export default function SectionForm({ closeForm }: { closeForm: () => void }) {
         },
       }
     );
-    dispatch(
-      addSection({
-        section: {
-          id: response.data.id,
-          title: response.data.title,
-          units: [],
-        },
-      })
-    );
+    if(response.status === 201) {
+      const newId = response.data.id;
+      const section = {...newSection, id: newId}
+      dispatch(updateSection({newSection: section}));
+      setSaving('done');
+      setTimeout(() => {
+        setSaving(undefined);
+      }, 1000);
+    } else {
+      setSaving('error');
+      setTimeout(() => {
+        setSaving(undefined);
+      }, 1000);
+    }
     setTitle('');
     closeForm()
   }

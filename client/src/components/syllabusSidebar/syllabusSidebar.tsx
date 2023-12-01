@@ -24,12 +24,14 @@ interface SyllabusSidebarProps {
   selectUnit: (unit: Unit) => void;
   selectedUnit?: string;
   isAdmin: boolean;
+  setSaving: (saving?: 'saving' | 'done' | 'error') => void;
 }
 
 const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
 export default function SyllabusSidebar(props: SyllabusSidebarProps) {
-  const { isAdmin, sections, courseName, selectUnit, selectedUnit } = props;
+  const { isAdmin, sections, courseName, selectUnit, selectedUnit, setSaving } =
+    props;
   const { data: session } = useSession();
 
   const dispatch = useAppDispatch();
@@ -50,9 +52,9 @@ export default function SyllabusSidebar(props: SyllabusSidebarProps) {
   }
 
   return (
-    <div className='h-screen min-h-full min-w-max bg-white shadow-lg relative box-border flex flex-col'>
+    <div className='h-screen min-h-full min-w-max bg-white shadow-xl relative box-border flex flex-col'>
       <div className='flex p-4'>
-        <h2 className='my-auto text-3xl text-primary-gray font-semibold w-[12vw]'>
+        <h2 className='my-auto text-2xl text-primary-gray font-semibold w-[12vw]'>
           {courseName}
         </h2>
         <div className='w-10 h-10 rounded-full bg-primary-red bg-opacity-50 ml-4'></div>
@@ -61,7 +63,14 @@ export default function SyllabusSidebar(props: SyllabusSidebarProps) {
         <ul>
           {sections.map((section, index) => (
             <li key={index} className='pt-4'>
-              <SyllabusSection isAdmin={isAdmin} deleteSection={deleteSection} selectedUnit={selectedUnit} selectUnit={selectUnit} section={section} />
+              <SyllabusSection
+                setSaving={setSaving}
+                isAdmin={isAdmin}
+                deleteSection={deleteSection}
+                selectedUnit={selectedUnit}
+                selectUnit={selectUnit}
+                section={section}
+              />
             </li>
           ))}
         </ul>
@@ -77,7 +86,7 @@ export default function SyllabusSidebar(props: SyllabusSidebarProps) {
               />
             </div>
           )}
-          {sectionFormOpen && <SectionForm closeForm={closeSectionForm} />}
+          {sectionFormOpen && <SectionForm setSaving={setSaving} closeForm={closeSectionForm} />}
         </div>
       </div>
     </div>

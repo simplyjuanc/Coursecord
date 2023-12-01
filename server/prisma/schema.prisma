@@ -65,8 +65,8 @@ model CourseSection {
   id           String              @id @default(auto()) @map("_id") @db.ObjectId
   title        String
   course_units CourseSectionUnit[] @relation
-  course       Course              @relation(fields: [courseId], references: [id], onUpdate: Cascade)
-  courseId     String              @db.ObjectId
+  course       Course              @relation(fields: [course_id], references: [id], onUpdate: Cascade)
+  course_id     String              @db.ObjectId
 }
 
 model CourseUnit {

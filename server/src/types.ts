@@ -23,6 +23,7 @@ export type CourseUnitInfo = {
 
 export type CourseSectionInfo = {
   title: string;
+  course_id: string;
 }
 
 export interface RequestWithUser extends Request {

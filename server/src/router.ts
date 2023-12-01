@@ -1,72 +1,74 @@
-import { Router } from 'express';
-import Organisation from './controllers/organisation';
-import Course from './controllers/course';
-import User from './controllers/user';
-import Role from './controllers/role';
-import Section from './controllers/courseSection';
-import Unit from './controllers/courseUnit';
-import Auth from './middlewares/auth';
+import { Router } from "express";
+import Organisation from "./controllers/organisation";
+import Course from "./controllers/course";
+import User from "./controllers/user";
+import Role from "./controllers/role";
+import Section from "./controllers/courseSection";
+import Unit from "./controllers/courseUnit";
+import Auth from "./middlewares/auth";
 
 const router = Router();
 
-router.post('/organisation', Auth.requireAuth, Organisation.addOrganisation);
-router.get('/organisation', Organisation.getOrganisations);
-router.get('/organisation/:orgId', Organisation.getOrganisationById);
+router.post("/organisation", Auth.requireAuth, Organisation.addOrganisation);
+router.get("/organisation", Organisation.getOrganisations);
+router.get("/organisation/:orgId", Organisation.getOrganisationById);
 router.put(
-  '/organisation/:orgId',
+  "/organisation/:orgId",
   Auth.requireAuth,
   Organisation.editOrganisation
 );
 router.delete(
-  '/organisation/:orgId',
+  "/organisation/:orgId",
   Auth.requireAuth,
   Organisation.deleteOrganisation
 );
 
-router.get('/course', Course.getCourses);
-router.post('/:orgId/course', Auth.requireAuth, Course.addCourse);
-router.get('/:orgId/course', Course.getCoursesByOrganisation);
-router.get('/course/:courseId', Course.getCourseById);
-router.put('/course/:courseId', Auth.requireAuth, Course.editCourse);
+router.get("/course", Course.getCourses);
+router.post("/:orgId/course", Auth.requireAuth, Course.addCourse);
+router.get("/:orgId/course", Course.getCoursesByOrganisation);
+router.get("/course/:courseId", Course.getCourseById);
+router.put("/course/:courseId", Auth.requireAuth, Course.editCourse);
 router.delete(
-  '/course/:orgId/:courseId',
+  "/course/:orgId/:courseId",
   Auth.requireAuth,
   Course.deleteCourse
 );
 
-router.post('/signIn', User.signIn);
-router.get('/:orgId/users', User.getUsersByOrg);
-router.put('/user/:userId/:roleId', Auth.requireAuth, User.assignRoleToUser);
+router.post("/signIn", User.signIn);
+router.get("/:orgId/users", User.getUsersByOrg);
+router.put("/user/:userId/:roleId", Auth.requireAuth, User.assignRoleToUser);
 router.delete(
-  '/user/:userId/:roleId',
+  "/user/:userId/:roleId",
   Auth.requireAuth,
   User.removeRoleFromUser
 );
-router.delete('/user/:userId', Auth.requireAuth, User.deleteUser);
-router.get('/student/course/:userId', Course.getCoursesWithStudent);
-router.get('/instructor/course/:userId', Course.getCoursesWithInstructor);
+router.delete("/user/:userId", Auth.requireAuth, User.deleteUser);
+router.get("/student/course/:userId", Course.getCoursesWithStudent);
+router.get("/instructor/course/:userId", Course.getCoursesWithInstructor);
 
-router.get('/:courseId/instructors', User.getInstructorsByCourse);
-router.get('/:courseId/students', User.getStudentsByCourse);
+// router.get('/:orgId/instructors', User.getInstructorsByOrg);
+router.get("/:courseId/instructors", User.getInstructorsByCourse);
+router.get("/:courseId/students", User.getStudentsByCourse);
+// router.get('/:orgId/students', User.getStudentsByOrg);
 
-router.post('/:courseId/section', Auth.requireAuth, Section.addSection);
-router.put('/section/:sectionId', Auth.requireAuth, Section.editSection);
-router.delete('/section/:sectionId', Auth.requireAuth, Section.deleteSection);
-router.get('/syllabus/:courseId/', Section.getSectionsByCourse);
+router.post("/:courseId/section", Auth.requireAuth, Section.addSection);
+router.put("/section/:sectionId", Auth.requireAuth, Section.editSection);
+router.delete("/section/:sectionId", Auth.requireAuth, Section.deleteSection);
+router.get("/syllabus/:courseId/", Section.getSectionsByCourse);
 
 router.post(
-  '/unit/org/:orgId/:sectionId',
+  "/unit/org/:orgId/:sectionId",
   Auth.requireAuth,
   Unit.addCourseUnit
 );
 router.put(
-  '/unit/section/:sectionId/:unitId',
+  "/unit/section/:sectionId/:unitId",
   Auth.requireAuth,
   Unit.addUnitToSection
 );
-router.put('/unit/:unitId', Auth.requireAuth, Unit.editContent);
+router.put("/unit/:unitId", Auth.requireAuth, Unit.editContent);
 router.delete(
-  '/unit/:sectionId/:unitId',
+  "/unit/:sectionId/:unitId",
   Auth.requireAuth,
   Unit.removeUnitFromSection
 );

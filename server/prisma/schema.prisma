@@ -64,12 +64,11 @@ model HelpRequest {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   course       String //references course
   students     String[] //references User
-  status       String   @default("Pending")
+  status       String   @default("WAITING") // WAITING | ASSIGNED | FINISHED
   instructor   String? //references User
   content      String
   created_at   DateTime @default(now())
-  time_waiting Int      @default(0)
-  time_in_call Int?
+  finished_at DateTime?
 }
 
 //Below is not part of MVP

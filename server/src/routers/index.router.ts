@@ -9,12 +9,11 @@ import CourseUnitRouter from './courseUnit';
 
 const router = Router();
 
-router.use(UserRouter);
-router.use(OrganisationRouter);
-router.use(RoleRouter);
-router.use(CourseRouter);
-router.use(CourseSectionRouter);
-router.use(CourseUnitRouter);
-
+router.use('/user', UserRouter);
+router.use('/org', OrganisationRouter);
+router.use('/role', RoleRouter);
+router.use('/course', CourseRouter);
+router.use('/section', CourseSectionRouter);
+router.use('/unit', CourseUnitRouter);
 
 export default router;

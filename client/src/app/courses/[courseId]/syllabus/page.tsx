@@ -14,6 +14,7 @@ import {
   deleteUnit as deleteUnitReducer,
   updateUnit,
 } from '@/store/slices/courseSlice';
+import Spinner from '@/components/spinner/spinner';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
 
@@ -29,7 +30,7 @@ export default function Syllabus() {
   const [editText, setEditText] = useState<string>('');
   const [unitTitle, setUnitTitle] = useState<string>('');
   const [unitType, setUnitType] = useState<string>('lesson');
-  const [saving, setSaving] = useState<'saving' | 'done'>();
+  const [saving, setSaving] = useState<'saving' | 'done' | 'error'>();
   const { data: session } = useSession();
 
   const user = useAppSelector((state) => state.user);
@@ -56,7 +57,7 @@ export default function Syllabus() {
     }));
     setEditMode(false);
     setSaving('saving');
-    await axios.put(
+    const response = await axios.put(
       `${baseUrl}/unit/${activeUnit!.id}`,
       {
         markdown_body: editText,
@@ -67,17 +68,27 @@ export default function Syllabus() {
         },
       }
     );
-    dispatch(
-      updateUnit({
-        newUnit: {
-          ...activeUnit!,
-          title: unitTitle,
-          markdown_body: editText,
-          type: unitType as 'lesson' | 'excercise' | 'test',
-        },
-      })
-    );
-    setSaving('done');
+    if (response.status === 200) {
+      dispatch(
+        updateUnit({
+          newUnit: {
+            ...activeUnit!,
+            title: unitTitle,
+            markdown_body: editText,
+            type: unitType as 'lesson' | 'excercise' | 'test',
+          },
+        })
+      );
+      setSaving('done');
+      setTimeout(() => {
+        setSaving(undefined);
+      }, 1000);
+    } else {
+      setSaving('error');
+      setTimeout(() => {
+        setSaving(undefined);
+      }, 1000);
+    }
   }
 
   async function deleteUnit() {
@@ -93,13 +104,13 @@ export default function Syllabus() {
   return (
     <>
       <section className='flex flex-grow h-screen'>
-        <div className='flex flex-col w-[60vw] mx-auto h-screen overflow-y-auto'>
+        <div className='flex flex-col w-[60vw] mx-auto h-[95vh] overflow-y-auto bg-white shadow-lg m-auto rounded-xl px-4'>
           <div className='flex w-full justify-end'>
             <h2 className='text-4xl pl-4 py-1 my-4 mx-auto border-l-primary-red border-opacity-30 border-l-[0.5rem] border-l-solid rounded-tl rounded-bl align-middle font-semibold'>
               {activeUnit != null ? (
                 editMode ? (
                   <input
-                    className='rounded-lg p-1'
+                    className='rounded-lg p-1 border-primary-gray border-2 border-opacity-100'
                     onChange={(e) => setUnitTitle(e.target.value)}
                     value={unitTitle}
                   />
@@ -110,17 +121,20 @@ export default function Syllabus() {
                 'Choose a unit to view from the right!'
               )}
             </h2>
+            {isAdmin && saving != null && (
+              <Spinner active={saving === 'saving'} />
+            )}
             {isAdmin && editMode && (
               <>
                 <button
                   onClick={deleteUnit}
-                  className='mx-4 my-4 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                  className='mx-4 my-6 max-h-min max-w-min bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
                 >
                   <RiDeleteBin4Line />
                 </button>
                 <button
                   onClick={saveChanges}
-                  className='mx-4 my-4 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                  className='mx-4 my-6 max-h-min max-w-min bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
                 >
                   <AiOutlineSave />
                 </button>
@@ -129,7 +143,7 @@ export default function Syllabus() {
             {isAdmin && activeUnit != null && (
               <button
                 onClick={() => setEditMode((prev) => !prev)}
-                className='mx-4 my-4 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                className='mx-4 my-6 max-h-min bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
               >
                 <MdOutlineEdit />
               </button>
@@ -141,6 +155,7 @@ export default function Syllabus() {
               type={unitType!}
               setText={setEditText}
               setType={setUnitType}
+              saveChanges={saveChanges}
             />
           ) : (
             activeUnit && <Markdown markdown={activeUnit.markdown_body} />
@@ -149,6 +164,7 @@ export default function Syllabus() {
       </section>
       <div className='self-end'>
         <SyllabusSidebar
+          setSaving={setSaving}
           isAdmin={isAdmin}
           activeId={''}
           sections={syllabus || []}

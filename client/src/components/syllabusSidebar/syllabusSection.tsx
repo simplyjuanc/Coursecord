@@ -19,13 +19,22 @@ type SyllabusSectionProps = {
   selectedUnit?: string;
   selectUnit: (unit: Unit) => void;
   deleteSection: (sectionId: string) => void;
+  setSaving: (saving?: 'saving' | 'done' |'error') => void;
 };
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
 
 export default function SyllabusSection(props: SyllabusSectionProps) {
+  const {
+    isAdmin,
+    section,
+    selectedUnit,
+    selectUnit,
+    deleteSection,
+    setSaving,
+  } = props;
+
   const dispatch = useAppDispatch();
-  const { isAdmin, section, selectedUnit, selectUnit, deleteSection } = props;
   const { data: session } = useSession();
   const [unitFormOpen, setUnitFormOpen] = useState(false);
   const [mode, setMode] = useState<'edit' | 'active'>();
@@ -67,7 +76,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
         <div className='w-full pr-4 pl-4'>
           <div
             className={
-              `flex text-2xl p-2 min-w-full rounded-xl` +
+              `flex text-xl p-2 min-w-full rounded-xl` +
               (mode != null
                 ? ' bg-primary-red bg-opacity-10 text-primary-red'
                 : ' hover:bg-primary-red hover:bg-opacity-5')
@@ -84,28 +93,34 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
               </div>
               <h2 className='font-semibold pl-3'>{section.title}</h2>
             </button>
-            <div className='ml-auto flex'>
-              <div
-                onClick={() =>
-                  setMode((prev) => (prev === undefined ? 'edit' : undefined))
-                }
-                className={` hover:${
-                  mode === 'active' ? 'text-primary-black' : 'text-primary-red'
-                }`}
-              >
-                <MdOutlineEdit />
+            {isAdmin && (
+              <div className='ml-auto flex'>
+                <div
+                  onClick={() =>
+                    setMode((prev) => (prev === undefined ? 'edit' : undefined))
+                  }
+                  className={` hover:${
+                    mode === 'active'
+                      ? 'text-primary-black'
+                      : 'text-primary-red'
+                  }`}
+                >
+                  <MdOutlineEdit />
+                </div>
+                <div
+                  onClick={() => {
+                    deleteSection(section.id);
+                  }}
+                  className={` hover:${
+                    mode === 'active'
+                      ? 'text-primary-black'
+                      : 'text-primary-red'
+                  }`}
+                >
+                  <IoIosClose />
+                </div>
               </div>
-              <div
-                onClick={() => {
-                  deleteSection(section.id);
-                }}
-                className={` hover:${
-                  mode === 'active' ? 'text-primary-black' : 'text-primary-red'
-                }`}
-              >
-                <IoIosClose />
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -137,7 +152,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
                 <li key={index}>
                   <button
                     onClick={() => selectUnit(unit)}
-                    className={`flex items-center text-3xl p-2 min-w-full rounded-xl mt-2 ${
+                    className={`flex items-center text-xl p-2 min-w-full rounded-xl mt-2 ${
                       selectedUnit === unit.id
                         ? 'bg-primary-red bg-opacity-10 text-primary-red'
                         : 'hover:bg-primary-red hover:bg-opacity-5 rounded-xl p-2 w-full'
@@ -161,7 +176,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
               </div>
             )}
             {unitFormOpen && (
-              <UnitForm sectionId={section.id} closeForm={closeUnitForm} />
+              <UnitForm setSaving={setSaving} sectionId={section.id} closeForm={closeUnitForm} />
             )}
           </ol>
         </div>

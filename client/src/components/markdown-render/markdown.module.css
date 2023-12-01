@@ -7,25 +7,43 @@
   padding-left: 1rem;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .markdown h2 {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
+  font-weight: 500;
+
 }
 
 .markdown h3 {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin-top: 0.35rem;
   margin-bottom: 0.35rem;
+  font-weight: 500;
 }
 
 .markdown h4 {
-  font-size: 1rem;
+  font-size: 1.3rem;
   margin-top: 0.2rem;
   margin-bottom: 0.2rem;
+  font-weight: 500;
+}
+
+.markdown h5 {
+  font-size: 1.1rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+  font-weight: 500;
+}
+
+.markdown h6 {
+  font-size: 1rem;
+  margin-top: 0.05rem;
+  margin-bottom: 0.05rem;
+  font-weight: 500;
 }
 
 .markdown a {
@@ -44,10 +62,36 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
   max-width: 100%;
+  list-style: disc;
 }
 
 .markdown li {
   margin-left: 2em;
   display: list-item;
   text-align: -webkit-match-parent;
+}
+
+.markdown ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  max-width: 100%;
+  list-style: decimal;
+}
+
+.markdown blockquote {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  padding-left: 1rem;
+  border-left-color: rgba(0, 0, 0, 0.3);
+  border-left-width: 0.5rem;
+  border-left-style: solid;
+  border-radius: 5px;
+  font-style: italic;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.markdown iframe {
+  margin: 1rem auto;
 }

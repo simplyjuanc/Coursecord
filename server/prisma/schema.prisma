@@ -22,14 +22,13 @@ model Organisation {
 }
 
 model Role {
-  id               String       @id @default(auto()) @map("_id") @db.ObjectId
-  title            String
-  permissions      String[]
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  permissions     String[]
   organisation    Organisation @relation(fields: [organisation_id], references: [id])
   organisation_id String       @db.ObjectId
-  users            UserRole[]   @relation
-  user_ids         String[]     @db.ObjectId
-  organisationId   String       @db.ObjectId
+  users           UserRole[]   @relation
+  user_ids        String[]     @db.ObjectId
 }
 
 model User {

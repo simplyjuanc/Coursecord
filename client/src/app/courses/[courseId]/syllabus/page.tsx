@@ -103,8 +103,8 @@ export default function Syllabus() {
 
   return (
     <>
-      <section className='flex flex-grow h-screen'>
-        <div className='flex flex-col w-[60vw] mx-auto h-[95vh] overflow-y-auto bg-white shadow-lg m-auto rounded-xl px-4'>
+      <section className='flex flex-grow h-screen bg-white'>
+        <div className='flex flex-col w-[60vw] mx-auto h-[95vh] overflow-y-auto bg-white shadow-lg m-auto rounded-xl px-4 border-2 border-primary-gray border-opacity-50'>
           <div className='flex w-full justify-end'>
             <h2 className='text-4xl pl-4 py-1 my-4 mx-auto border-l-primary-red border-opacity-30 border-l-[0.5rem] border-l-solid rounded-tl rounded-bl align-middle font-semibold'>
               {activeUnit != null ? (

@@ -1,6 +1,6 @@
 import { UserInfo } from '../types';
-import { User } from './index';
-import Organisation from './organisation';
+import { User, Organisation } from './index';
+// import Organisation from './organisation';
 import Role from '../models/role';
 import Course from '../models/course';
 import { Organisation as TOrganisation } from '@prisma/client';
@@ -13,9 +13,10 @@ async function getUserByEmail(email: string) {
 async function getUserById(id: string) {
   try {
     const user = await User.findUnique({ where: { id } });
+    if (!user) throw new Error('Invalid User');
     return user;
   } catch (error) {
-    
+    console.log(error);
   }
 }
 
@@ -40,97 +41,107 @@ async function updateUser(userInfo: UserInfo) {
 async function assignRoleToUser(id: string, roleId: string) {
   const updatedUser = await User.update({
     where: { id },
-    data: { roles: { push: roleId } },
+    data: { roles: { connect: { id: roleId } } },
   });
   return updatedUser;
 }
 
 async function userIsOrgOwner(userId: string, orgId: string) {
-  const org = await Organisation.getOrganisationById(orgId);
-  return userId === org?.owner;
+  try {
+    const org = await Organisation.findUnique({ where: { id: orgId }, select: { owner_id: true } });
+    if (!org) throw new Error('Invalid Organisation ID');
+    return userId === org.owner_id;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function getUsersByOrg(orgId: string) {
-  const org = await Organisation.getOrganisationById(orgId);
-  const users = await User.findMany({ where: { id: { in: org?.members } } });
-  return users;
+  try {
+    const users = await Organisation.findUnique({
+      where: { id: orgId },
+      select: {
+        members: { select: { user: true } }
+      }
+    });
+    if (!users) throw new Error('Invalid Organisation ID');
+    return users.members.map(member => member.user);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function getUsersWithRoleByOrg(orgId: string, roleTitle: string) {
-  const org = await Organisation.getOrganisationById(orgId);
-  if (!org) {
-    throw new Error('Invalid Organisation');
+  try {
+    const users = await User.findMany({
+      where: {
+        member_of: { every: { organisation_id: orgId } },
+        roles: {
+          some: {
+            role: { title: roleTitle }
+          }
+        }
+      },
+    });
+    return users;
+  } catch (error) {
+    console.log(error);
   }
-  const role = await Role.getRoleByTitle(org.roles, roleTitle);
-  if (!role) {
-    throw new Error('Invalid Role');
-  }
-  const users = await User.findMany({ where: { roles: { has: role.id } } });
-  return users;
 }
 
 async function getInstructorsByCourse(courseId: string) {
-  const course = await Course.getCourseById(courseId);
-
-  if (!course) {
-    throw new Error('Invalid Course');
+  try {
+    const instructors = await User.findMany({
+      where: { instructor_of: { some: { id: courseId } } }
+    });
+    return instructors;
+  } catch (error) {
+    console.log(error);
   }
-  const instructors = await User.findMany({
-    where: { id: { in: course.instructors } },
-  });
-
-  return instructors;
 }
 
 async function getStudentsByCourse(courseId: string) {
-  const course = await Course.getCourseById(courseId);
-
-  if (!course) {
-    throw new Error('Invalid Course');
-  }
   const students = await User.findMany({
-    where: { id: { in: course.students } },
+    where: { student_of: { some: { id: courseId } } },
   });
-
   return students;
 }
 
 async function addRoleToUser(userId: string, roleId: string) {
-  const updatedUser = await User.update({
-    where: { id: userId },
-    data: { roles: { push: roleId } },
-  });
+  try {
+    const updatedUser = await User.update({
+      where: { id: userId },
+      data: {
+        roles: { connect: { id: roleId } }
+      }
+    });
 
-  return updatedUser;
+    return updatedUser;
+
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function removeRoleFromUser(userId: string, roleId: string) {
-  const user = await getUserById(userId);
-  if (!user) throw new Error('Invalid User');
-  const updatedUser = await User.update({
-    where: { id: userId },
-    data: { roles: user.roles.filter((id) => id != roleId) },
-  });
-
-  return updatedUser;
+  try {
+    const updatedUser = await User.update({
+      where: { id: userId },
+      data: { roles: { disconnect: { id: roleId } } },
+    });
+    return updatedUser;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function deleteUser(userId: string) {
-  const deletedUser = await User.delete({ where: { id: userId } });
-  return deletedUser;
-}
-
-async function removeAllRolesFromOrgUsers(org: TOrganisation) {
-  const users = await User.findMany({ where: { id: { in: org.members } } });
-  let promises = [];
-  for (const user of users) {
-    promises.push(User.update({
-      where: { id: user.id },
-      data: { roles: user.roles.filter((id) => !org.roles.includes(id)) },
-    }));
+  try {
+    const deletedUser = await User.delete({ where: { id: userId } });
+    return deletedUser;
+  } catch (error) {
+    console.log(error);
   }
-
-  await Promise.all(promises);
 }
 
 export default {
@@ -146,6 +157,5 @@ export default {
   getStudentsByCourse,
   addRoleToUser,
   removeRoleFromUser,
-  deleteUser,
-  removeAllRolesFromOrgUsers,
+  deleteUser
 };

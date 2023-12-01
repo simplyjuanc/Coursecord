@@ -15,11 +15,12 @@ export interface DbUser extends User {
 }
 
 export type THelpRequest = {
+  finished_at: Date;
   id: string;
   course: string;
   students: DbUser[];
   status: "WAITING" | "ASSIGNED" | "FINISHED";
-  instructor: string | null;
+  instructor: DbUser;
   content: string;
   created_at: Date;
   time_waiting: number;
@@ -40,10 +41,9 @@ export interface Unit {
   id: string;
   owner: string;
   title: string;
-  type: 'lesson' | 'excercise' | 'test'
+  type: "lesson" | "excercise" | "test";
   markdown_body: string;
 }
-
 
 export interface Section {
   id: string;

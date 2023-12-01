@@ -13,11 +13,6 @@ import user from "../models/user";
 import { request } from "express";
 import { UserInfo } from "../types";
 
-// type TUserSpace = {
-//   organisationId: string
-//   role: 'admin' | 'instructor' | 'student'
-// }
-
 export default function setupWebSockets(io: Server<any>) {
   const getUpdatedRequests = async (courseId: string) => {
     let requests = await HelpRequest.findMany({
@@ -31,18 +26,17 @@ export default function setupWebSockets(io: Server<any>) {
         }
       }
     }
-    // requests.map(async (item) =>
-    //   item.students.map(async (student, index) => {
-    //     // console.log()
-    //     // @ts-ignore
-    //     item.students[index] = await user.getUserById(student);
-    //   })
-    // );
+    for (let i = 0; i < requests.length; i++) {
+      let instructorId = requests[i].instructor;
+      if (instructorId !== null) {
+        let instructor = await user.getUserById(instructorId);
+        (requests[i].instructor as any) = instructor;
+      }
+    }
     return requests;
   };
   console.log("Instantiating socket setup ");
   io.use(async (socket, next) => {
-    // console.log("MIDDLE WARE");
     const accessToken = socket.handshake.auth.accessToken;
     try {
       if (!accessToken) {
@@ -106,9 +100,21 @@ export default function setupWebSockets(io: Server<any>) {
 
     socket.on("updateStatus", async (data: any) => {
       const { course, request, destination } = data;
+      const org = await organisation.getOrganisationWithCourse(course);
+      const roles = await Role.getRolesByUser((socket as any).user.id);
+      let isInstructor = await Role.userRolesIncludes(
+        roles.map((role) => role.id!),
+        "instructor",
+        org?.id ?? ""
+      );
+      if (!isInstructor) return;
       await HelpRequest.update({
         where: { id: request },
-        data: { status: destination },
+        data: {
+          status: destination,
+          instructor: destination === "WAITING" ? "" : (socket as any).user.id,
+          finished_at: destination === "FINISHED" ? new Date() : null,
+        },
       });
       let requests = await getUpdatedRequests(course);
       io.emit("requestsUpdated", requests);

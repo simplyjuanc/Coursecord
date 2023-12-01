@@ -1,9 +1,10 @@
 import { Course as CourseType } from '@prisma/client';
 import { Course, Organisation } from './index';
 
-
-async function createCourse(title: string, description: string, orgId: string ){
-  const course = await Course.create({ data: { title, description, organisation: orgId} });
+async function createCourse(title: string, description: string, orgId: string) {
+  const course = await Course.create({
+    data: { title, description, organisation_id: orgId },
+  });
   return course;
 }
 
@@ -18,6 +19,7 @@ async function getCourseById(id: string) {
 }
 
 async function getCoursesInOrg(orgCourses: string[]) {
+  //TODO: refactor so that this takes an orgId instead of an array of courseIds
   const courses = await Course.findMany({ where: { id: { in: orgCourses } } });
   return courses;
 }
@@ -33,11 +35,8 @@ async function deleteCourse(id: string) {
 }
 
 async function deleteCoursesInOrganisation(orgId: string) {
-  const org = await Organisation.findUnique({ where: { id: orgId } });
-  if (!org) throw new Error('Organisation Not Found');
-
   const deletedCourses = await Course.deleteMany({
-    where: { id: { in: org.courses } },
+    where: { organisation_id: orgId },
   });
   return deletedCourses;
 }
@@ -45,32 +44,38 @@ async function deleteCoursesInOrganisation(orgId: string) {
 async function addStudentToCourse(courseId: string, userId: string) {
   const updatedCourse = await Course.update({
     where: { id: courseId },
-    data: { students: { push: userId } },
+    data: {
+      students: { create: { student_id: userId } },
+    },
   });
   return updatedCourse;
 }
 
 async function getCoursesWithStudent(userId: string) {
-  const courses = await Course.findMany({where: {students: {has: userId}}});
+  const courses = await Course.findMany({
+    where: { students: { some: { student_id: userId } } },
+  });
   return courses;
 }
 
 async function getCoursesWithInstructor(userId: string) {
-  const courses = await Course.findMany({where: {instructors: {has: userId}}});
+  const courses = await Course.findMany({
+    where: { instructors: { some: { instructor_id: userId } } },
+  });
   return courses;
 }
 
 async function addSectionToCourse(courseId: string, sectionId: string) {
   const updatedCourse = await Course.update({
     where: { id: courseId },
-    data: { syllabus: { push: sectionId } },
+    data: { syllabus: { connect: { id: sectionId } } },
   });
   return updatedCourse;
 }
 
 async function getCourseWithSection(sectionId: string) {
   const course = await Course.findFirst({
-    where: { syllabus: { has: sectionId } },
+    where: { syllabus: { some: { id: sectionId } } },
   });
 
   return course;
@@ -88,5 +93,5 @@ export default {
   getCoursesWithStudent,
   getCoursesWithInstructor,
   addSectionToCourse,
-  getCourseWithSection
+  getCourseWithSection,
 };

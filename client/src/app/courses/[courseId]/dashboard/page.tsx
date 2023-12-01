@@ -1,11 +1,3 @@
-import { getCourseData } from '@/services/reduxFetchService';
-
-export default async function Dashboard({
-  params,
-}: {
-  params: { courseId: string };
-}) {
-  await getCourseData(params.courseId);
-
+export default async function Dashboard() {
   return <div>dashboard!</div>;
 }

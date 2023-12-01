@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router'; 
+import { useRouter, useSearchParams } from 'next/navigation'; 
 import type { NextPage } from 'next';
 
 interface Course {
@@ -23,7 +23,8 @@ interface Organisation {
 
 const Dashboard: NextPage = () => {
   const router = useRouter();
-  const courseId = router.query.courseId;
+  const [searchParams] = useSearchParams();
+const courseId = searchParams ? searchParams.get('courseId') : null;
 
   const [courseDetails, setCourseDetails] = useState<Course | null>(null);
   const [organisation, setOrganisation] = useState<Organisation | null>(null);

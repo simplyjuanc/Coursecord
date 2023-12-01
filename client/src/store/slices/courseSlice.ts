@@ -1,9 +1,17 @@
-import { CompiledSection, CourseInfo, CourseState, Unit } from '@/types';
+import {
+  CompiledSection,
+  CourseInfo,
+  CourseState,
+  DbUser,
+  Unit,
+} from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: CourseState = {
   courseInfo: undefined,
   syllabus: undefined,
+  students: [],
+  instructors: [],
 };
 
 const courseSlice = createSlice({
@@ -22,7 +30,20 @@ const courseSlice = createSlice({
     ) => {
       state.syllabus = payload.syllabus;
     },
-
+    setStudents: (
+      state,
+      { payload }: PayloadAction<{ students: DbUser[] }>
+    ) => {
+      state.students = payload.students;
+      console.log(state.students);
+    },
+    setInstructors: (
+      state,
+      { payload }: PayloadAction<{ instructors: DbUser[] }>
+    ) => {
+      state.instructors = payload.instructors;
+      console.log(state.instructors);
+    },
     addSection: (
       state,
       { payload }: PayloadAction<{ section: CompiledSection }>
@@ -75,7 +96,10 @@ const courseSlice = createSlice({
         return { ...state, syllabus: newSyllabus };
       }
     },
-    deleteSection: (state, { payload }: PayloadAction<{ sectionId: string }>) => {
+    deleteSection: (
+      state,
+      { payload }: PayloadAction<{ sectionId: string }>
+    ) => {
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.filter(
           (section) => section.id !== payload.sectionId
@@ -83,27 +107,31 @@ const courseSlice = createSlice({
         return { ...state, syllabus: newSyllabus };
       }
     },
-    updateSection: (state, { payload }: PayloadAction<{ newSection: CompiledSection }>) => {
+    updateSection: (
+      state,
+      { payload }: PayloadAction<{ newSection: CompiledSection }>
+    ) => {
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.map((section) =>
           section.id === payload.newSection.id ? payload.newSection : section
         );
         return { ...state, syllabus: newSyllabus };
       }
-    }
-
+    },
   },
 });
 
 export const {
   setCourseInfo,
   setSyllabus,
+  setStudents,
+  setInstructors,
   addSection,
   addUnitToSection,
   updateUnit,
   deleteUnit,
   deleteSection,
-  updateSection
+  updateSection,
 } = courseSlice.actions;
 
 export default courseSlice.reducer;

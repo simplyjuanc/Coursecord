@@ -67,6 +67,8 @@ export interface CourseInfo {
 export interface CourseState {
   courseInfo?: CourseInfo;
   syllabus?: CompiledSection[];
+  students: DbUser[];
+  instructors: DbUser[];
 }
 
 export interface UserState {

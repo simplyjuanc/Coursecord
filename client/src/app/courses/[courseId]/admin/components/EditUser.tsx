@@ -82,8 +82,8 @@ export default function EditUser({
   }
 
   return (
-    <div className='absolute top-0 left-0 flex items-center justify-center w-full h-full bg-opacity-50 bg-slate-100'>
-      <div className='fixed w-1/3 p-8 bg-white rounded-lg shadow-lg px-16'>
+    <div className='absolute top-0 left-0 flex items-center justify-center w-full h-full bg-opacity-50 bg-slate-100 z-10'>
+      <div className='fixed w-1/3 p-8 bg-white rounded-lg shadow-lg z-20'>
         <div>
           <div
             className='absolute text-xl cursor-pointer right-6 top-4'

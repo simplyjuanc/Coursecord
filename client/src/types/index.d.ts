@@ -60,8 +60,8 @@ export interface CourseInfo {
   organisation: string;
   title: string;
   description: string;
-  students: string[];
-  instructors: string[];
+  students: DbUser[];
+  instructors: DbUser[];
 }
 
 export interface CourseState {

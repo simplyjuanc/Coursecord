@@ -49,7 +49,7 @@ export async function getCourseData(courseId: string) {
     const info = {
       id: course.id,
       title: course.title,
-      organisation: course.organisation,
+      organisation: course.organisation,  
       description: course.description,
       instructors: course.instructors,
       students: course.students,

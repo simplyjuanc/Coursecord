@@ -17,7 +17,7 @@ async function addOrganisation(req: Request, res: Response) {
     const ownerId = (req as RequestWithUser).user.id;
     const newOrg = await Organisation.createOrganisation(name, ownerId);
 
-    const adminRole = await Role.getRoleByTitle(newOrg.roles, 'admin')
+    const adminRole = await Role.getRoleByTitle(newOrg.id, 'admin')
     await User.assignRoleToUser(ownerId, adminRole!.id);
 
     res.status(201).send(newOrg);
@@ -71,9 +71,7 @@ async function deleteOrganisation(req: Request, res: Response) {
     if(!await User.userIsOrgOwner(ownerId, orgId)) {
       return res.status(401).send({message: 'Unauthorised'})
     }
-
-
-    await Course.deleteCoursesInOrganisation(orgId);
+    
     const deletedOrg = await Organisation.deleteOrganisation(orgId);
     await User.removeAllRolesFromOrgUsers(deletedOrg);
     res.status(204).send(deletedOrg);

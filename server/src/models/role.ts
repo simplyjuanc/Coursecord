@@ -1,21 +1,21 @@
 import { Role } from './index';
 
-async function userRolesIncludes(
-  userRoles: string[],
-  title: string,
-  orgId: string
-) {
+async function userHasRole(userId: string, orgId: string, roleTitle: string) {
   const roles = await Role.findMany({
-    where: { id: { in: userRoles }, organisation_id: orgId, title: title },
+    where: {
+      users: { some: { id: userId } },
+      organisation_id: orgId,
+      title: roleTitle,
+    },
   });
 
   return roles.length > 0;
 }
 
-async function getRoleByTitle(orgRoles: string[], title: string) {
+async function getRoleByTitle(orgId: string, title: string) {
   const role = await Role.findFirst({
     where: {
-      id: { in: orgRoles },
+      organisation_id: orgId,
       title,
     },
   });
@@ -52,8 +52,7 @@ async function getRolesByUser(userId: string) {
 }
 
 export default {
-  createDefaultRoles,
-  userRolesIncludes,
+  userHasRole,
   getRoleByTitle,
   deleteRolesInOrg,
   getRolesByUser,

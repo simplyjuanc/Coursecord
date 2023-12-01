@@ -18,9 +18,8 @@ async function getCourseById(id: string) {
   return course;
 }
 
-async function getCoursesInOrg(orgCourses: string[]) {
-  //TODO: refactor so that this takes an orgId instead of an array of courseIds
-  const courses = await Course.findMany({ where: { id: { in: orgCourses } } });
+async function getCoursesInOrg(orgId: string) {
+  const courses = await Course.findMany({where: {organisation_id: orgId}})
   return courses;
 }
 

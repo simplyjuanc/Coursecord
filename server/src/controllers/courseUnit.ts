@@ -11,7 +11,7 @@ async function addCourseUnit(req: Request, res: Response) {
     const unitData = req.body;
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", orgId))) {
+    if (!(await Role.userHasRole(userRoles, "admin", orgId))) {
       return res.status(401).send({ message: "Incorrect Permissions" });
     }
 
@@ -39,7 +39,7 @@ async function addUnitToSection(req: Request, res: Response) {
     }
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", orgId))) {
+    if (!(await Role.userHasRole(userRoles, "admin", orgId))) {
       return res.status(401).send({ message: "Unauthorised" });
     }
 
@@ -64,7 +64,7 @@ async function removeUnitFromSection(req: Request, res: Response) {
     }
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", orgId))) {
+    if (!(await Role.userHasRole(userRoles, "admin", orgId))) {
       return res.status(401).send({ message: "Unauthorised" });
     }
 
@@ -91,7 +91,7 @@ async function deleteContent(req: Request, res: Response) {
 
 
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, 'admin', org.id))) {
+    if (!(await Role.userHasRole(userRoles, 'admin', org.id))) {
       return res.status(401).send({ message: 'Missing Permission' });
     }
 
@@ -128,7 +128,7 @@ async function editContent(req: Request, res: Response) {
       return res.status(401).send({ message: "Invalid Unit" });
     }
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
+    if (!(await Role.userHasRole(userRoles, "admin", org.id))) {
       return res.status(401).send({ message: "Unauthorised" });
     }
 

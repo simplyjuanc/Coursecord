@@ -74,7 +74,7 @@ export default function setupWebSockets(io: Server<any>) {
       if (!callback) return;
       const org = await organisation.getOrganisationWithCourse(courseId);
       const roles = await Role.getRolesByUser((socket as any).user.id);
-      let isInstructor = await Role.userRolesIncludes(
+      let isInstructor = await Role.userHasRole(
         roles.map((role) => role.id!),
         "instructor",
         org?.id ?? ""
@@ -102,7 +102,7 @@ export default function setupWebSockets(io: Server<any>) {
       const { course, request, destination } = data;
       const org = await organisation.getOrganisationWithCourse(course);
       const roles = await Role.getRolesByUser((socket as any).user.id);
-      let isInstructor = await Role.userRolesIncludes(
+      let isInstructor = await Role.userHasRole(
         roles.map((role) => role.id!),
         "instructor",
         org?.id ?? ""

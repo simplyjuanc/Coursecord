@@ -1,12 +1,12 @@
-import { Organisation as TOrganisation } from '@prisma/client';
-import { Organisation } from './index';
-import Course from './course';
-import Role from './role';
+import { Organisation as TOrganisation } from "@prisma/client";
+import { Organisation } from "./index";
+import Course from "./course";
+import Role from "./role";
 
 async function createOrganisation(name: string, owner: string) {
   const defaultRoles = await Role.createDefaultRoles();
   const newOrg = await Organisation.create({
-    data: { name, owner, members: [owner], roles: defaultRoles },
+    data: { name, owner_id: owner, roles: defaultRoles },
   });
 
   return newOrg;
@@ -27,33 +27,13 @@ async function getOrganisationById(id: string) {
   return org;
 }
 
-async function addCourseToOrganisation(id: string, course: string) {
-  const updatedOrg = await Organisation.update({
-    where: { id },
-    data: { courses: { push: course } },
-  });
-  return updatedOrg;
-}
-
-async function removeCourseFromOrganisation(id: string, course: string) {
-  const org = await Organisation.findUnique({ where: { id } });
-  if (!org) throw new Error('Organisation not found');
-
-  const updatedOrg = await Organisation.update({
-    where: { id },
-    data: { courses: org.courses.filter((id) => id !== course) },
-  });
-
-  return updatedOrg;
-}
-
 async function editOrganisation(
   id: string,
   newData: Partial<TOrganisation>,
   userId: string
 ) {
   const updatedOrg = await Organisation.update({
-    where: { id, owner: userId },
+    where: { id, owner_id: userId },
     data: newData,
   });
 
@@ -62,23 +42,22 @@ async function editOrganisation(
 
 async function deleteOrganisation(id: string) {
   const deletedOrg = await Organisation.delete({ where: { id } });
-  await Role.deleteRolesInOrg(deletedOrg.roles);
   return deletedOrg;
 }
 
 async function getOrganisationWithUnit(unitId: string) {
-  const orgs = await Organisation.findFirst({
-    where: { content: { has: unitId } },
+  const org = await Organisation.findFirst({
+    where: { course_units: { some: { id: unitId } } },
   });
 
-  return orgs;
+  return org;
 }
 
 async function setOrganisationUnits(orgId: string, units: string[]) {
   const updatedOrg = await Organisation.update({
     where: { id: orgId },
     data: {
-      content: units,
+      course_units: {},
     },
   });
 
@@ -86,10 +65,8 @@ async function setOrganisationUnits(orgId: string, units: string[]) {
 }
 
 async function getOrgWithSection(sectionId: string) {
-  const course = await Course.getCourseWithSection(sectionId);
-  if(!course) throw new Error('Course not found');
   const org = await Organisation.findFirst({
-    where: { courses: { has: course.id } },
+    where: { courses: { some: { syllabus: { some: { id: sectionId } } } } },
   });
 
   return org;
@@ -97,7 +74,7 @@ async function getOrgWithSection(sectionId: string) {
 
 async function getOrganisationWithCourse(courseId: string) {
   const org = await Organisation.findFirst({
-    where: { courses: { has: courseId } },
+    where: { courses: { some: { id: courseId } } },
   });
 
   return org;
@@ -105,7 +82,7 @@ async function getOrganisationWithCourse(courseId: string) {
 
 async function getOrganisationWithRole(roleId: string) {
   const org = await Organisation.findFirst({
-    where: { roles: { has: roleId } },
+    where: { roles: { some: {id:roleId} } },
   });
 
   return org;
@@ -114,15 +91,15 @@ async function getOrganisationWithRole(roleId: string) {
 async function addMemberToOrganisation(orgId: string, userId: string) {
   const updatedOrg = await Organisation.update({
     where: { id: orgId },
-    data: { members: { push: userId } },
+    data: { members: { create: {user_id:userId} } },
   });
 
-  return updatedOrg
+  return updatedOrg;
 }
 
 async function getOrganisationsWithMember(userId: string) {
   const org = await Organisation.findMany({
-    where: { members: { has: userId } },
+    where: { members: { some: {user_id:userId} } },
   });
 
   return org;
@@ -133,8 +110,6 @@ export default {
   getOrganisations,
   getOrganisationByName,
   getOrganisationById,
-  addCourseToOrganisation,
-  removeCourseFromOrganisation,
   editOrganisation,
   deleteOrganisation,
   getOrganisationWithUnit,
@@ -143,5 +118,5 @@ export default {
   getOrganisationWithRole,
   addMemberToOrganisation,
   getOrganisationsWithMember,
-  getOrgWithSection
+  getOrgWithSection,
 };

@@ -25,7 +25,7 @@ model Role {
   id               String       @id @default(auto()) @map("_id") @db.ObjectId
   title            String
   permissions      String[]
-  organisation    Organisation @relation(fields: [organisation_id], references: [id])
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onUpdate: Cascade)
   organisation_id String       @db.ObjectId
   users            UserRole[]   @relation
   user_ids         String[]     @db.ObjectId

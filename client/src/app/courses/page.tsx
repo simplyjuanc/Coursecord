@@ -26,14 +26,14 @@ export default function Courses() {
     return (
       <div className="relative bg-white rounded-xl shadow-md hover:bg-gray-50">
         <div className="flex">
-          <div className="w-20 h-20 mx-2 mt-2 bg-primary-red bg-opacity-50 text-center rounded-xl">
+          <div className="w-20 h-20  mx-2 mt-2 bg-primary-red bg-opacity-50 text-center rounded-xl">
             <h1 className="my-auto pt-5 text-3xl font-bold text-primary-red">
               {props.course.title[0].toUpperCase()}
             </h1>
           </div>
           <div className="p-2">
             <h2 className="text-2xl">{props.course.title}</h2>
-            <h3 className="truncate font-light pb-1">
+            <h3 className="truncate font-light pb-1 w-1/2">
               {props.course.description}
             </h3>
             <h3>{props.course.students.length} members</h3>

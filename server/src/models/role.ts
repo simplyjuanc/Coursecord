@@ -6,19 +6,19 @@ import User from '../models/user';
 async function createDefaultRoles() {
   const newRoles = [];
   newRoles.push(
-    (await Role.create({ data: { title: 'admin', permissions: ['admin'] } })).id
+    (await Role.create({ data: { title: "admin", permissions: ["admin"] } })).id
   );
   newRoles.push(
     (
       await Role.create({
-        data: { title: 'instructor', permissions: ['instructor'] },
+        data: { title: "instructor", permissions: ["instructor"] },
       })
     ).id
   );
   newRoles.push(
     (
       await Role.create({
-        data: { title: 'student', permissions: ['student'] },
+        data: { title: "student", permissions: ["student"] },
       })
     ).id
   );
@@ -26,16 +26,20 @@ async function createDefaultRoles() {
   return newRoles;
 }
 
-async function userRolesIncludeAdmin(userRoles: string[], orgId: string) {
+async function userRolesIncludes(
+  userRoles: string[],
+  title: string,
+  orgId: string
+) {
   const org = await Organisation.getOrganisationById(orgId);
 
   if (!org) {
-    throw new Error('Organisation Not Found');
+    throw new Error("Organisation Not Found");
   }
 
   const orgRoles = await Role.findMany({ where: { id: { in: org.roles } } });
   for (const role of orgRoles) {
-    if (role.title === 'admin' && userRoles.includes(role.id)) {
+    if (role.title === title && userRoles.includes(role.id)) {
       return true;
     }
   }
@@ -80,10 +84,10 @@ async function getRolesByUser(userId: string) {
     userPromise,
     orgsWithUserPromise,
   ]);
-  if (!user || !orgsWithUser) throw new Error('User or Organisation Not Found');
+  if (!user || !orgsWithUser) throw new Error("User or Organisation Not Found");
 
   const rolePromises = user.roles.map(async (roleId) => {
-    let organisation = '';
+    let organisation = "";
     for (const org of orgsWithUser) {
       if (org.roles.includes(roleId)) {
         organisation = org.id;
@@ -91,7 +95,7 @@ async function getRolesByUser(userId: string) {
       }
     }
     return {
-      ...(await getRoleById(roleId.replace('\n', ''))),
+      ...(await getRoleById(roleId.replace("\n", ""))),
       organisation,
     };
   });
@@ -103,7 +107,7 @@ async function getRolesByUser(userId: string) {
 
 export default {
   createDefaultRoles,
-  userRolesIncludeAdmin,
+  userRolesIncludes,
   getRoleByTitle,
   deleteRolesInOrg,
   getRolesByUser,

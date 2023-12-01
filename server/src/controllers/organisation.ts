@@ -73,7 +73,6 @@ async function deleteOrganisation(req: Request, res: Response) {
     }
     
     const deletedOrg = await Organisation.deleteOrganisation(orgId);
-    await User.removeAllRolesFromOrgUsers(deletedOrg.id);
     res.status(204).send(deletedOrg);
   } catch (error) {
     console.log(error);

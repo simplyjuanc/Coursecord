@@ -19,6 +19,7 @@ export default function HelpRequestBoard() {
   const baseUrl = process.env.API_URL || "http://localhost:5000";
   const courseId = "6565c41df515f6ec9392f30f";
   const { data: session } = useSession();
+
   useEffect(() => {
     axios
       .get<DbUser[]>(`${baseUrl}/${courseId}/instructors`)
@@ -43,6 +44,7 @@ export default function HelpRequestBoard() {
       socket.disconnect();
     };
   }, [baseUrl]);
+
   const ItemComponent = (props: { item: THelpRequest }) => {
     return (
       <div className="border-primary-red border-2 rounded-xl select-none">
@@ -94,14 +96,15 @@ export default function HelpRequestBoard() {
       </div>
     );
   };
+  
   const BoardComponent = (props: { status: string }) => {
     return (
-      <div>
+      <div className="flex-grow flex flex-col ">
         <div className="flex font-bold text-3xl">
           <div className="my-auto text-primary-red text-4xl pr-4 pb-6">
             <BsThreeDots />
           </div>
-          <h1 className="">
+          <h1 className="drop-shadow-lg">
             {props.status.slice(0, 1)}
             {props.status.slice(1).toLocaleLowerCase()}
           </h1>
@@ -109,7 +112,7 @@ export default function HelpRequestBoard() {
         <Droppable droppableId={props.status}>
           {(droppableProvided, snapshot) => (
             <div
-              className="bg-white w-full rounded-xl p-6"
+              className="bg-white w-full max-h-min rounded-xl p-6 shadow-xl border-2 border-primary-gray border-opacity-40"
               ref={droppableProvided.innerRef}
               {...droppableProvided.droppableProps}
             >
@@ -146,14 +149,14 @@ export default function HelpRequestBoard() {
   };
 
   return (
-    <div className="w-full h-full px-32 py-12">
-      <div className="bg-white flex text-5xl font-semibold px-8 py-4 mx-auto rounded-xl">
-        <div className="my-auto mr-4 text-primary-red text-6xl">
+    <div className="flex-grow flex flex-col h-screen px-20 pt-10 bg-white">
+      <div className="bg-white flex text-3xl font-semibold px-8 py-4 mx-auto rounded-xl shadow-xl border-2 border-primary-gray border-opacity-40">
+        <div className="my-auto mr-4 text-primary-red text-4xl">
           <MdSupportAgent />
         </div>
         <h1 className="my-auto">Help Requests</h1>
       </div>
-      <div className="grid pt-12 grid-cols-3 h-screen gap-x-24 overflow-y-scroll">
+      <div className="flex-grow max-h-screen grid pt-12 grid-cols-3 gap-x-12 overflow-y-auto">
         {socket === undefined ? (
           <div className="text-center mx-auto justify-center pt-40 left-1/2 flex absolute">
             <Image src={Spinner} alt="Spinner" width={75} height={75} />

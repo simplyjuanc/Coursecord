@@ -10,10 +10,11 @@ type MarkdownFormProps = {
   text: string;
   setText: (text: string) => void;
   setType: (type: string) => void;
+  saveChanges: () => void;
 };
 
 export default function MarkdownForm(props: MarkdownFormProps) {
-  const { type, text, setText, setType } = props;
+  const { type, text, setText, setType, saveChanges } = props;
 
   const [preview, setPreview] = useState<boolean>(false);
 
@@ -22,6 +23,26 @@ export default function MarkdownForm(props: MarkdownFormProps) {
     excercise: <FaPencilRuler />,
     test: <IoDocumentTextOutline />,
   };
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const start = e.currentTarget.selectionStart;
+      const end = e.currentTarget.selectionEnd;
+
+      e.currentTarget.value =
+        e.currentTarget.value.substring(0, start) +
+        '\t' +
+        e.currentTarget.value.substring(end);
+
+      e.currentTarget.selectionStart = e.currentTarget.selectionEnd = start + 1;
+    }
+
+    if(e.ctrlKey && e.key === 's') {
+      e.preventDefault();
+      saveChanges();
+    }
+  }
 
   return (
     <div className='w-full flex-grow flex flex-col  p-6'>
@@ -61,7 +82,8 @@ export default function MarkdownForm(props: MarkdownFormProps) {
         <Markdown markdown={text} />
       ) : (
         <textarea
-          className='w-full flex-grow p-6 rounded-xl resize-none'
+          className='w-full flex-grow p-6 rounded-xl resize-none border-solid border-2 border-primary-gray border-opacity-100'
+          onKeyDown={handleKeyDown}
           value={text}
           onChange={(e) => setText(e.target.value)}
         />

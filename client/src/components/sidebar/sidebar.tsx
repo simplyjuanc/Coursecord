@@ -45,8 +45,7 @@ export default function Sidebar() {
   };
 
   const NavItemComponent = (props: { item: NavItem }) => {
-    const isActive = pathname.includes(props.item.href);
-    //probably change this to a regex just in case one of the object ids says dashboard or smn
+    const isActive = pathname.split("/")[3] === props.item.href;
     return (
       <div className="flex">
         {isActive && (
@@ -71,7 +70,7 @@ export default function Sidebar() {
     );
   };
   return (
-    <div className="h-screen min-h-full min-w-max w-[12vw] bg-white shadow-lg relative box-border">
+    <div className="h-screen min-h-full min-w-max w-[12vw] bg-white shadow-xl relative box-border">
       <div className="flex p-4">
         <div className="w-10 h-10 rounded-full bg-primary-red bg-opacity-50 mr-4"></div>
         <h1 className="my-auto text-3xl text-primary-gray font-semibold">

@@ -7,7 +7,7 @@ import {
 } from '@/types';
 import axios from 'axios';
 import store from '@/store';
-import { setCourseInfo, setSyllabus } from '@/store/slices/courseSlice';
+import { setCourseInfo, setInstructors, setStudents, setSyllabus } from '@/store/slices/courseSlice';
 import {
   setCoursesAsInstructor,
   setCoursesAsStudent,
@@ -23,10 +23,15 @@ export async function getCourseData(courseId: string) {
     const syllabusPromise = axios.get<Section[]>(
       `${baseUrl}/syllabus/${courseId}`
     );
-    const [courseResponse, syllabusResponse] = await Promise.all([
+    const studentPromise = axios.get<DbUser[]>(`${baseUrl}/${courseId}/students`)
+    const instructorPromise = axios.get<DbUser[]>(`${baseUrl}/${courseId}/instructors`)
+    const [courseResponse, syllabusResponse, studentResponse, instructorResponse] = await Promise.all([
       coursePromise,
       syllabusPromise,
+      studentPromise,
+      instructorPromise
     ]);
+
     if (courseResponse.status !== 200 || syllabusResponse.status !== 200) {
       throw new Error('Error fetching course data');
     }
@@ -58,6 +63,8 @@ export async function getCourseData(courseId: string) {
 
     store.dispatch(setCourseInfo({ info }));
     store.dispatch(setSyllabus({ syllabus }));
+    store.dispatch(setInstructors({ instructors: instructorResponse.data }));
+    store.dispatch(setStudents({ students: studentResponse.data }));
   } catch (error) {
     console.log(error);
   }

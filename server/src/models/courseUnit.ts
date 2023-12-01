@@ -1,14 +1,12 @@
 import { CourseUnitInfo } from '../types';
 import { CourseUnit, Organisation } from './index';
-import CourseSection from '../models/courseSection';
 
-async function createCourseUnit(owner: string, courseUnitData: CourseUnitInfo) {
+async function createCourseUnit(
+  organisation_id: string,
+  courseUnitData: CourseUnitInfo
+) {
   const newCourseUnit = await CourseUnit.create({
-    data: { ...courseUnitData, owner },
-  });
-  await Organisation.update({
-    where: { id: owner },
-    data: { content: { push: newCourseUnit.id } },
+    data: { ...courseUnitData, organisation_id },
   });
   return newCourseUnit;
 }
@@ -31,11 +29,8 @@ async function editCourseUnit(
 }
 
 async function getUnitsBySection(sectionId: string) {
-  const section = await CourseSection.getSectionById(sectionId);
-  if (!section) throw new Error('No unique section found');
-
   const units = await CourseUnit.findMany({
-    where: { id: { in: section.content } },
+    where: { section: { some: { section_id: sectionId } } },
   });
 
   return units;

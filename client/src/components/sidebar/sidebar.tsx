@@ -16,7 +16,9 @@ import { useAppSelector } from "@/store";
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isUserAdmin = useAppSelector(state => state.user).roles.some(role => role.title === "admin");
+  const isUserAdmin = useAppSelector((state) => state.user).roles.some(
+    (role) => role.title === "admin"
+  );
 
   const NavItems: NavItem[] = [
     {
@@ -36,11 +38,11 @@ export default function Sidebar() {
     },
   ];
 
-  const NavAdminPanel:NavItem = {
+  const NavAdminPanel: NavItem = {
     title: "User Management",
     href: "admin",
     icon: <FaUsersCog />,
-  }
+  };
 
   const NavItemComponent = (props: { item: NavItem }) => {
     const isActive = pathname.includes(props.item.href);
@@ -83,7 +85,11 @@ export default function Sidebar() {
               <NavItemComponent item={item} />
             </li>
           ))}
-          { isUserAdmin && (<li><NavItemComponent item={NavAdminPanel} /></li>) }
+          {isUserAdmin && (
+            <li>
+              <NavItemComponent item={NavAdminPanel} />
+            </li>
+          )}
         </ul>
       </div>
       <div onClick={() => {}} className="absolute bottom-0 mx-auto w-full p-3">
@@ -91,7 +97,9 @@ export default function Sidebar() {
           <IconButton
             title="Courses"
             icon={<IoCaretBackOutline />}
-            onClick={() => {}}
+            onClick={() => {
+              router.push("/courses");
+            }}
           />
         </div>
         <IconButton

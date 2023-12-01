@@ -128,13 +128,13 @@ export default function Syllabus() {
               <>
                 <button
                   onClick={deleteUnit}
-                  className='mx-4 my-6 max-h-min max-w-min bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                  className='mx-4 my-6 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
                 >
                   <RiDeleteBin4Line />
                 </button>
                 <button
                   onClick={saveChanges}
-                  className='mx-4 my-6 max-h-min max-w-min bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                  className='mx-4 my-6 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
                 >
                   <AiOutlineSave />
                 </button>

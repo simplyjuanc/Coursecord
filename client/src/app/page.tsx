@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 import wave from "/public/login/Vector 1.png";
 import four from "/public/login/+4.png";

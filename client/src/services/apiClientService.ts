@@ -2,7 +2,7 @@ import { Section, SessionWithToken, Unit } from '@/types';
 
 const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
-export async function getOrgAndCourseUsers(
+export async function getCourseUsers(
   courseId: string,
   /* orgId: string, (constant for now)*/ session: SessionWithToken
 ) {

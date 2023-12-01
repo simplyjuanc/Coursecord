@@ -116,7 +116,7 @@ async function assignRoleToUser(req: Request, res: Response) {
       return res.status(401).send({ message: "Invalid Role" });
     }
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
+    if (!(await Role.userHasRole(userRoles, "admin", org.id))) {
       return res.status(401).send({ message: "Unauthorised" });
     }
 
@@ -136,7 +136,7 @@ async function removeRoleFromUser(req: Request, res: Response) {
       return res.status(401).send({ message: "Invalid Role" });
     }
     const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
+    if (!(await Role.userHasRole(userRoles, "admin", org.id))) {
       return res.status(401).send({ message: "Unauthorised" });
     }
 

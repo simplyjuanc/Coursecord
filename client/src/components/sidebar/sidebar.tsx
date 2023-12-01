@@ -2,21 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { RiDashboardFill } from "react-icons/ri";
-import { IconType } from "react-icons";
-import IconButton from "../buttons/iconButton";
-import { RiLogoutBoxLine } from "react-icons/ri";
+import { FaUsersCog } from "react-icons/fa";
+import { IoIosHelpBuoy } from "react-icons/io";
 import { IoCaretBackOutline } from "react-icons/io5";
+import { MdTextSnippet } from "react-icons/md";
+import { RiDashboardFill, RiLogoutBoxLine } from "react-icons/ri";
+import IconButton from "../buttons/iconButton";
 import { useRouter } from "next/navigation";
 import { NavItem } from "@/types";
 import { signOut } from "next-auth/react";
-import { MdTextSnippet } from "react-icons/md";
-import { IoIosHelpBuoy } from "react-icons/io";
+import { useAppSelector } from "@/store";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const isUserAdmin = useAppSelector((state) => state.user).roles.some(
+    (role) => role.title === "admin"
+  );
 
   const NavItems: NavItem[] = [
     {
@@ -36,9 +38,14 @@ export default function Sidebar() {
     },
   ];
 
+  const NavAdminPanel: NavItem = {
+    title: "User Management",
+    href: "admin",
+    icon: <FaUsersCog />,
+  };
+
   const NavItemComponent = (props: { item: NavItem }) => {
-    const isActive = pathname.includes(props.item.href);
-    //probably change this to a regex just in case one of the object ids says dashboard or smn
+    const isActive = pathname.split("/")[3] === props.item.href;
     return (
       <div className="flex">
         {isActive && (
@@ -49,7 +56,7 @@ export default function Sidebar() {
         <Link href={props.item.href} className="w-full pr-4 pl-4">
           <button
             className={
-              `flex text-3xl p-2 min-w-full rounded-xl` +
+              `flex text-xl p-2 min-w-full rounded-xl` +
               (isActive
                 ? " bg-primary-red bg-opacity-10 text-primary-red"
                 : " hover:bg-primary-red hover:bg-opacity-5")
@@ -63,7 +70,7 @@ export default function Sidebar() {
     );
   };
   return (
-    <div className="h-screen min-h-full min-w-max w-[12vw] bg-white shadow-lg relative box-border">
+    <div className="h-screen min-h-full min-w-max w-[12vw] bg-white shadow-xl relative box-border">
       <div className="flex p-4">
         <div className="w-10 h-10 rounded-full bg-primary-red bg-opacity-50 mr-4"></div>
         <h1 className="my-auto text-3xl text-primary-gray font-semibold">
@@ -77,6 +84,11 @@ export default function Sidebar() {
               <NavItemComponent item={item} />
             </li>
           ))}
+          {isUserAdmin && (
+            <li>
+              <NavItemComponent item={NavAdminPanel} />
+            </li>
+          )}
         </ul>
       </div>
       <div onClick={() => {}} className="absolute bottom-0 mx-auto w-full p-3">
@@ -84,11 +96,13 @@ export default function Sidebar() {
           <IconButton
             title="Courses"
             icon={<IoCaretBackOutline />}
-            onClick={() => {}}
+            onClick={() => {
+              router.push("/courses");
+            }}
           />
         </div>
         <IconButton
-          title="Logout "
+          title="Logout"
           icon={<RiLogoutBoxLine />}
           onClick={() => {
             signOut();

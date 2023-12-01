@@ -47,7 +47,7 @@ export default function UserRow({
 
   return (
     <>
-      <div className='flex flex-row justify-center col-span-1 gap-2 py-2'>
+      <div className='flex flex-row justify-center col-span-1 gap-2 py-2 bg-white border-b border-primary-gray border-opacity-40'>
         <div className='cursor-pointer' onClick={handleEdit}>
           <MdOutlineModeEdit />
         </div>
@@ -55,9 +55,9 @@ export default function UserRow({
           <MdOutlineRestoreFromTrash />
         </div>
       </div>
-      <div className='col-span-2 py-2 text-center'>{user.name}</div>
-      <div className='col-span-2 py-2 text-center'>{user.email}</div>
-      <div className='col-span-2 py-2 text-center'>
+      <div className='col-span-2 py-2 text-center bg-white border-b border-primary-gray border-opacity-40'>{user.name}</div>
+      <div className='col-span-2 py-2 text-center bg-white border-b border-primary-gray border-opacity-40'>{user.email}</div>
+      <div className='col-span-2 py-2 text-center bg-white border-b border-primary-gray border-opacity-40'>
         {userRoles && userRoles.join(', ')}
       </div>
       {showUser && (

@@ -84,3 +84,14 @@ body {
   animation: pulse 2s infinite;
 }
 
+.selected {
+  @apply scale-105 shadow-lg z-10 relative;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: none; /* This explicitly removes blur */
+}
+
+/* The 'blur' class applies a blur effect */
+.blur {
+  @apply blur-sm transition-all duration-300 ease-in-out;
+}
+

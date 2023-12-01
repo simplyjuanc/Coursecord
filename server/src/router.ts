@@ -7,7 +7,7 @@ import Section from "./controllers/courseSection";
 import Unit from "./controllers/courseUnit";
 import Auth from "./middlewares/auth";
 
-const router = Router();
+  const router = Router();
 
 router.post("/organisation", Auth.requireAuth, Organisation.addOrganisation);
 router.get("/organisation", Organisation.getOrganisations);
@@ -75,11 +75,11 @@ router.delete(
 router.delete('/unit/:unitId', Auth.requireAuth, Unit.deleteContent);
 router.get('/section/units/:sectionId', Unit.getUnitsBySection);
 
-router.get('/:orgId/roles', Role.getRolesByOrg);
-router.get('/user/role/:userId', Role.getRolesByUser);
-//Not part of MVP
-router.post('/:orgId/role', Role.addRole);
-router.delete('/role/:roleId', Role.removeRole);
-router.put('/role/:roleId', Role.editRole);
+  router.get('/:orgId/roles', Role.getRolesByOrg);
+  router.get('/user/role/:userId', Role.getRolesByUser);
+  //Not part of MVP
+  router.post('/:orgId/role', Role.addRole);
+  router.delete('/role/:roleId', Role.removeRole);
+  router.put('/role/:roleId', Role.editRole);
 
-export default router;
+  export default router;

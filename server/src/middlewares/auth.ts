@@ -9,6 +9,7 @@ async function requireAuth(
   next: NextFunction
 ) {
   try {
+    const accessToken = req.headers.authorization;
     if (!accessToken) {
       return res.status(401).send({ message: 'No access token found' });
     }

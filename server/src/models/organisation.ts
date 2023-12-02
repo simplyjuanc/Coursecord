@@ -1,12 +1,21 @@
-import { Organisation as TOrganisation } from "@prisma/client";
-import { Organisation } from "./index";
-import Course from "./course";
-import Role from "./role";
+import { Organisation as TOrganisation } from '@prisma/client';
+import { Organisation } from './index';
 
 async function createOrganisation(name: string, owner: string) {
-  const defaultRoles = await Role.createDefaultRoles();
   const newOrg = await Organisation.create({
-    data: { name, owner_id: owner, roles: defaultRoles },
+    data: {
+      name,
+      owner_id: owner,
+      roles: {
+        createMany: {
+          data: [
+            { title: 'admin', permissions: ['admin'] },
+            { title: 'instructor', permissions: ['instructor'] },
+            { title: 'student', permissions: ['student']}
+          ],
+        },
+      },
+    },
   });
 
   return newOrg;
@@ -82,7 +91,7 @@ async function getOrganisationWithCourse(courseId: string) {
 
 async function getOrganisationWithRole(roleId: string) {
   const org = await Organisation.findFirst({
-    where: { roles: { some: {id:roleId} } },
+    where: { roles: { some: { id: roleId } } },
   });
 
   return org;
@@ -91,7 +100,7 @@ async function getOrganisationWithRole(roleId: string) {
 async function addMemberToOrganisation(orgId: string, userId: string) {
   const updatedOrg = await Organisation.update({
     where: { id: orgId },
-    data: { members: { create: {user_id:userId} } },
+    data: { members: { create: { user_id: userId } } },
   });
 
   return updatedOrg;
@@ -99,7 +108,7 @@ async function addMemberToOrganisation(orgId: string, userId: string) {
 
 async function getOrganisationsWithMember(userId: string) {
   const org = await Organisation.findMany({
-    where: { members: { some: {user_id:userId} } },
+    where: { members: { some: { user_id: userId } } },
   });
 
   return org;

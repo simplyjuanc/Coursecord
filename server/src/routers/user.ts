@@ -12,6 +12,7 @@ router.use('/auth', Auth.requireAuth, authRouter);
 authRouter.put('/:userId/:roleId', User.assignRoleToUser);
 authRouter.delete('/:userId/:roleId', User.removeRoleFromUser);
 authRouter.delete('/:userId', User.deleteUser);
+authRouter.get('/:userId/courses', User.getUserCourses);
 
 router.post('/signIn', User.signIn);
 router.get('/:orgId/users', User.getUsersByOrg);

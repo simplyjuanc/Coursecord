@@ -11,6 +11,6 @@ authRouter.post('/:courseId/section', Section.addSection);
 authRouter.put('/section/:sectionId', Section.editSection);
 authRouter.delete('/section/:sectionId', Section.deleteSection);
 
-router.get('/syllabus/:courseId/', Section.getSectionsByCourse);
+router.get('/syllabus/:courseId/', Section.getCourseSyllabus);
 
 export default router;

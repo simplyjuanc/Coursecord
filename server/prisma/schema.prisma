@@ -84,9 +84,9 @@ model HelpRequest {
   course        Course                @relation(fields: [course_id], references: [id], onUpdate: Cascade)
   course_id     String                @db.ObjectId
   students      HelpRequestStudents[] @relation
-  instructor    User                  @relation(fields: [instructor_id], references: [id])
-  instructor_id String                @db.ObjectId
-  status        String                @default("WAITING")
+  instructor    User?                 @relation(fields: [instructor_id], references: [id])
+  instructor_id String?               @db.ObjectId
+  status        String                @default("WAITING") // WAITING, ASSIGNED, FINISHED
   content       String
   created_at    DateTime              @default(now())
   time_waiting  Int                   @default(0)

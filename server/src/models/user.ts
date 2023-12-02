@@ -1,16 +1,14 @@
-import { UserInfo } from '../types';
+import { UserInfo } from '../../@types/types';
 import { User, Organisation } from './index';
-// import Organisation from './organisation';
-import Role from '../models/role';
-import Course from '../models/course';
-import { Organisation as TOrganisation } from '@prisma/client';
+
+
 
 async function getUserByEmail(email: string) {
   const user = await User.findUnique({ where: { email } });
   return user;
 }
 
-async function getUserById(id: string) {
+async function getUsersById(id: string) {
   try {
     const user = await User.findUnique({ where: { id } });
     if (!user) throw new Error('Invalid User');
@@ -19,6 +17,16 @@ async function getUserById(id: string) {
     console.log(error);
   }
 }
+
+async function getUsersByIds(ids: string[]) {
+  try {
+    const users = await User.findMany({where: { id: { in: ids } }});
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 async function createUser(userInfo: UserInfo) {
   const newUser = await User.create({
@@ -34,7 +42,6 @@ async function updateUser(userInfo: UserInfo) {
       ...userInfo,
     },
   });
-
   return updatedUser;
 }
 
@@ -146,11 +153,12 @@ async function deleteUser(userId: string) {
 
 export default {
   getUserByEmail,
+  getUsersByIds,
   createUser,
   updateUser,
   assignRoleToUser,
   userIsOrgOwner,
-  getUserById,
+  getUsersById,
   getUsersByOrg,
   getUsersWithRoleByOrg,
   getInstructorsByCourse,

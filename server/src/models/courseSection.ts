@@ -1,7 +1,6 @@
-import { CourseSectionInfo } from '../types';
+import { CourseSectionInfo } from '../../@types/types';
 import { CourseSection } from './index';
-import Course from './course';
-import { CourseSection as TCourseSection } from '@prisma/client';
+
 
 //right now course section info is just a title but I am sure that is
 //going to change so I am putting the type there to make it easier to change later

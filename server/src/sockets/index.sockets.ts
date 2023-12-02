@@ -1,3 +1,4 @@
+import { AuthSocket } from "./AuthSocket";
 import { Server, Socket } from "socket.io";
 import { instrument } from "@socket.io/admin-ui";
 import Role from "../models/role";
@@ -5,84 +6,40 @@ import {
   setupStudentHelpSockets,
   setupInstructorHelpSockets,
 } from "./helpRequests";
-import axios from "axios";
-import User from "../models/user";
 import organisation from "../models/organisation";
-import { HelpRequest } from "../models";
 import user from "../models/user";
-import { request } from "express";
-import { UserInfo } from "../types";
+import HelpRequestModel from "../models/helpRequest";
+import { SocketWithUser } from "../../@types/types";
 
-export default function setupWebSockets(io: Server<any>) {
-  const getUpdatedRequests = async (courseId: string) => {
-    let requests = await HelpRequest.findMany({
-      where: { course: { equals: courseId } },
-    });
-    for (let i = 0; i < requests.length; i++) {
-      for (let j = 0; j < requests[i].students.length; j++) {
-        let student = await user.getUserById(requests[i].students[j]);
-        if (student !== null && student !== undefined) {
-          (requests[i] as any).students[j] = student;
-        }
-      }
-    }
-    for (let i = 0; i < requests.length; i++) {
-      let instructorId = requests[i].instructor;
-      if (instructorId !== null) {
-        let instructor = await user.getUserById(instructorId);
-        (requests[i].instructor as any) = instructor;
-      }
-    }
-    return requests;
-  };
+
+export default async function setupWebSockets(io: Server) {
   console.log("Instantiating socket setup ");
-  io.use(async (socket, next) => {
-    const accessToken = socket.handshake.auth.accessToken;
-    try {
-      if (!accessToken) {
-        next(new Error("Unauthorised"));
-      }
-
-      const response = await axios.get(
-        "https://www.googleapis.com/oauth2/v3/userinfo",
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      if (response.status !== 200) next(new Error("Unauthorised"));
-      const googleUser = response.data;
-      if (!googleUser) {
-        next(new Error("Unauthorised"));
-      }
-      const user = await User.getUserByEmail(googleUser.email);
-      if (!user) {
-        next(new Error("User not found"));
-      }
-
-      (socket as any).user = user;
-      next();
-    } catch (error) {
-      console.error(error);
-      next(new Error("Authorisation Error"));
-    }
-    next();
-  });
-  io.on("connection", (socket: Socket<any>) => {
+  io.use(AuthSocket);
+  io.on("connection", (socket: Socket) => {
     console.log("Connection established with user: ", socket.id);
 
     socket.on("join", async (courseId: string, callback: Function) => {
-      if (!callback) return;
-      const org = await organisation.getOrganisationWithCourse(courseId);
-      const roles = await Role.getRolesByUser((socket as any).user.id);
-      let isInstructor = await Role.userHasRole(
-        roles.map((role) => role.id!),
-        "instructor",
-        org?.id ?? ""
-      );
-      if (isInstructor) {
-        let requests = await getUpdatedRequests(courseId);
-        callback(requests);
+      try {
+        
+      } catch (error) {
+        console.log(error)
       }
+      if (!callback) return;
+      const userId = (socket as SocketWithUser).user.id;
+      const org = await organisation.getOrganisationWithCourse(courseId);
+      
+      // const isInstructor = await Role.userHasRole(userId, )
+      
+      // const roles = await Role.getRolesByUser((socket as SocketWithUser).user.id);
+      // const isInstructor = await Role.userHasRole(
+      //   roles.map((role) => role.id!),
+      //   "instructor",
+      //   org?.id ?? ""
+      // );
+      // if (isInstructor) {
+      //   let requests = await HelpRequestModel.getHelpRequests(courseId);
+      //   callback(requests);
+      // }
 
       callback([]);
     });
@@ -131,3 +88,4 @@ export default function setupWebSockets(io: Server<any>) {
     mode: "development",
   });
 }
+

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/user";
 import Auth from "../middlewares/auth";
-import { RequestWithUser } from "../types";
+import { RequestWithUser } from "../../@types/types";
 import Organisation from "../models/organisation";
 import Course from "../models/course";
 import Role from "../models/role";

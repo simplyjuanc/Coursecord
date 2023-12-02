@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import CourseUnit from "../models/courseUnit";
 import CourseSection from "../models/courseSection";
 import Organisation from "../models/organisation";
-import { RequestWithUser } from "../types";
+import { RequestWithUser } from "../../@types/types";
 import Role from "../models/role";
 
 async function addCourseUnit(req: Request, res: Response) {

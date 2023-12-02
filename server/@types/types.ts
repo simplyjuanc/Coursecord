@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import { Request } from "express";
+import { Socket } from "socket.io";
 
 export type GoogleUser ={
   email: string;
@@ -29,3 +30,19 @@ export type CourseSectionInfo = {
 export interface RequestWithUser extends Request {
   user: User;
 }
+
+export interface SocketWithUser extends Socket { 
+  user: User 
+}
+
+export type THelpRequest ={
+  id: string;
+  content: string;
+  course_id: string;
+  students: string[];
+  instructor_id: string | undefined;
+  status: 'WAITING' | 'ASSIGNED' | 'FINISHED';
+}
+
+export type HelpRequestStatus = Pick<THelpRequest, "status">;
+export type HelpRequestInstructor = Pick<THelpRequest, "instructor_id">;

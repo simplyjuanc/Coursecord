@@ -1,14 +1,19 @@
 import { UserInfo } from '../../@types/types';
-import { User, Organisation } from './index';
+import { User, Organisation, Role } from './index';
 
 
 
 async function getUserByEmail(email: string) {
-  const user = await User.findUnique({ where: { email } });
-  return user;
+  try {
+    const user = await User.findUnique({ where: { email } });
+    if (!user) throw new Error('Invalid User');
+    return user;
+  } catch (error) {
+    console.log(error)
+  }
 }
 
-async function getUsersById(id: string) {
+async function getUserById(id: string) {
   try {
     const user = await User.findUnique({ where: { id } });
     if (!user) throw new Error('Invalid User');
@@ -26,7 +31,6 @@ async function getUsersByIds(ids: string[]) {
     console.log(error);
   }
 }
-
 
 async function createUser(userInfo: UserInfo) {
   const newUser = await User.create({
@@ -125,7 +129,6 @@ async function addRoleToUser(userId: string, roleId: string) {
         roles: { connect: { id: roleId } },
       },
     });
-
     return updatedUser;
   } catch (error) {
     console.log(error);
@@ -177,6 +180,16 @@ async function getOrganisationAdmins(orgId: string) {
   return org;
 }
 
+async function isCourseInstructor(userId:string, courseId: string) {
+  try {
+    const instructors = await getInstructorsByCourse(courseId);
+    if (!instructors) throw new Error("No instructors found");
+    return instructors.some((instructor) => instructor.id === userId);
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default {
   getUserByEmail,
   getUsersByIds,
@@ -184,7 +197,7 @@ export default {
   updateUser,
   assignRoleToUser,
   userIsOrgOwner,
-  getUsersById,
+  getUserById,
   getUsersByOrg,
   getUsersWithRoleByOrg,
   getInstructorsByCourse,
@@ -193,5 +206,6 @@ export default {
   removeRoleFromUser,
   deleteUser,
   getUserCourses,
-  getOrganisationAdmins
+  getOrganisationAdmins,
+  isCourseInstructor
 };

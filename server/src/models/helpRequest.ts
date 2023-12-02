@@ -1,16 +1,15 @@
 import { HelpRequest } from ".";
-import { THelpRequest } from "../../@types/types";
+import { THelpRequest, TCreateHelpRequest } from "../../@types/types";
 
 
-async function createHelpRequest(content: string, course_id: string, students: string[]) {
+async function createHelpRequest(data: TCreateHelpRequest) {
   try {
-    if (!content || !course_id || !students) throw new Error("Missing data");
     const createdRequest = await HelpRequest.create({
       data: {
-        content,
-        course_id,
+        content: data.content,
+        course_id : data.course_id,
         students: {
-          connect: students.map((student) => ({ id: student }))
+          connect: data.students.map((student) => ({ id: student }))
         }
       },
     });

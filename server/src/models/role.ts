@@ -51,6 +51,19 @@ async function getRolesByUser(userId: string) {
   return roles;
 }
 
+
+async function getUserOrgRoles(userId: string, orgId: string) {
+  const roles = Role.findMany({
+    where: { 
+      users: { some: { user_id: userId } }, 
+      organisation_id: orgId },
+  });
+
+  return roles;
+}
+
+
+
 export default {
   userHasRole,
   getRoleByTitle,
@@ -58,4 +71,5 @@ export default {
   getRolesByUser,
   getRolesByOrg,
   getRoleById,
+  getUserOrgRoles
 };

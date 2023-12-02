@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Role, User } from "@prisma/client";
 import { Request } from "express";
 import { Socket } from "socket.io";
 
@@ -32,7 +32,8 @@ export interface RequestWithUser extends Request {
 }
 
 export interface SocketWithUser extends Socket { 
-  user: User 
+  user?: User 
+  roles?: Role[];
 }
 
 export type THelpRequest ={
@@ -44,5 +45,6 @@ export type THelpRequest ={
   status: 'WAITING' | 'ASSIGNED' | 'FINISHED';
 }
 
+export type TCreateHelpRequest = Pick<THelpRequest, "content" | "course_id" | "students">;
 export type HelpRequestStatus = Pick<THelpRequest, "status">;
 export type HelpRequestInstructor = Pick<THelpRequest, "instructor_id">;

@@ -57,11 +57,11 @@ export interface CompiledSection extends Section {
 
 export interface CourseInfo {
   id: string;
-  organisation: string;
+  organisation: {name: string};
   title: string;
   description: string;
-  students: DbUser[];
-  instructors: DbUser[];
+  students: {name: string, image: string}[]
+  instructors: {name: string, image: string}[]
 }
 
 export interface CourseState {

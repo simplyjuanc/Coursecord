@@ -134,7 +134,7 @@ export async function deleteUnit(unitId: string, session: SessionWithToken) {
 
 export async function getCourses(courseId: string, session: SessionWithToken) {
   try {
-    //gets a course
+    //gets all courses
   } catch (error) {
     console.log(error);
   }
@@ -167,10 +167,18 @@ export async function getRolesByUser(
 
 export async function getCourseData(
   courseId: string,
-  session: SessionWithToken
 ) {
   try {
-    //gets a course
+    const courseResponse = await fetch(`${baseUrl}/course/${courseId}`, {
+      method: 'GET'
+    });
+
+    if (!courseResponse.ok) {
+      console.log('Course could not be retrieved');
+      return null;
+    }
+
+    return await courseResponse.json();
   } catch (error) {
     console.log(error);
   }

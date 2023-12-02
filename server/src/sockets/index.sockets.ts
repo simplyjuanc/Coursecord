@@ -1,12 +1,10 @@
 import { AuthSocket } from "./AuthSocket";
 import { Server } from "socket.io";
-import { instrument } from "@socket.io/admin-ui";
-import {
-  setupStudentSockets,
-  setupInstructorSockets,
-} from "./helpRequests";
-
 import { SocketWithUser } from "../../@types/types";
+import {
+  setStudentSockets,
+  setInstructorSockets,
+} from "./helpRequests";
 
 
 export default async function setupWebSockets(io: Server) {
@@ -20,18 +18,13 @@ export default async function setupWebSockets(io: Server) {
 
     const isInstructor = socket.roles!.some((role) => role.title === "instructor");
 
-    if (isInstructor) setupInstructorSockets(socket);
-    else setupStudentSockets(socket);
+    if (isInstructor) setInstructorSockets(socket);
+    else setStudentSockets(socket);
 
     socket.on("disconnect", () => {
       socket.disconnect();
       console.log(`User ${socket.id} disconnected`);
     });
-  });
-
-  instrument(io, {
-    auth: false,
-    mode: "development",
   });
 }
 

@@ -1,9 +1,9 @@
-import { Role } from '@/types';
+import { IRole } from '@/types';
 import React from 'react';
 
 type RoleSelectProps = {
-  roles: Role[];
-  setRole: React.Dispatch<React.SetStateAction<Role | undefined>>;
+  roles: IRole[];
+  setRole: React.Dispatch<React.SetStateAction<IRole | undefined>>;
 };
 export function RoleSelect({ roles, setRole }: RoleSelectProps) {
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {

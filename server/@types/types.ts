@@ -48,3 +48,5 @@ export type THelpRequest ={
 export type TCreateHelpRequest = Pick<THelpRequest, "content" | "course_id" | "students">;
 export type HelpRequestStatus = Pick<THelpRequest, "status">;
 export type HelpRequestInstructor = Pick<THelpRequest, "instructor_id">;
+export type UpdateRequestStatusData = Pick<THelpRequest, "id" | "status" | "course_id">;
+

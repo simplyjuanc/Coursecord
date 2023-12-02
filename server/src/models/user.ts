@@ -4,13 +4,11 @@ import { User, Organisation, Role } from './index';
 
 
 async function getUserByEmail(email: string) {
-  try {
-    const user = await User.findUnique({ where: { email } });
-    if (!user) throw new Error('Invalid User');
-    return user;
-  } catch (error) {
-    console.log(error)
-  }
+  const user = await User.findUnique({
+    where: { email },
+    include: { roles: true },
+  });
+  return user;
 }
 
 async function getUserById(id: string) {
@@ -52,7 +50,7 @@ async function updateUser(userInfo: UserInfo) {
 async function assignRoleToUser(id: string, roleId: string) {
   const updatedUser = await User.update({
     where: { id },
-    data: { roles: { connect: { id: roleId } } },
+    data: { roles: { create: { role_id: roleId } } },
   });
   return updatedUser;
 }

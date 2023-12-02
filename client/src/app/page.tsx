@@ -11,6 +11,7 @@ import logo from "/public/login/logo.png";
 
 export default function Login() {
   const { data: session } = useSession();
+  console.log('session', session);
   const router = useRouter();
 
   const handleCourses = () => {

@@ -70,35 +70,10 @@ export async function getCourseData(courseId: string) {
   }
 }
 
-export async function getUserData(user: DbUser) {
+export async function getUserCourse(user: DbUser) {
   try {
-    const studentPromise = axios.get<Course[]>(
-      `${baseUrl}/student/course/${user.id}`
-    );
-    const instructorPromise = axios.get<Course[]>(
-      `${baseUrl}/instructor/course/${user.id}`
-    );
-    const rolesPromise = axios.get<RoleWithOrg[]>(
-      `${baseUrl}/user/role/${user.id}`
-    );
-
-    const [studentResponse, instructorResponse, rolesResponse] =
-      await Promise.all([studentPromise, instructorPromise, rolesPromise]);
-
-    if (
-      studentResponse.status !== 200 ||
-      instructorResponse.status !== 200 ||
-      rolesResponse.status !== 200
-    ) {
-      throw new Error('Error fetching user data');
-    }
-
-    store.dispatch(setUser({ user }));
-    store.dispatch(setRoles({ roles: rolesResponse.data }));
-    store.dispatch(
-      setCoursesAsInstructor({ courses: instructorResponse.data })
-    );
-    store.dispatch(setCoursesAsStudent({ courses: studentResponse.data }));
+    
+    
   } catch (error) {
     console.log(error);
   }

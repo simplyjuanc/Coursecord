@@ -72,19 +72,19 @@ export interface CourseState {
 }
 
 export interface UserState {
-  user?: DbUser;
+  id: string;
   coursesAsStudent: Course[];
   coursesAsInstructor: Course[];
   roles: RoleWithOrg[];
 }
 
-export interface Role {
+export interface IRole {
   id: string;
   title: string;
   permissions: string[];
 }
 
-export interface RoleWithOrg extends Role {
+export interface RoleWithOrg extends IRole {
   organisation: string;
 }
 

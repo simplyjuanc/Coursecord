@@ -1,4 +1,4 @@
-import { DbUser, SessionWithToken, Role } from '@/types';
+import { DbUser, SessionWithToken, IRole } from '@/types';
 import React, { useEffect, useState } from 'react';
 import { UserSelect } from './UserSelect';
 import { RoleSelect } from './RoleSelect';
@@ -10,7 +10,7 @@ type EditUserProps = {
   user: DbUser;
   courseId: string;
   setShowUser: React.Dispatch<React.SetStateAction<boolean>>;
-  roles: Role[];
+  roles: IRole[];
 };
 
 export default function EditUser({

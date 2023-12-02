@@ -1,9 +1,11 @@
-import { Socket } from "socket.io";
-import { SocketWithUser, TCreateHelpRequest, THelpRequest } from "../../@types/types";
+import { SocketWithUser, TCreateHelpRequest } from "../../@types/types";
 import HelpRequestModel from "../models/helpRequest";
 import UserModel from "../models/user";
+import { UpdateRequestStatusData } from "../../@types/types";
 
-export function setupStudentSockets(socket: SocketWithUser) {  
+
+
+export function setStudentSockets(socket: SocketWithUser) {  
   socket.on("createRequest", async (data: TCreateHelpRequest, callback: Function) => {
     console.log("STUDENTS:    ", data.students);
     const createdRequest = await HelpRequestModel.createHelpRequest(data);
@@ -15,15 +17,15 @@ export function setupStudentSockets(socket: SocketWithUser) {
 }
 
 
-export function setupInstructorSockets(socket: SocketWithUser) {
+export function setInstructorSockets(socket: SocketWithUser) {
+  socket.join('instructors');
+
   socket.on("getRequests", async (data:Record<'courseId',string>, callback: Function) => {
     const { courseId } = data;
     const requests = await HelpRequestModel.getHelpRequests(courseId);
     callback(requests);
   });
 
-
-  type UpdateRequestStatusData = Pick<THelpRequest, "id" |  "status" | "course_id">;
   socket.on("updateStatus", async (data: UpdateRequestStatusData) => {
     const { id, course_id, status } = data;
     const isInstructor = await UserModel.isCourseInstructor(socket.user!.id, course_id);

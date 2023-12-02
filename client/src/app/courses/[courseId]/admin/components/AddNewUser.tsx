@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { RoleSelect } from './RoleSelect';
-import { Role } from '@/types';
+import { IRole } from '@/types';
 import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 
 type AddUserProps = {
   courseId: string;
   setShowNewUser: React.Dispatch<React.SetStateAction<boolean>>;
-  roles: Role[];
+  roles: IRole[];
 };
 
 export default function AddNewUser({
@@ -19,7 +19,7 @@ export default function AddNewUser({
     name: '',
     email: '',
   });
-  const [selectedRole, setSelectedRole] = useState<Role>();
+  const [selectedRole, setSelectedRole] = useState<IRole>();
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {

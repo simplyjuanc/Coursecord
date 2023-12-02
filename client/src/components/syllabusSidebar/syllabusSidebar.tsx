@@ -5,17 +5,11 @@ import { CgAddR } from 'react-icons/cg';
 import { useState } from 'react';
 import IconButton from '../buttons/iconButton';
 import SectionForm from '../syllabusForms/sectionForm';
-import UnitForm from '../syllabusForms/unitForm';
-import { RiBook2Line } from 'react-icons/ri';
-import { FaPencilRuler } from 'react-icons/fa';
-import { IoDocumentTextOutline } from 'react-icons/io5';
-import { IoIosClose } from 'react-icons/io';
 import { useAppDispatch } from '@/store';
 import { deleteSection as deleteSectionReducer } from '@/store/slices/courseSlice';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { MdOutlineEdit } from 'react-icons/md';
 import SyllabusSection from './syllabusSection';
+import * as api from '@/services/apiClientService';
 
 interface SyllabusSidebarProps {
   sections: CompiledSection[];
@@ -44,11 +38,7 @@ export default function SyllabusSidebar(props: SyllabusSidebarProps) {
 
   async function deleteSection(sectionId: string) {
     dispatch(deleteSectionReducer({ sectionId }));
-    await axios.delete(`${baseUrl}/section/${sectionId}`, {
-      headers: {
-        Authorization: (session as SessionWithToken)!.accessToken,
-      },
-    });
+    await api.deletSection(sectionId, session as SessionWithToken);
   }
 
   return (

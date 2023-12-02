@@ -9,7 +9,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: CourseState = {
   courseInfo: undefined,
-  syllabus: undefined,
+  syllabus: [],
+  cachedUnits: {},
   students: [],
   instructors: [],
 };
@@ -55,22 +56,24 @@ const courseSlice = createSlice({
 
     addUnitToSection: (
       state,
-      { payload }: PayloadAction<{ sectionId: string; unit: Unit }>
+      {
+        payload,
+      }: PayloadAction<{ sectionId: string; course_unit: { unit: Unit } }>
     ) => {
       if (state.syllabus && state.courseInfo) {
         const section = state.syllabus.find(
           (section) => section.id === payload.sectionId
         );
         if (section) {
-          section.units.push(payload.unit);
+          section.course_units.push(payload.course_unit);
         }
       }
     },
     updateUnit: (state, { payload }: PayloadAction<{ newUnit: Unit }>) => {
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.map((section) => {
-          const units = section.units.map((unit) =>
-            unit.id === payload.newUnit.id ? payload.newUnit : unit
+          const units = section.course_units.map((unit) =>
+            unit.unit.id === payload.newUnit.id ? payload.newUnit : unit
           );
 
           return {
@@ -84,8 +87,8 @@ const courseSlice = createSlice({
     deleteUnit: (state, { payload }: PayloadAction<{ unitId: string }>) => {
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.map((section) => {
-          const units = section.units.filter(
-            (unit) => unit.id !== payload.unitId
+          const units = section.course_units.filter(
+            (unit) => unit.unit.id !== payload.unitId
           );
 
           return {

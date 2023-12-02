@@ -21,8 +21,7 @@ async function addSection(req: Request, res: Response) {
       return res.status(401).send({ message: 'Missing Permissions' });
     }
     const sectionData = req.body;
-
-    const newSection = await CourseSection.createSection(sectionData);
+    const newSection = await CourseSection.createSection(sectionData, courseId);
     await Course.addSectionToCourse(courseId, newSection.id);
     res.status(201).send(newSection);
   } catch (error) {

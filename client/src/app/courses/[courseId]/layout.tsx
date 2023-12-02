@@ -14,21 +14,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
 
   const userId = useAppSelector((state) => state.user.id);
-  const course = useAppSelector((state) => state.course.courseInfo);
   const { courseId } = useParams() as { courseId: string };
 
   useEffect(() => {
     (async function () {
-      if (session) {
-        const userSession = session as SessionWithToken;
-        if (!course) {
-          getCourseData(courseId);
-        }
-        if (userSession.user.id !== userId) {
-          dispatch(setUser({ userId: userSession.user.id }));
-          const userRoles = await getRolesByUser(userSession.user.id, userSession);
-          dispatch(setRoles({roles: userRoles}));
-        }
+      const userSession = session as SessionWithToken | undefined;
+      if (userSession && userSession.user.id !== userId) {
+        dispatch(setUser({ userId: userSession.user.id }));
+        const userRoles = await getRolesByUser(
+          userSession.user.id,
+          userSession
+        );
+        dispatch(setRoles({ roles: userRoles }));
       }
     })();
   }, [courseId]);

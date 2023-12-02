@@ -7,9 +7,9 @@ const authRouter = Router();
 
 router.use('/auth', Auth.requireAuth, authRouter);
 
-authRouter.post('/:courseId/section', Section.addSection);
-authRouter.put('/section/:sectionId', Section.editSection);
-authRouter.delete('/section/:sectionId', Section.deleteSection);
+authRouter.post('/:courseId/', Section.addSection);
+authRouter.put('/:sectionId', Section.editSection);
+authRouter.delete('/:sectionId', Section.deleteSection);
 
 router.get('/syllabus/:courseId/', Section.getCourseSyllabus);
 

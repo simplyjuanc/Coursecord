@@ -12,6 +12,7 @@ authRouter.put('/section/:sectionId/:unitId', Unit.addUnitToSection);
 authRouter.put('/:unitId', Unit.editContent);
 authRouter.delete('/:sectionId/:unitId', Unit.removeUnitFromSection);
 authRouter.delete('/:unitId', Unit.deleteContent);
+router.get('/:unitId', Unit.getUnit);
 
 router.get('/section/:sectionId', Unit.getUnitsBySection);
 

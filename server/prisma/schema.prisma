@@ -28,7 +28,6 @@ model Role {
   organisation    Organisation @relation(fields: [organisation_id], references: [id])
   organisation_id String       @db.ObjectId
   users           UserRole[]   @relation
-  user_ids        String[]     @db.ObjectId
 }
 
 model User {
@@ -73,7 +72,7 @@ model CourseUnit {
   id              String              @id @default(auto()) @map("_id") @db.ObjectId
   title           String
   type            String
-  markdown_body   String
+  markdown_body   String              @default("")
   organisation    Organisation        @relation(fields: [organisation_id], references: [id], onUpdate: Cascade)
   organisation_id String              @db.ObjectId
   section         CourseSectionUnit[] @relation

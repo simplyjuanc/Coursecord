@@ -174,4 +174,5 @@ export default {
   deleteContent,
   editContent,
   getUnitsBySection,
+  getUnit,
 };

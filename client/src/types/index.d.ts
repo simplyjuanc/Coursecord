@@ -48,25 +48,26 @@ export interface Unit {
 export interface Section {
   id: string;
   title: string;
-  units: string[];
+  course_id: string;
 }
 
 export interface CompiledSection extends Section {
-  units: Unit[];
+  course_units: {unit: Unit}[];
 }
 
 export interface CourseInfo {
   id: string;
-  organisation: string;
+  organisation: {name: string};
   title: string;
   description: string;
-  students: DbUser[];
-  instructors: DbUser[];
+  students: {student: {name: string, image: string}}[]
+  instructors: {instructor: {name: string, image: string}}[]
 }
 
 export interface CourseState {
   courseInfo?: CourseInfo;
-  syllabus?: CompiledSection[];
+  syllabus: CompiledSection[];
+  cachedUnits: Record<string, Unit>;
   students: DbUser[];
   instructors: DbUser[];
 }

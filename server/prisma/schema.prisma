@@ -28,7 +28,6 @@ model Role {
   organisation    Organisation @relation(fields: [organisation_id], references: [id])
   organisation_id String       @db.ObjectId
   users           UserRole[]   @relation
-  user_ids        String[]     @db.ObjectId
 }
 
 model User {

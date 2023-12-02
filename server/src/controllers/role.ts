@@ -21,6 +21,7 @@ async function getRolesByUser(req: Request, res: Response) {
   try {
     const { userId } = req.params;
     const roles = await Role.getRolesByUser(userId);
+    console.log(roles);
     res.status(200).send(roles);
   } catch (error) {
     console.log(error);

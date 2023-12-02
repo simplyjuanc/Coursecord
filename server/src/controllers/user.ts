@@ -41,11 +41,11 @@ async function signIn(req: Request, res: Response) {
     const newUser = await User.createUser(userInfo);
     //TEMPORARY
     await Organisation.addMemberToOrganisation(
-      '656b2fde7b32e44d802e342d',
+      '656b40666c0ea5f66060c942',
       newUser.id,
       'admin'
     );
-    await Course.addStudentToCourse('656b338c2ef4b28dc15893fb', newUser.id);
+    await Course.addStudentToCourse('656b40a56c0ea5f66060c947', newUser.id);
     //TEMPORARY^
     res.status(201).send(newUser);
 

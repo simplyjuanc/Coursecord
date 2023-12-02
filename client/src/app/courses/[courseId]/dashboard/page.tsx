@@ -13,6 +13,8 @@ const Dashboard: NextPage = () => {
   const [selectedDiv, setSelectedDiv] = useState<string | null>(null);
   const courseInfo = useAppSelector((state) => state.course.courseInfo);
 
+  console.log(courseInfo);
+
   useEffect(() => {
     if (courseInfo) return;
 
@@ -62,7 +64,7 @@ const Dashboard: NextPage = () => {
           <ul>
             {courseInfo && courseInfo.students.map((student, index) => (
               <li key={index} className='list-disc list-inside mb-1'>
-                {student.name}
+                {student.student.name}
               </li>
             ))}
           </ul>
@@ -78,7 +80,7 @@ const Dashboard: NextPage = () => {
           <ul>
             {courseInfo && courseInfo.instructors.map((instructor, index) => (
               <li key={index} className='list-disc list-inside mb-1'>
-                {instructor.name}
+                {instructor.instructor.name}
               </li>
             ))}
           </ul>

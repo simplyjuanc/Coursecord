@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     (async function () {
       const userSession = session as SessionWithToken | undefined;
-      if (userSession && userSession.user.id === userId) {
+      if (userSession && userSession.user.id !== userId) {
         dispatch(setUser({ userId: userSession.user.id }));
         const userRoles = await getRolesByUser(
           userSession.user.id,

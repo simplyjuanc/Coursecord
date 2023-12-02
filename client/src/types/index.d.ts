@@ -60,8 +60,8 @@ export interface CourseInfo {
   organisation: {name: string};
   title: string;
   description: string;
-  students: {name: string, image: string}[]
-  instructors: {name: string, image: string}[]
+  students: {student: {name: string, image: string}}[]
+  instructors: {instructor: {name: string, image: string}}[]
 }
 
 export interface CourseState {

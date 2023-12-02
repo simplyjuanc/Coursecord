@@ -1,4 +1,5 @@
 import { Role } from './index';
+import Course from './course';
 
 async function userHasRole(userId: string, orgId: string, roleTitle: string) {
   const roles = await Role.findMany({

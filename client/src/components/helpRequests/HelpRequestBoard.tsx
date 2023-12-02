@@ -47,7 +47,7 @@ export default function HelpRequestBoard() {
 
   const ItemComponent = (props: { item: THelpRequest }) => {
     return (
-      <div className="border-primary-red border-2 rounded-xl select-none">
+      <div className="border-primary-red border-2 rounded-xl bg-white select-none">
         <div className="p-2">
           <div className="flex">
             <div className="my-auto">

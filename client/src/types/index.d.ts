@@ -48,7 +48,7 @@ export interface Unit {
 export interface Section {
   id: string;
   title: string;
-  units: string[];
+  course_id: string;
 }
 
 export interface CompiledSection extends Section {

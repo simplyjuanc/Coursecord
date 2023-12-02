@@ -6,8 +6,10 @@ import { CourseSection as TCourseSection } from '@prisma/client';
 //right now course section info is just a title but I am sure that is
 //going to change so I am putting the type there to make it easier to change later
 
-async function createSection(sectionData: CourseSectionInfo) {
-  const newSection = await CourseSection.create({ data: sectionData });
+async function createSection(sectionData: CourseSectionInfo, courseId: string) {
+  const newSection = await CourseSection.create({
+    data: { ...sectionData, course_id: courseId },
+  });
   return newSection;
 }
 

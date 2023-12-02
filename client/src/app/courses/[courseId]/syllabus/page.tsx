@@ -47,8 +47,9 @@ export default function Syllabus() {
         dispatch(setCourseInfo({ info: courseInfo }));
       });
     }
-    if (!syllabus && session) {
+    if (!syllabus.length && session) {
       getSyllabus(courseId, session as SessionWithToken).then((syllabus) => {
+        console.log(syllabus);
         dispatch(setSyllabus({ syllabus }));
       });
     }

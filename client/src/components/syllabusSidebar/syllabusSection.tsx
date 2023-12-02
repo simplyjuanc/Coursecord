@@ -10,7 +10,7 @@ import { MdOutlineEdit } from 'react-icons/md';
 import { IoIosClose } from 'react-icons/io';
 import { useAppDispatch } from '@/store';
 import { updateSection } from '@/store/slices/courseSlice';
-import axios from 'axios';
+import * as api from '@/services/apiClientService';
 import { useSession } from 'next-auth/react';
 
 type SyllabusSectionProps = {
@@ -19,7 +19,7 @@ type SyllabusSectionProps = {
   selectedUnit?: string;
   selectUnit: (unit: Unit) => void;
   deleteSection: (sectionId: string) => void;
-  setSaving: (saving?: 'saving' | 'done' |'error') => void;
+  setSaving: (saving?: 'saving' | 'done' | 'error') => void;
 };
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
@@ -54,14 +54,10 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
     if (!editTitle) return;
 
     dispatch(updateSection({ newSection: { ...section, title: editTitle } }));
-    await axios.put(
-      `${baseUrl}/section/${section.id}`,
+    await api.editSection(
+      section.id,
       { title: editTitle },
-      {
-        headers: {
-          Authorization: (session as SessionWithToken)!.accessToken,
-        },
-      }
+      session as SessionWithToken
     );
   }
 
@@ -176,7 +172,11 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
               </div>
             )}
             {unitFormOpen && (
-              <UnitForm setSaving={setSaving} sectionId={section.id} closeForm={closeUnitForm} />
+              <UnitForm
+                setSaving={setSaving}
+                sectionId={section.id}
+                closeForm={closeUnitForm}
+              />
             )}
           </ol>
         </div>

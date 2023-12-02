@@ -1,10 +1,10 @@
 import { Role } from './index';
-import Course from './course';
 
 async function userHasRole(userId: string, orgId: string, roleTitle: string) {
+  console.log(userId, orgId, roleTitle);
   const roles = await Role.findMany({
     where: {
-      users: { some: { id: userId } },
+      users: { some: { user_id: userId } },
       organisation_id: orgId,
       title: roleTitle,
     },

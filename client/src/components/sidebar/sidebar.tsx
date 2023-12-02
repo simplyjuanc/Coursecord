@@ -16,10 +16,8 @@ import { useAppSelector } from '@/store';
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isUserAdmin = useAppSelector((state) => {
-    console.log(state.user.roles);
-    return state.user.roles.some((role) => role.title === 'admin')
-  }
+  const isUserAdmin = useAppSelector((state) =>
+    state.user.roles.some((role) => role.title === 'admin')
   );
 
   const NavItems: NavItem[] = [

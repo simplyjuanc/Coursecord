@@ -9,7 +9,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: CourseState = {
   courseInfo: undefined,
-  syllabus: undefined,
+  syllabus: [],
+  cachedUnits: {},
   students: [],
   instructors: [],
 };

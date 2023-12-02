@@ -81,7 +81,7 @@ export async function getUserData(user: DbUser) {
     const rolesPromise = axios.get<RoleWithOrg[]>(
       `${baseUrl}/user/role/${user.id}`
     );
-
+    
     const [studentResponse, instructorResponse, rolesResponse] =
       await Promise.all([studentPromise, instructorPromise, rolesPromise]);
 

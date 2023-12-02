@@ -6,11 +6,11 @@ import { useEffect, useState } from "react";
 import { MdSupportAgent } from "react-icons/md";
 import { Socket, io } from "socket.io-client";
 import React from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext } from "react-beautiful-dnd";
 import Image from "next/image";
-import { formatDistanceToNow } from "date-fns";
-import { BsThreeDots } from "react-icons/bs";
 import Spinner from "/public/spinner.svg";
+import BoardComponent from "./BoardComponent";
+
 
 let socket: Socket;
 export default function HelpRequestBoard() {
@@ -26,7 +26,7 @@ export default function HelpRequestBoard() {
       .then((res) => setInstructors(res.data))
       .catch((e) => console.error(e));
 
-    socket = io("http://localhost:5000/", {
+    socket = io(baseUrl, {
       auth: {
         accessToken: (session as SessionWithToken).accessToken,
       },
@@ -43,110 +43,8 @@ export default function HelpRequestBoard() {
     return () => {
       socket.disconnect();
     };
-  }, [baseUrl]);
-
-  const ItemComponent = (props: { item: THelpRequest }) => {
-    return (
-      <div className="border-primary-red border-2 rounded-xl select-none">
-        <div className="p-2">
-          <div className="flex">
-            <div className="my-auto">
-              <Image
-                src={props.item.students[0].image ?? ""}
-                alt={""}
-                width={30}
-                height={30}
-                className="object-contain rounded-full mr-1"
-              />
-            </div>
-            <h1 className="text-xl font-semibold my-auto">
-              {props.item.students[0].name}
-            </h1>
-          </div>
-          <h2 className="py-2 font-medium">{props.item.content}</h2>
-          {props.item.instructor ? (
-            <div className="flex">
-              <Image
-                src={props.item.instructor.image ?? ""}
-                alt={""}
-                width={25}
-                height={25}
-                className="object-contain rounded-full mr-1 my-auto"
-              />
-              <h1 className="my-auto text-lg font-medium">
-                {props.item.instructor.name}
-              </h1>
-            </div>
-          ) : (
-            <></>
-          )}
-          <div>
-            <h3 className="">
-              {props.item.finished_at === null
-                ? formatDistanceToNow(new Date(props.item.created_at), {
-                    addSuffix: true,
-                  })
-                : "finished " +
-                  formatDistanceToNow(new Date(props.item.finished_at), {
-                    addSuffix: true,
-                  })}
-            </h3>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  }, [baseUrl, session]);    
   
-  const BoardComponent = (props: { status: string }) => {
-    return (
-      <div className="flex-grow flex flex-col ">
-        <div className="flex font-bold text-3xl">
-          <div className="my-auto text-primary-red text-4xl pr-4 pb-6">
-            <BsThreeDots />
-          </div>
-          <h1 className="drop-shadow-lg">
-            {props.status.slice(0, 1)}
-            {props.status.slice(1).toLocaleLowerCase()}
-          </h1>
-        </div>
-        <Droppable droppableId={props.status}>
-          {(droppableProvided, snapshot) => (
-            <div
-              className="bg-white w-full max-h-min rounded-xl p-6 shadow-xl border-2 border-primary-gray border-opacity-40"
-              ref={droppableProvided.innerRef}
-              {...droppableProvided.droppableProps}
-            >
-              <div className="">
-                {helpRequests.map((item, index) =>
-                  item.status === props.status ? (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <div style={{ height: "1rem" }} />
-                          <ItemComponent item={item} />
-                        </div>
-                      )}
-                    </Draggable>
-                  ) : (
-                    <></>
-                  )
-                )}
-              </div>
-              {droppableProvided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </div>
-    );
-  };
 
   return (
     <div className="flex-grow flex flex-col h-screen px-20 pt-10 bg-white">
@@ -179,8 +77,8 @@ export default function HelpRequestBoard() {
               });
             }}
           >
-            {["WAITING", "ASSIGNED", "FINISHED"].map((item) => (
-              <BoardComponent status={item} />
+            {["WAITING", "ASSIGNED", "FINISHED"].map((status, idx) => (
+              <BoardComponent key={idx} status={status} helpRequests={helpRequests}/>
             ))}
           </DragDropContext>
         )}

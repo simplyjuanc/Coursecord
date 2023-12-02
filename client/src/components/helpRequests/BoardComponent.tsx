@@ -32,7 +32,7 @@ export default function BoardComponent({
             {...droppableProvided.droppableProps}
           >
             <div className=''>
-              { helpRequests.map(
+              {helpRequests.map(
                 (item, index) =>
                   item.status === status && (
                     <Draggable

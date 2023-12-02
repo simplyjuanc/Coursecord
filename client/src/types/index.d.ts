@@ -41,7 +41,7 @@ export interface Unit {
   id: string;
   owner: string;
   title: string;
-  type: "lesson" | "excercise" | "test";
+  type: "lesson" | "exercise" | "test";
   markdown_body: string;
 }
 

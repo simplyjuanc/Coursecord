@@ -52,7 +52,7 @@ export interface Section {
 }
 
 export interface CompiledSection extends Section {
-  units: Unit[];
+  course_units: {unit: Unit}[];
 }
 
 export interface CourseInfo {

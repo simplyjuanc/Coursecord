@@ -143,19 +143,19 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
       {mode === 'active' && (
         <div className='w-full pr-4 pl-4'>
           <ol className='border-solid border-2 border-primary-gray border-opacity-20 mt-2 rounded-lg p-2'>
-            {section.units.map((unit, index) => {
+            {section.course_units.map((unit, index) => {
               return (
                 <li key={index}>
                   <button
-                    onClick={() => selectUnit(unit)}
+                    onClick={() => selectUnit(unit.unit)}
                     className={`flex items-center text-xl p-2 min-w-full rounded-xl mt-2 ${
-                      selectedUnit === unit.id
+                      selectedUnit === unit.unit.id
                         ? 'bg-primary-red bg-opacity-10 text-primary-red'
                         : 'hover:bg-primary-red hover:bg-opacity-5 rounded-xl p-2 w-full'
                     }`}
                   >
-                    {unitIcons[unit.type]}
-                    <div className='ml-2'>{unit.title}</div>
+                    {unitIcons[unit.unit.type]}
+                    <div className='ml-2'>{unit.unit.title}</div>
                   </button>
                 </li>
               );

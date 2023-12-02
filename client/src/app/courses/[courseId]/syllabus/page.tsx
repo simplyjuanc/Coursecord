@@ -71,7 +71,6 @@ export default function Syllabus() {
     setEditMode(false);
     setSaving('saving');
     const unitEdited = await editUnit(
-      unit!.id,
       unit!,
       session as SessionWithToken
     );

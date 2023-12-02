@@ -51,14 +51,17 @@ export async function addUnit(
   session: SessionWithToken
 ) {
   try {
-    const unitResponse = await fetch(`${baseUrl}/unit/${sectionId}`, {
-      method: 'POST',
-      headers: {
-        Authorization: session.accessToken,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(unit),
-    });
+    const unitResponse = await fetch(
+      `${baseUrl}/unit/auth/org/${'656b40666c0ea5f66060c942'}/${sectionId}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: session.accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(unit),
+      }
+    );
     return unitResponse.ok ? await unitResponse.json() : null;
   } catch (error) {
     console.log(error);
@@ -67,18 +70,19 @@ export async function addUnit(
 }
 
 export async function editUnit(
-  unitId: string,
-  newContent: Partial<Unit>,
+  unit: Unit,
   session: SessionWithToken
 ) {
   try {
-    const unitResponse = await fetch(`${baseUrl}/unit/${unitId}`, {
+    console.log(session.accessToken);
+    const {id, ...unitData} = unit;
+    const unitResponse = await fetch(`${baseUrl}/unit/auth/${id}`, {
       method: 'PUT',
       headers: {
         Authorization: session.accessToken,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newContent),
+      body: JSON.stringify(unitData),
     });
 
     return unitResponse.ok;
@@ -92,14 +96,17 @@ export async function addSection(
   session: SessionWithToken
 ) {
   try {
-    const sectionResponse = await fetch(`${baseUrl}/section/auth/${section.course_id}`, {
-      method: 'POST',
-      headers: {
-        Authorization: session.accessToken,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(section),
-    });
+    const sectionResponse = await fetch(
+      `${baseUrl}/section/auth/${section.course_id}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: session.accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(section),
+      }
+    );
 
     return sectionResponse.ok ? await sectionResponse.json() : null;
   } catch (error) {
@@ -113,14 +120,17 @@ export async function editSection(
   session: SessionWithToken
 ) {
   try {
-    const sectionResponse = await fetch(`${baseUrl}/section/auth/${sectionId}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: session.accessToken,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newContent),
-    });
+    const sectionResponse = await fetch(
+      `${baseUrl}/section/auth/${sectionId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: session.accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newContent),
+      }
+    );
 
     return sectionResponse.ok;
   } catch (error) {
@@ -128,14 +138,20 @@ export async function editSection(
   }
 }
 
-export async function deletSection(sectionId: string, session: SessionWithToken) {
+export async function deletSection(
+  sectionId: string,
+  session: SessionWithToken
+) {
   try {
-    const sectionResponse = await fetch(`${baseUrl}/section/auth/${sectionId}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: session.accessToken,
-      },
-    });
+    const sectionResponse = await fetch(
+      `${baseUrl}/section/auth/${sectionId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
 
     return sectionResponse.ok;
   } catch (error) {
@@ -185,13 +201,15 @@ export async function getCourseData(courseId: string) {
   }
 }
 
-export async function getLastResult<T>(promises:Promise<T>[]) {
-  if (!promises.length) throw new RangeError("No last result from no promises");
-  const results:T[] = [];
-  await Promise.all(promises.map(p =>
-      p.then(v => {
-          results.push(v);
+export async function getLastResult<T>(promises: Promise<T>[]) {
+  if (!promises.length) throw new RangeError('No last result from no promises');
+  const results: T[] = [];
+  await Promise.all(
+    promises.map((p) =>
+      p.then((v) => {
+        results.push(v);
       })
-  ));
-  return results[results.length-1];
+    )
+  );
+  return results[results.length - 1];
 }

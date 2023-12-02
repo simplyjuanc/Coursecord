@@ -24,6 +24,8 @@ export default function UnitForm(props: UnitFormProps) {
   const [type, setType] = useState<string>('lesson');
 
   async function submitForm(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
     setSaving('saving');
     let newUnit = {
       id: 'placeholder',
@@ -33,8 +35,7 @@ export default function UnitForm(props: UnitFormProps) {
       owner: '656b40666c0ea5f66060c942',
     };
 
-    dispatch(addUnitToSection({ sectionId, unit: newUnit }));
-    e.preventDefault();
+    dispatch(addUnitToSection({ sectionId, course_unit: { unit: newUnit } }));
     try {
       const newUnit = await addUnit(
         { title, type: type as 'lesson' | 'excercise' | 'test' },
@@ -50,7 +51,6 @@ export default function UnitForm(props: UnitFormProps) {
         setTimeout(() => {
           setSaving(undefined);
         }, 1000);
-
       } else {
         setSaving('error');
         setTimeout(() => {

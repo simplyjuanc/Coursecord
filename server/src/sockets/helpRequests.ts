@@ -1,42 +1,53 @@
 import { Socket } from "socket.io";
+import { SocketWithUser, TCreateHelpRequest, THelpRequest } from "../../@types/types";
 import HelpRequestModel from "../models/helpRequest";
-import { THelpRequest } from "../../@types/types";
+import UserModel from "../models/user";
 
-
-export function setupStudentHelpSockets(socket: Socket) {
-  socket.on("createRequest", async (data: THelpRequest, callback: Function) => {
-    const { content, course_id, students } = data;
-    const createdRequest = await HelpRequestModel.createHelpRequest(content, course_id, students)
-    socket.to("instructors").emit("createRequest", createdRequest);
-    callback(createdRequest);
+export function setupStudentSockets(socket: SocketWithUser) {  
+  socket.on("createRequest", async (data: TCreateHelpRequest, callback: Function) => {
+    console.log("STUDENTS:    ", data.students);
+    const createdRequest = await HelpRequestModel.createHelpRequest(data);
+    if (!createdRequest) return;
+    const requests = await HelpRequestModel.getHelpRequests(data.course_id);
+    socket.to('instructors').emit("requestsUpdated", requests);
+    callback();
   });
 }
 
-export function setupInstructorHelpSockets(socket: Socket) {
-  socket.on("getRequests", async (data, callback: Function) => {
+
+export function setupInstructorSockets(socket: SocketWithUser) {
+  socket.on("getRequests", async (data:Record<'courseId',string>, callback: Function) => {
     const { courseId } = data;
     const requests = await HelpRequestModel.getHelpRequests(courseId);
     callback(requests);
   });
 
 
-  type UpdateRequestStatusData = {
-    id: string;
-    status: THelpRequest["status"];
-  }
+  type UpdateRequestStatusData = Pick<THelpRequest, "id" |  "status" | "course_id">;
+  socket.on("updateStatus", async (data: UpdateRequestStatusData) => {
+    const { id, course_id, status } = data;
+    const isInstructor = await UserModel.isCourseInstructor(socket.user!.id, course_id);
+    if (!isInstructor) return;
 
-  socket.on("updateRequestStatus", async (data: UpdateRequestStatusData) => {
-    const { id, status } = data;
-    const updatedRequest = await HelpRequestModel.updateRequestStatus(id, status);
-    console.log("updatedRequest :>> ", updatedRequest);
-    socket.to("instructors").emit("updateRequestStatus", updatedRequest);
-  });
+    const updatedInstructor = HelpRequestModel.updateRequestInstructor(id, socket.user!.id);
+    const updatedStatus = HelpRequestModel.updateRequestStatus(id, status);
+    const latestRequest = await getLastResult([updatedInstructor, updatedStatus]);
+    if (!latestRequest) return;
 
-  socket.on("assignRequestInstructor", async (data) => {
-    console.log("assignRequestInstructor: ", data);
-    const { id, instructor_id } = data;
-    const updatedRequest = await HelpRequestModel.updateRequestInstructor(id, instructor_id);
-    console.log("updatedRequest :>> ", updatedRequest);
-    socket.to("instructors").emit("assignRequestInstructor", updatedRequest);
+    const requests = await HelpRequestModel.getHelpRequests(course_id);
+    socket.to('instructors').emit("requestsUpdated", requests);
   });
+}
+
+
+
+async function getLastResult<T>(promises:Promise<T>[]) {
+  if (!promises.length) throw new RangeError("No last result from no promises");
+  const results:T[] = [];
+  await Promise.all(promises.map(p =>
+      p.then(v => {
+          results.push(v);
+      })
+  ));
+  return results[results.length-1];
 }

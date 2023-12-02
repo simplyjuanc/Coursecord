@@ -36,9 +36,15 @@ async function getUnitsBySection(sectionId: string) {
   return units;
 }
 
+async function getUnit(id: string) {
+  const unit = await CourseUnit.findUnique({ where: { id } });
+  return unit;
+}
+
 export default {
   createCourseUnit,
   deleteCourseUnit,
   editCourseUnit,
   getUnitsBySection,
+  getUnit,
 };

@@ -80,9 +80,14 @@ async function deleteSection(id: string) {
   return deletedSection;
 }
 
-async function getSectionsByCourse(courseId: string) {
+async function getSyllabus(courseId: string) {
   const sections = await CourseSection.findMany({
     where: { course: { id: courseId } },
+    include: {
+      course_units: {
+        select: { unit: { select: { id: true, title: true, type: true } } },
+      },
+    },
   });
 
   return sections;
@@ -97,5 +102,5 @@ export default {
   setSectionUnits,
   getSectionsWithUnit,
   deleteSection,
-  getSectionsByCourse,
+  getSyllabus,
 };

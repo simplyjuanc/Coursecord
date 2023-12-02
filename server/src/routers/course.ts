@@ -2,14 +2,17 @@ import { Router } from 'express';
 import Course from '../controllers/course';
 import Auth from '../middlewares/auth';
 
-
 const router = Router();
+const authRouter = Router();
+
+router.use('/auth', Auth.requireAuth, authRouter);
+
+authRouter.post('/:orgId/course', Course.addCourse);
+authRouter.put('/course/:courseId', Course.editCourse);
+authRouter.delete('/course/:orgId/:courseId', Course.deleteCourse);
+
 router.get('/course', Course.getCourses);
-router.post('/:orgId/course', Auth.requireAuth, Course.addCourse);
 router.get('/:orgId/course', Course.getCoursesByOrganisation);
 router.get('/course/:courseId', Course.getCourseById);
-router.put('/course/:courseId', Auth.requireAuth, Course.editCourse);
-router.delete('/course/:orgId/:courseId', Auth.requireAuth, Course.deleteCourse);
-
 
 export default router;

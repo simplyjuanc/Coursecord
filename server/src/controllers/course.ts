@@ -17,8 +17,6 @@ async function addCourse(req: Request, res: Response) {
     }
 
     const newCourse = await Course.createCourse(title, description, orgId);
-    await Organisation.addCourseToOrganisation(orgId, newCourse.id);
-
     res.status(201).send(newCourse);
   } catch (error) {
     console.log(error);
@@ -40,11 +38,12 @@ async function getCourseById(req: Request, res: Response) {
   try {
     const { courseId } = req.params;
     const course = await Course.getCourseById(courseId);
+
     if (!course) {
       return res.status(404).send({ message: 'Course not found' });
-    } else {
-      res.status(200).send(course);
     }
+
+    res.status(200).send(course);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -100,8 +99,6 @@ async function deleteCourse(req: Request, res: Response) {
     if (!(await Role.userHasRole(userId, orgId, 'admin'))) {
       return res.status(401).send({ message: 'Missing Correct Permissions' });
     }
-
-    await Organisation.removeCourseFromOrganisation(orgId, courseId);
 
     const deletedCourse = await Course.deleteCourse(courseId);
     res.status(204).send(deletedCourse);

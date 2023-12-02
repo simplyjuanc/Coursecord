@@ -14,12 +14,23 @@ async function getCourses() {
 }
 
 async function getCourseById(id: string) {
-  const course = await Course.findUnique({ where: { id } });
+  const course = await Course.findUnique({
+    where: { id },
+    include: {
+      organisation: { select: { name: true } },
+      instructors: {
+        select: { instructor: { select: { name: true, image: true } } },
+      },
+      students: {
+        select: { student: { select: { name: true, image: true } } },
+      },
+    },
+  });
   return course;
 }
 
 async function getCoursesInOrg(orgId: string) {
-  const courses = await Course.findMany({where: {organisation_id: orgId}})
+  const courses = await Course.findMany({ where: { organisation_id: orgId } });
   return courses;
 }
 
@@ -80,6 +91,18 @@ async function getCourseWithSection(sectionId: string) {
   return course;
 }
 
+async function getCourseUsers(courseId: string) {
+  const course = await Course.findUnique({
+    where: { id: courseId },
+    select: {
+      students: { select: { student: { include: { roles: true } } } },
+      instructors: { select: { instructor: { include: { roles: true } } } },
+    },
+  });
+
+  return course;
+}
+
 export default {
   createCourse,
   getCourses,
@@ -93,4 +116,5 @@ export default {
   getCoursesWithInstructor,
   addSectionToCourse,
   getCourseWithSection,
+  getCourseUsers,
 };

@@ -48,7 +48,10 @@ async function assignRoleToUser(id: string, roleId: string) {
 
 async function userIsOrgOwner(userId: string, orgId: string) {
   try {
-    const org = await Organisation.findUnique({ where: { id: orgId }, select: { owner_id: true } });
+    const org = await Organisation.findUnique({
+      where: { id: orgId },
+      select: { owner_id: true },
+    });
     if (!org) throw new Error('Invalid Organisation ID');
     return userId === org.owner_id;
   } catch (error) {
@@ -61,11 +64,11 @@ async function getUsersByOrg(orgId: string) {
     const users = await Organisation.findUnique({
       where: { id: orgId },
       select: {
-        members: { select: { user: true } }
-      }
+        members: { select: { user: true } },
+      },
     });
     if (!users) throw new Error('Invalid Organisation ID');
-    return users.members.map(member => member.user);
+    return users.members.map((member) => member.user);
   } catch (error) {
     console.log(error);
   }
@@ -78,9 +81,9 @@ async function getUsersWithRoleByOrg(orgId: string, roleTitle: string) {
         member_of: { every: { organisation_id: orgId } },
         roles: {
           some: {
-            role: { title: roleTitle }
-          }
-        }
+            role: { title: roleTitle },
+          },
+        },
       },
     });
     return users;
@@ -92,7 +95,7 @@ async function getUsersWithRoleByOrg(orgId: string, roleTitle: string) {
 async function getInstructorsByCourse(courseId: string) {
   try {
     const instructors = await User.findMany({
-      where: { instructor_of: { some: { id: courseId } } }
+      where: { instructor_of: { some: { id: courseId } } },
     });
     return instructors;
   } catch (error) {
@@ -112,12 +115,11 @@ async function addRoleToUser(userId: string, roleId: string) {
     const updatedUser = await User.update({
       where: { id: userId },
       data: {
-        roles: { connect: { id: roleId } }
-      }
+        roles: { connect: { id: roleId } },
+      },
     });
 
     return updatedUser;
-
   } catch (error) {
     console.log(error);
   }
@@ -144,6 +146,30 @@ async function deleteUser(userId: string) {
   }
 }
 
+async function getUserCourses(userId: string) {
+  try {
+    const courses = await User.findUnique({
+      where: { id: userId },
+      select: {
+        student_of: { select: { course: true } },
+        instructor_of: { select: { course: true } },
+      },
+    });
+
+    return courses;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getOrganisationAdmins(orgId: string) {
+  const org = await User.findUnique({
+    where: { id: orgId, roles: { some: { role: { title: 'admin' } } } },
+  });
+
+  return org;
+}
+
 export default {
   getUserByEmail,
   createUser,
@@ -157,5 +183,7 @@ export default {
   getStudentsByCourse,
   addRoleToUser,
   removeRoleFromUser,
-  deleteUser
+  deleteUser,
+  getUserCourses,
+  getOrganisationAdmins
 };

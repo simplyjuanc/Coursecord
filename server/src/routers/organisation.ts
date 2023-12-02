@@ -3,13 +3,15 @@ import Auth from '../middlewares/auth';
 import Organisation from '../controllers/organisation';
 
 const router = Router();
+const authRouter = Router();
 
+router.use('/auth', Auth.requireAuth, authRouter);
 
-router.post('/organisation', Auth.requireAuth, Organisation.addOrganisation);
-router.get('/organisation', Organisation.getOrganisations);
-router.get('/organisation/:orgId', Organisation.getOrganisationById);
-router.put('/organisation/:orgId', Auth.requireAuth, Organisation.editOrganisation);
-router.delete('/organisation/:orgId', Auth.requireAuth, Organisation.deleteOrganisation);
+authRouter.post('/add', Organisation.addOrganisation);
+authRouter.put('/:orgId', Organisation.editOrganisation);
+authRouter.delete('/:orgId', Organisation.deleteOrganisation);
 
+router.get('/get', Organisation.getOrganisations);
+router.get('/:orgId', Organisation.getOrganisationById);
 
 export default router;

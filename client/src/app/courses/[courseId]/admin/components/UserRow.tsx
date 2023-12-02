@@ -1,13 +1,13 @@
 'use client';
 import React from 'react';
 import { MdOutlineModeEdit, MdOutlineRestoreFromTrash } from 'react-icons/md';
-import { DbUser, Role, SessionWithToken } from '@/types';
+import { DbUser, IRole, SessionWithToken } from '@/types';
 import { useSession } from 'next-auth/react';
 import EditUser from './EditUser';
 
 type UserRowProps = {
   user: DbUser;
-  roles: Role[];
+  roles: IRole[];
   courseId: string;
 };
 

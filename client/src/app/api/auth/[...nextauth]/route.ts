@@ -1,27 +1,27 @@
-import { NextAuthOptions } from "next-auth";
-import { DbUser, SessionWithToken } from "@/types";
-import NextAuth from "next-auth/next";
-import GoogleProvider from "next-auth/providers/google";
-import axios from "axios";
-import { JWT } from "next-auth/jwt";
-import { headers } from "../../../../../next.config";
+import { NextAuthOptions } from 'next-auth';
+import { DbUser, SessionWithToken } from '@/types';
+import NextAuth from 'next-auth/next';
+import GoogleProvider from 'next-auth/providers/google';
+import axios from 'axios';
+import { JWT } from 'next-auth/jwt';
+import { headers } from '../../../../../next.config';
 
 const GOOGLE_ID = process.env.GOOGLE_ID!;
 const GOOGLE_SECRET = process.env.GOOGLE_SECRET!;
 
 const GOOGLE_AUTHORISATION_URL =
-  "https://accounts.google.com/o/oauth2/v2/auth?" +
+  'https://accounts.google.com/o/oauth2/v2/auth?' +
   new URLSearchParams({
-    prompt: "consent",
-    access_type: "offline",
-    response_type: "code",
+    prompt: 'consent',
+    access_type: 'offline',
+    response_type: 'code',
   });
 
 const API_URL = process.env.API_URL;
 
 export const authOptions: NextAuthOptions = {
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   providers: [
     GoogleProvider({
@@ -35,28 +35,26 @@ export const authOptions: NextAuthOptions = {
       if (!(user && account)) return false;
 
       try {
-        const response = await axios.post(
-          `${API_URL}/signIn`,
-          {
-            oauth_id: user.id,
-            oauth_provider: "google",
+        const response = await fetch(`${API_URL}/user/signIn`, {
+          method: 'POST',
+          headers: {
+            Authorization: account.access_token!,
+            'Content-Type': 'application/json',
           },
-          {
-            headers: { Authorization: account.access_token },
-          }
-        );
+          body: JSON.stringify({
+            oauth_id: user.id,
+            oauth_provider: 'google',
+          }),
+        });
 
-        if (response.status !== 200 && response.status !== 201) {
-          console.log("User could not be created");
+        if (!response.ok) {
+          console.log('User could not be created');
           return false;
         }
 
-        const dbUser: DbUser = response.data;
+        const dbUser: DbUser = await response.json();
 
-        (user as DbUser).id = dbUser.id;
-        (user as DbUser).oauth_id = dbUser.oauth_id;
-        (user as DbUser).oauth_provider = dbUser.oauth_provider;
-        (user as DbUser).roles = dbUser.roles;
+        user.id = dbUser.id;
 
         return true;
       } catch (error) {
@@ -95,11 +93,11 @@ export const authOptions: NextAuthOptions = {
 
 async function refreshAccessToken(token: JWT) {
   const url =
-    "https://oauth2.googleapis.com/token?" +
+    'https://oauth2.googleapis.com/token?' +
     new URLSearchParams({
       client_id: GOOGLE_ID,
       client_secret: GOOGLE_SECRET,
-      grant_type: "refresh_token",
+      grant_type: 'refresh_token',
       refresh_token: token.refreshToken as string,
     });
 

@@ -5,14 +5,13 @@ import Role from '../controllers/role';
 const router = Router();
 
 //role router
-router.get('/:orgId/roles', Role.getRolesByOrg);
-router.get('/user/role/:userId', Role.getRolesByUser);
-
+router.get('/org/:orgId', Role.getRolesByOrg);
+router.get('/user/:userId', Role.getRolesByUser);
 
 //Not part of MVP
-router.post('/:orgId/role', Role.addRole);
-router.delete('/role/:roleId', Role.removeRole);
-router.put('/role/:roleId', Role.editRole);
+router.post('/:orgId', Role.addRole);
+router.delete('/:roleId', Role.removeRole);
+router.put('/:roleId', Role.editRole);
 
 
 export default router;

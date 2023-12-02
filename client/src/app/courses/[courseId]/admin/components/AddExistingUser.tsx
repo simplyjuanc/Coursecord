@@ -1,4 +1,4 @@
-import { DbUser, SessionWithToken, Role } from '@/types';
+import { DbUser, SessionWithToken, IRole } from '@/types';
 import React, { useEffect, useState } from 'react';
 import { UserSelect } from './UserSelect';
 import { RoleSelect } from './RoleSelect';
@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 type AddUserProps = {
   courseId: string;
   setShowExistingUser: React.Dispatch<React.SetStateAction<boolean>>;
-  roles: Role[];
+  roles: IRole[];
 };
 
 export default function AddExistingUser({
@@ -19,14 +19,14 @@ export default function AddExistingUser({
 }: AddUserProps) {
   const [potentialUsers, setPotentialUsers] = useState<DbUser[]>();
   const [selectedUser, setSelectedUser] = useState<DbUser>();
-  const [selectedRole, setSelectedRole] = useState<Role>();
+  const [selectedRole, setSelectedRole] = useState<IRole>();
   const session = useSession().data as SessionWithToken;
 
   useEffect(() => {
     (async () => {
       try {
         const [totalUsersRes, instructorsRes, studentsRes] = await Promise.all([
-          fetch(`http://localhost:5000/6565c3bdf515f6ec9392f30e/users`), // TODO: replace with process.env.API_URL once orgId is dynamic
+          fetch(`http://localhost:5000/656b2fde7b32e44d802e342d/users`), // TODO: replace with process.env.API_URL once orgId is dynamic
           fetch(`http://localhost:5000/${courseId}/instructors`),
           fetch(`http://localhost:5000/${courseId}/students`),
         ]);

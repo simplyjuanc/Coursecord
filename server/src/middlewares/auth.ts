@@ -5,7 +5,9 @@ import User from "../models/user";
 
 async function requireAuth(req: Request, res: Response, next: NextFunction) {
   try {
-    const accessToken = req.headers.authorization;
+
+    const accessToken = req.headers.authorization
+    
     if (!accessToken) {
       return res.status(401).send({ message: 'No access token found' });
     }

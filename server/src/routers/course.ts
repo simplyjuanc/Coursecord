@@ -7,12 +7,12 @@ const authRouter = Router();
 
 router.use('/auth', Auth.requireAuth, authRouter);
 
-authRouter.post('/:orgId/course', Course.addCourse);
-authRouter.put('/course/:courseId', Course.editCourse);
-authRouter.delete('/course/:orgId/:courseId', Course.deleteCourse);
+authRouter.post('/:orgId', Course.addCourse);
+authRouter.put('/:courseId', Course.editCourse);
+authRouter.delete(':orgId/:courseId', Course.deleteCourse);
 
 router.get('/course', Course.getCourses);
 router.get('/:orgId/course', Course.getCoursesByOrganisation);
-router.get('/course/:courseId', Course.getCourseById);
+router.get('/:courseId', Course.getCourseById);
 
 export default router;

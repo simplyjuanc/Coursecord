@@ -1,5 +1,5 @@
 import { Organisation as TOrganisation } from '@prisma/client';
-import { Organisation } from './index';
+import { Organisation, User } from './index';
 
 async function createOrganisation(name: string, owner: string) {
   const newOrg = await Organisation.create({
@@ -11,7 +11,7 @@ async function createOrganisation(name: string, owner: string) {
           data: [
             { title: 'admin', permissions: ['admin'] },
             { title: 'instructor', permissions: ['instructor'] },
-            { title: 'student', permissions: ['student']}
+            { title: 'student', permissions: ['student'] },
           ],
         },
       },
@@ -97,10 +97,25 @@ async function getOrganisationWithRole(roleId: string) {
   return org;
 }
 
-async function addMemberToOrganisation(orgId: string, userId: string) {
+async function addMemberToOrganisation(
+  orgId: string,
+  userId: string,
+  roleTitle: string
+) {
   const updatedOrg = await Organisation.update({
     where: { id: orgId },
     data: { members: { create: { user_id: userId } } },
+    include: {roles: true}
+  });
+
+  const tileRole = updatedOrg.roles.find((role) => role.title === roleTitle);
+  if (!tileRole) {
+    throw new Error('Invalid Role');
+  }
+
+  await User.update({
+    where: { id: userId },
+    data: { roles: { create: { role_id: tileRole.id } } },
   });
 
   return updatedOrg;

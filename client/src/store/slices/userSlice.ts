@@ -2,7 +2,7 @@ import { Course, DbUser, RoleWithOrg, UserState } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: UserState = {
-  user: undefined,
+  id: '',
   roles: [],
   coursesAsInstructor: [],
   coursesAsStudent: [],
@@ -12,11 +12,12 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, { payload }: PayloadAction<{ user: DbUser }>) => {
-      state.user = payload.user;
+    setUser: (state, { payload }: PayloadAction<{ userId: string }>) => {
+      state.id = payload.userId;
     },
     setRoles: (state, { payload }: PayloadAction<{ roles: RoleWithOrg[] }>) => {
       state.roles = payload.roles;
+      console.log('roles', state.roles)
     },
     setCoursesAsInstructor: (
       state,

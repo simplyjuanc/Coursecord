@@ -41,12 +41,15 @@ async function signIn(req: Request, res: Response) {
     const newUser = await User.createUser(userInfo);
     //TEMPORARY
     await Organisation.addMemberToOrganisation(
-      '6565c3bdf515f6ec9392f30e',
-      newUser.id
+      '656b2fde7b32e44d802e342d',
+      newUser.id,
+      'admin'
     );
-    await Course.addStudentToCourse('6565c41df515f6ec9392f30f', newUser.id);
+    await Course.addStudentToCourse('656b338c2ef4b28dc15893fb', newUser.id);
     //TEMPORARY^
     res.status(201).send(newUser);
+
+    //todo send back roles with newUser
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -135,7 +138,7 @@ async function removeRoleFromUser(req: Request, res: Response) {
     if (!org) {
       return res.status(401).send({ message: 'Invalid Role' });
     }
-    const reqUserId = (req as RequestWithUser).user.id
+    const reqUserId = (req as RequestWithUser).user.id;
     if (!(await Role.userHasRole(reqUserId, org.id, 'admin'))) {
       return res.status(401).send({ message: 'Unauthorised' });
     }

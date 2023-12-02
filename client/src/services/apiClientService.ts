@@ -19,7 +19,6 @@ export async function assignRoleToUser(
   session: SessionWithToken
 ) {
   try {
-    //assigns a role to a user
   } catch (error) {
     console.log(error);
   }
@@ -125,10 +124,7 @@ export async function editUnit(
   }
 }
 
-export async function deleteUnit(
-  unitId: string,
-  session: SessionWithToken
-) {
+export async function deleteUnit(unitId: string, session: SessionWithToken) {
   try {
     //deletes a unit
   } catch (error) {
@@ -136,10 +132,7 @@ export async function deleteUnit(
   }
 }
 
-export async function getCourses(
-  courseId: string,
-  session: SessionWithToken
-) {
+export async function getCourses(courseId: string, session: SessionWithToken) {
   try {
     //gets a course
   } catch (error) {
@@ -147,12 +140,26 @@ export async function getCourses(
   }
 }
 
-export async function getUserData(
+export async function getRolesByUser(
   userId: string,
   session: SessionWithToken
 ) {
   try {
-    //gets a user
+    const userResponse = await fetch(`${baseUrl}/role/user/${userId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: session.accessToken,
+      },
+    });
+
+    console.log(userResponse.status);
+    if (!userResponse.ok) {
+      console.log('Roles could not be retrieved');
+      return [];
+    }
+
+    console.log('made it here');
+    return await userResponse.json();
   } catch (error) {
     console.log(error);
   }

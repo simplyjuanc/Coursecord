@@ -6,7 +6,10 @@ import Course from '../models/course';
 import { Organisation as TOrganisation } from '@prisma/client';
 
 async function getUserByEmail(email: string) {
-  const user = await User.findUnique({ where: { email } });
+  const user = await User.findUnique({
+    where: { email },
+    include: { roles: true },
+  });
   return user;
 }
 
@@ -41,7 +44,7 @@ async function updateUser(userInfo: UserInfo) {
 async function assignRoleToUser(id: string, roleId: string) {
   const updatedUser = await User.update({
     where: { id },
-    data: { roles: { connect: { id: roleId } } },
+    data: { roles: { create: { role_id: roleId } } },
   });
   return updatedUser;
 }
@@ -185,5 +188,5 @@ export default {
   removeRoleFromUser,
   deleteUser,
   getUserCourses,
-  getOrganisationAdmins
+  getOrganisationAdmins,
 };

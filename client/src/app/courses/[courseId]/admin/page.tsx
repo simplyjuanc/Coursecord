@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import IconButton from '@/components/buttons/iconButton';
-import { Course, DbUser, Role } from '@/types';
+import { Course, DbUser, IRole } from '@/types';
 import AddNewUser from './components/AddNewUser';
 import AddExistingUser from './components/AddExistingUser';
 import UserRow from './components/UserRow';
@@ -23,14 +23,14 @@ export default function AdminTable() {
   const [courseUsers, setCourseUsers] = useState<DbUser[]>([]);
   const [instructors, setInstructors] = useState<DbUser[]>();
   const [students, setStudents] = useState<DbUser[]>();
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [roles, setRoles] = useState<IRole[]>([]);
 
   useEffect(() => {
     (async () => {
       const [courseRes, rolesRes, instructorRes, studentRes] =
         await Promise.all([
           fetch(courseUrl),
-          fetch(`http://localhost:5000/6565c3bdf515f6ec9392f30e/roles`), //TODO: replace with orgId once it's dynamic
+          fetch(`http://localhost:5000/656b2fde7b32e44d802e342d/roles`), //TODO: replace with orgId once it's dynamic
           fetch(instructorUrl),
           fetch(studentUrl),
         ]);

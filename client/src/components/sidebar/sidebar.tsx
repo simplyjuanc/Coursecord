@@ -48,11 +48,10 @@ export default function Sidebar() {
     const isActive = pathname.split('/')[3] === props.item.href;
     return (
       <div className='flex'>
-        {isActive && (
-          <div
-            className={`w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-1 bg-opacity-50`}
-          ></div>
-        )}
+        <div
+          className={`w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-1 bg-opacity-${isActive ? '50' : '0'}`}
+        ></div>
+
         <Link href={props.item.href} className='w-full pr-4 pl-4'>
           <button
             className={
@@ -85,7 +84,7 @@ export default function Sidebar() {
             </li>
           ))}
           {isUserAdmin && (
-            <li>
+            <li className='pt-4'>
               <NavItemComponent item={NavAdminPanel} />
             </li>
           )}

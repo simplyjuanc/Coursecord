@@ -22,8 +22,6 @@ type SyllabusSectionProps = {
   setSaving: (saving?: 'saving' | 'done' | 'error') => void;
 };
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
-
 export default function SyllabusSection(props: SyllabusSectionProps) {
   const {
     isAdmin,
@@ -64,11 +62,10 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
   return (
     <>
       <div className='flex flex-row-reverse'>
-        {mode != null && (
-          <div
-            className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-1 bg-opacity-50`}
-          ></div>
-        )}
+        <div
+          className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-1 bg-opacity-${mode != null ? '50' : '0'}`}
+        ></div>
+
         <div className='w-full pr-4 pl-4'>
           <div
             className={
@@ -96,9 +93,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
                     setMode((prev) => (prev === undefined ? 'edit' : undefined))
                   }
                   className={` hover:${
-                    mode === 'active'
-                      ? 'text-primary-black'
-                      : 'text-primary-1'
+                    mode === 'active' ? 'text-primary-black' : 'text-primary-1'
                   }`}
                 >
                   <MdOutlineEdit />
@@ -108,9 +103,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
                     deleteSection(section.id);
                   }}
                   className={` hover:${
-                    mode === 'active'
-                      ? 'text-primary-black'
-                      : 'text-primary-1'
+                    mode === 'active' ? 'text-primary-black' : 'text-primary-1'
                   }`}
                 >
                   <IoIosClose />

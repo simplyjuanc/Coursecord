@@ -54,13 +54,6 @@ export default function CourseManagement(props: CourseManagementProps) {
           <div>
             <IconButton
               icon={<MdOutlinePersonAddAlt />}
-              title='Add New User'
-              onClick={showNewUserModal}
-            ></IconButton>
-          </div>
-          <div>
-            <IconButton
-              icon={<MdOutlinePersonAddAlt />}
               title='Add Existing User'
               onClick={showExistingUserModal}
             ></IconButton>
@@ -84,17 +77,29 @@ export default function CourseManagement(props: CourseManagementProps) {
       )}
       {courses[courseId] != null && (
         <div className='mt-5 mx-auto'>
-          <h2 className='text-xl font-semibold mb-5'>Instructors:</h2>
-          <div>
-            <UserTable
-              users={courses[courseId].instructors}
-              type='instructor'
-            />
+          <div className='flex items-center mb-5 justify-between'>
+            <h2 className='text-xl font-semibold'>Instructors:</h2>
+            <div>
+              <IconButton
+                icon={<MdOutlinePersonAddAlt />}
+                title='Add New User'
+                onClick={showNewUserModal}
+              ></IconButton>
+            </div>
           </div>
-          <h2 className='text-xl font-semibold my-5'>Students:</h2>
-          <div>
-            <UserTable users={courses[courseId].students} type='student' />
+          <UserTable users={courses[courseId].instructors} type='instructor' />
+
+          <div className='flex items-center my-5 justify-between'>
+          <h2 className='text-xl font-semibold'>Students:</h2>
+            <div>
+              <IconButton
+                icon={<MdOutlinePersonAddAlt />}
+                title='Add New User'
+                onClick={showNewUserModal}
+              ></IconButton>
+            </div>
           </div>
+          <UserTable users={courses[courseId].students} type='student' />
         </div>
       )}
     </>

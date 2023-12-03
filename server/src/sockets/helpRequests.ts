@@ -8,12 +8,12 @@ import { getLastResult } from "../helpers/getLastResult";
 
 export function setStudentSockets(socket: SocketWithUser) {  
   socket.on("createRequest", async (data: TCreateHelpRequest, callback: Function) => {
-    console.log("STUDENTS:    ", data.students);
+    console.log('socket - createHelpRequest - data :>> ', data);
     const createdRequest = await HelpRequestModel.createHelpRequest(data);
     if (!createdRequest) return;
     const requests = await HelpRequestModel.getHelpRequests(data.course_id);
     socket.to('instructors').emit("requestsUpdated", requests);
-    callback();
+    callback(createdRequest);
   });
 }
 
@@ -21,9 +21,10 @@ export function setStudentSockets(socket: SocketWithUser) {
 export function setInstructorSockets(socket: SocketWithUser) {
   socket.join('instructors');
 
-  socket.on("getRequests", async (data:Record<'courseId',string>, callback: Function) => {
-    const { courseId } = data;
+  socket.on("getRequests", async (courseId:string, callback: Function) => {
+    console.log('socket - getRequests - courseId :>> ', courseId);
     const requests = await HelpRequestModel.getHelpRequests(courseId);
+    console.log('socket - getRequests - requests :>> ', requests);
     callback(requests);
   });
 

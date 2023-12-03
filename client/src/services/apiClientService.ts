@@ -1,4 +1,4 @@
-import { Section, SessionWithToken, Unit } from '@/types';
+import { DbUser, Section, SessionWithToken, Unit } from '@/types';
 
 const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
@@ -68,11 +68,12 @@ export async function getCourseWithRoles(
 }
 
 export async function getStudentsByCourse(
-  courseId: string,
-  session: SessionWithToken
+  courseId: string
 ) {
   try {
-    //gets all students for a course
+    const res = await fetch(`${baseUrl}/user/${courseId}/students`);
+    const data:DbUser[] = await res.json();
+    return data;
   } catch (error) {
     console.log(error);
   }
@@ -83,11 +84,27 @@ export async function getInstructorsByCourse(
   session: SessionWithToken
 ) {
   try {
-    //gets all instructors for a course
+    const res = await fetch(`${baseUrl}/user/${courseId}/instructors`);
+    const data:DbUser[] = await res.json();
+    return data;
   } catch (error) {
     console.log(error);
   }
 }
+
+
+
+
+async function fetchHelper (url:string, cb:Function) {
+   try {
+     const res = await fetch(url);
+     const data = await res.json();
+     cb(data);
+   } catch (err) {
+     console.log(err)
+   }
+}
+
 
 export async function editSection(
   sectionId: string,

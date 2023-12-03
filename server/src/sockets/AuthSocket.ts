@@ -6,6 +6,8 @@ import { SocketWithUser } from "../../@types/types";
 
 export async function AuthSocket(socket: SocketWithUser, next: NextFunction) {
   try {
+    console.log("Authenticating socket connection");
+    
     const accessToken: string = socket.handshake.auth.accessToken;
     if (!accessToken) next(new Error("Unauthorised"));
 

@@ -10,24 +10,28 @@ import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import Image from 'next/image';
 import Spinner from '/public/spinner.svg';
 import BoardComponent from './BoardComponent';
-import { is } from 'date-fns/locale';
+import { getInstructorsByCourse } from '@/services/apiClientService';
 
 
 let socket: Socket;
-export default function HelpRequestBoard({ isUserInstructor} : { isUserInstructor: boolean }) {
+export default function HelpRequestBoard() {
   const [helpRequests, setHelpRequests] = useState<THelpRequest[]>([]);
-  const [instructors, setInstructors] = useState<DbUser[]>();
+  const [instructors, setInstructors] = useState<DbUser[]>([]);
   const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
   // TODO: get courseId from session
   const courseId = '656b40a56c0ea5f66060c947';
   const { data: session } = useSession();
-
+  
   useEffect(() => {
+    console.log('Loading HelpBoard');
+    console.log('session :>> ', session);
     // What is this for? Including useState hook above
-    axios
-      .get<DbUser[]>(`${baseUrl}/${courseId}/instructors`)
-      .then((res) => setInstructors(res.data))
+    getInstructorsByCourse(courseId, session as SessionWithToken)
+      .then(instructors => {
+        if (!instructors) throw new Error('No instructors found')
+        setInstructors(instructors)
+      })
       .catch((e) => console.error(e));
 
     socket = io(baseUrl, {
@@ -35,14 +39,13 @@ export default function HelpRequestBoard({ isUserInstructor} : { isUserInstructo
         accessToken: (session as SessionWithToken).accessToken,
       },
     });
+    console.log('socket :>> ', socket);
 
-    if (isUserInstructor) {
-      socket.emit('getRequests', courseId, (res: THelpRequest[]) => {
-        console.log(res);
-        setHelpRequests(res);
-      });
-    }
 
+    socket.emit('getRequests', courseId, (res: THelpRequest[]) => {
+      console.log('getRequests :>> ', res);
+      setHelpRequests(res);
+    });
 
     socket.on('requestsUpdated', (res: THelpRequest[]) => {
       console.log('req updated', res);
@@ -52,7 +55,7 @@ export default function HelpRequestBoard({ isUserInstructor} : { isUserInstructo
     return () => {
       socket.disconnect();
     };
-  }, [baseUrl, isUserInstructor, session]);
+  }, [baseUrl, session]);
 
 
   async function updateRequestStatus(coordinates: DropResult) {

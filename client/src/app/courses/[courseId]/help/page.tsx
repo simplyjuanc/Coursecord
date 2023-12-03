@@ -14,7 +14,7 @@ const HelpRequest = () => {
   return (
     <>
       {isUserInstructor ? (
-        <HelpRequestBoard isUserInstructor={isUserInstructor} />
+        <HelpRequestBoard />
       ) : submitted ? (
         <HelpRequestModal />
       ) : (

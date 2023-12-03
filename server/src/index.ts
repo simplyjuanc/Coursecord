@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use(router);
 
-// setupWebSockets(io);
+setupWebSockets(io);
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 5000;
 const HOST = process.env.HOST || "localhost";

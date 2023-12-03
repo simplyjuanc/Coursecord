@@ -8,9 +8,11 @@ import {
 } from "react";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { Socket, io } from "socket.io-client";
-import { DbUser, SessionWithToken } from "@/types";
+import { DbUser, SessionWithToken, THelpRequest } from "@/types";
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
+import { getStudentsByCourse } from "@/services/apiClientService";
+import { set } from "date-fns";
 
 type HelpRequestForm = {
   setSubmitted: Dispatch<SetStateAction<boolean>>;
@@ -18,34 +20,31 @@ type HelpRequestForm = {
 
 let socket: Socket;
 export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
+  const baseUrl = process.env.API_URL || "http://localhost:5000";
   const session = useSession().data as SessionWithToken;
   const userId = session.user.id;
-  const courseIdRegex = /[0-9a-fA-F]{24}/;
-  const courseId = usePathname().match(courseIdRegex)![0];
+  const { courseId } = useParams() as { courseId: string };
 
   const [message, setMessage] = useState("");
-  const [students, setStudents] = useState<Partial<DbUser>[]>([]);
+  const [students, setStudents] = useState<DbUser[]>([]);
   const [requestors, setRequestors] = useState<string[]>();
 
-  const baseUrl = process.env.API_URL || "http://localhost:5000";
 
   useEffect(() => {
-    socket = io("http://localhost:5000/", {
+    socket = io(baseUrl, {
       auth: {
         accessToken: session.accessToken,
       },
     });
-    socket.emit("join", courseId);
 
-    axios
-      .get<DbUser[]>(`${baseUrl}/${courseId}/students`)
-      .then((res) => setStudents(res.data))
+    getStudentsByCourse(courseId)
+      .then((students) => { if (students) setStudents(students) })
       .catch((e) => console.error(e));
 
     return () => {
       socket.disconnect();
     };
-  }, [baseUrl, courseId]);
+  }, [baseUrl, courseId, session]);
 
   const handleMessage = (e: ChangeEvent) => {
     const target = e.target as HTMLTextAreaElement;
@@ -64,10 +63,10 @@ export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
       "createRequest",
       {
         content: message,
-        course: courseId,
+        course_id: courseId,
         students: [userId, ...(requestors ?? [])],
       },
-      (res: any) => {
+      (res: THelpRequest) => {
         setSubmitted(true);
       }
     );

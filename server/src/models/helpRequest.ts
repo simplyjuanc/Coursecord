@@ -4,15 +4,19 @@ import { THelpRequest, TCreateHelpRequest } from "../../@types/types";
 
 async function createHelpRequest(data: TCreateHelpRequest) {
   try {
+    console.log('model - createHelpRequest - data :>> ', data);
     const createdRequest = await HelpRequest.create({
       data: {
         content: data.content,
         course_id : data.course_id,
         students: {
-          connect: data.students.map((student) => ({ id: student }))
+          // connect: data.students.map((student) => ({ id: student }))
+          connect: { id: data.students[0] }
         }
       },
     });
+    
+    console.log('socket - createHelpRequest - createdRequest :>> ', createdRequest);
     return createdRequest;
 
   } catch (error) {
@@ -21,13 +25,16 @@ async function createHelpRequest(data: TCreateHelpRequest) {
 }
 
 
-async function getHelpRequests(courseId: string) {
+async function getHelpRequests(courseId: THelpRequest['course_id']) {
+  console.log('model - getHelpRequests - courseId :>> ', courseId);
   const requests = await HelpRequest.findMany({
-    where: { course: { id: courseId } },
+    where: { course_id: courseId },
     include: {
       students: true,
       instructor: true
-  }});
+    }
+  });
+  console.log('model - getHelpRequests - requests :>> ', requests);
   return requests;
 }
 

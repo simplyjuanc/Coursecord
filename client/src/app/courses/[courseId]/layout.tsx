@@ -31,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         }
       }
     })();
-  }, [courseId]);
+  }, [course, courseId, dispatch, session, userId]);
 
   return (
     <div className='flex'>

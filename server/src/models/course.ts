@@ -103,6 +103,37 @@ async function getCourseUsers(courseId: string) {
   return course;
 }
 
+async function getCourseManagementInfo(courseId: string, userId: string) {
+  const course = await Course.findUnique({
+    where: { id: courseId } ,
+    select: {
+      instructors: {
+        select: {
+          instructor: {
+            select: {
+              name: true,
+              email: true,
+              id: true,
+            },
+          },
+        },
+      },
+      students: {
+        select: {
+          student: {
+            select: {
+              name: true,
+              email: true,
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  return course;
+}
+
 export default {
   createCourse,
   getCourses,
@@ -117,4 +148,5 @@ export default {
   addSectionToCourse,
   getCourseWithSection,
   getCourseUsers,
+  getCourseManagementInfo,
 };

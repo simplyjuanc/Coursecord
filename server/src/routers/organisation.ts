@@ -10,6 +10,7 @@ router.use('/auth', Auth.requireAuth, authRouter);
 authRouter.post('/add', Organisation.addOrganisation);
 authRouter.put('/:orgId', Organisation.editOrganisation);
 authRouter.delete('/:orgId', Organisation.deleteOrganisation);
+authRouter.get('/:orgId/management', Organisation.getOrgManagementInfo);
 
 router.get('/get', Organisation.getOrganisations);
 router.get('/:orgId', Organisation.getOrganisationById);

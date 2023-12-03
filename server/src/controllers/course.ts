@@ -130,6 +130,19 @@ async function getCoursesWithInstructor(req: Request, res: Response) {
   }
 }
 
+async function getCourseManagementInfo(req: Request, res: Response) {
+  try{
+    const { courseId } = req.params;
+    const userId = (req as RequestWithUser).user.id;
+
+    const courseManagementInfo = await Course.getCourseManagementInfo(courseId, userId);
+    res.status(200).send(courseManagementInfo);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
 export default {
   addCourse,
   getCourses,
@@ -139,4 +152,5 @@ export default {
   deleteCourse,
   getCoursesWithStudent,
   getCoursesWithInstructor,
+  getCourseManagementInfo,
 };

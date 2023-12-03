@@ -49,7 +49,6 @@ export default function Syllabus() {
     }
     if (!syllabus.length && session) {
       getSyllabus(courseId, session as SessionWithToken).then((syllabus) => {
-        console.log(syllabus);
         dispatch(setSyllabus({ syllabus }));
       });
     }

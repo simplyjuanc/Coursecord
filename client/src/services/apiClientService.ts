@@ -138,7 +138,7 @@ export async function editSection(
   }
 }
 
-export async function deletSection(
+export async function deleteSection(
   sectionId: string,
   session: SessionWithToken
 ) {
@@ -212,4 +212,47 @@ export async function getLastResult<T>(promises: Promise<T>[]) {
     )
   );
   return results[results.length - 1];
+}
+
+export async function getOrgManagementInfo(orgId: string, session: SessionWithToken) {
+  try {
+    const orgResponse = await fetch(`${baseUrl}/org/auth/${orgId}/management`, {
+      method: 'GET',
+      headers: {
+        Authorization: session.accessToken,
+      },
+    });
+
+    if (!orgResponse.ok) {
+      console.log('Organisation could not be retrieved');
+      return null;
+    }
+
+    console.log('LOOKING FOR ORG:', orgResponse)
+    return await orgResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null
+  }
+}
+
+export async function getCourseManagementInfo(course_id: string, session: SessionWithToken) {
+  try {
+    const courseResponse = await fetch(`${baseUrl}/course/auth/${course_id}/management`, {
+      method: 'GET',
+      headers: {
+        Authorization: session.accessToken,
+      },
+    });
+
+    if (!courseResponse.ok) {
+      console.log('Course could not be retrieved');
+      return null;
+    }
+
+    return await courseResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null
+  }
 }

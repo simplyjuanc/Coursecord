@@ -38,7 +38,7 @@ export default function SyllabusSidebar(props: SyllabusSidebarProps) {
 
   async function deleteSection(sectionId: string) {
     dispatch(deleteSectionReducer({ sectionId }));
-    await api.deletSection(sectionId, session as SessionWithToken);
+    await api.deleteSection(sectionId, session as SessionWithToken);
   }
 
   return (

@@ -80,10 +80,26 @@ async function deleteOrganisation(req: Request, res: Response) {
   }
 }
 
+async function getOrgManagementInfo(req: Request, res: Response) {
+  try {
+    const { orgId } = req.params;
+
+    const userId = (req as RequestWithUser).user.id;
+    const org = await Organisation.getOrgManagementInfo(orgId, userId);
+
+    console.log(org);
+    res.status(200).send(org);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
 export default {
   addOrganisation,
   getOrganisations,
   getOrganisationById,
   editOrganisation,
   deleteOrganisation,
+  getOrgManagementInfo,
 };

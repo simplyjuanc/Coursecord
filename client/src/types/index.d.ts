@@ -1,4 +1,4 @@
-import { Session, User } from "next-auth";
+import { Session, User } from 'next-auth';
 
 export interface SessionWithToken extends Session {
   accessToken: string;
@@ -19,7 +19,7 @@ export type THelpRequest = {
   id: string;
   course: string;
   students: DbUser[];
-  status: "WAITING" | "ASSIGNED" | "FINISHED";
+  status: 'WAITING' | 'ASSIGNED' | 'FINISHED';
   instructor: DbUser;
   content: string;
   created_at: Date;
@@ -32,16 +32,15 @@ export interface Course {
   organisation: string;
   title: string;
   description: string;
-  instructors: string[];
-  students: string[];
-  syllabus: string[];
+  instructors: { instructor: { name: string; email: string; id: string } }[];
+  students: { student: { name: string; email: string; id: string } }[];
 }
 
 export interface Unit {
   id: string;
   owner: string;
   title: string;
-  type: "lesson" | "excercise" | "test";
+  type: 'lesson' | 'excercise' | 'test';
   markdown_body: string;
 }
 
@@ -52,16 +51,16 @@ export interface Section {
 }
 
 export interface CompiledSection extends Section {
-  course_units: {unit: Unit}[];
+  course_units: { unit: Unit }[];
 }
 
 export interface CourseInfo {
   id: string;
-  organisation: {name: string};
+  organisation: { name: string };
   title: string;
   description: string;
-  students: {student: {name: string, image: string}}[]
-  instructors: {instructor: {name: string, image: string}}[]
+  students: { student: { name: string; image: string } }[];
+  instructors: { instructor: { name: string; image: string } }[];
 }
 
 export interface CourseState {
@@ -111,7 +110,7 @@ export interface OrgInfo {
   id: string;
   name: string;
   description: string;
-  courses: Course[];
-  members: string[];
+  courses: { title: string; id: string }[];
+  members: { user: { name: string; id: string } }[];
   roles: [];
 }

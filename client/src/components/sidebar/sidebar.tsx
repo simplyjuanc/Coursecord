@@ -50,7 +50,7 @@ export default function Sidebar() {
       <div className='flex'>
         {isActive && (
           <div
-            className={`w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-red bg-opacity-50`}
+            className={`w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-1 bg-opacity-50`}
           ></div>
         )}
         <Link href={props.item.href} className='w-full pr-4 pl-4'>
@@ -58,8 +58,8 @@ export default function Sidebar() {
             className={
               `flex text-xl p-2 min-w-full rounded-xl` +
               (isActive
-                ? ' bg-primary-red bg-opacity-10 text-primary-red'
-                : ' hover:bg-primary-red hover:bg-opacity-5')
+                ? ' bg-primary-1 bg-opacity-10 text-primary-1'
+                : ' hover:bg-primary-1 hover:bg-opacity-5')
             }
           >
             <div className='my-auto'>{props.item.icon}</div>
@@ -72,8 +72,8 @@ export default function Sidebar() {
   return (
     <div className='h-screen min-h-full min-w-max w-[12vw] bg-white shadow-xl relative box-border'>
       <div className='flex p-4'>
-        <div className='w-10 h-10 rounded-full bg-primary-red bg-opacity-50 mr-4'></div>
-        <h1 className='my-auto text-3xl text-primary-gray font-semibold'>
+        <div className='w-10 h-10 rounded-full bg-primary-1 bg-opacity-50 mr-4'></div>
+        <h1 className='my-auto text-3xl text-primary-2 font-semibold'>
           Coursecord
         </h1>
       </div>

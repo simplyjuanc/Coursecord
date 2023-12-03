@@ -107,6 +107,7 @@ async function getCourseManagementInfo(courseId: string, userId: string) {
   const course = await Course.findUnique({
     where: { id: courseId } ,
     select: {
+      id: true,
       instructors: {
         select: {
           instructor: {

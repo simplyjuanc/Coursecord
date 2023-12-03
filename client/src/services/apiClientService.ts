@@ -62,6 +62,7 @@ export async function addUnit(
         body: JSON.stringify(unit),
       }
     );
+    
     return unitResponse.ok ? await unitResponse.json() : null;
   } catch (error) {
     console.log(error);
@@ -69,13 +70,10 @@ export async function addUnit(
   }
 }
 
-export async function editUnit(
-  unit: Unit,
-  session: SessionWithToken
-) {
+export async function editUnit(unit: Unit, session: SessionWithToken) {
   try {
     console.log(session.accessToken);
-    const {id, ...unitData} = unit;
+    const { id, ...unitData } = unit;
     const unitResponse = await fetch(`${baseUrl}/unit/auth/${id}`, {
       method: 'PUT',
       headers: {
@@ -177,7 +175,6 @@ export async function getRolesByUser(
       return [];
     }
 
-    console.log('made it here');
     return await userResponse.json();
   } catch (error) {
     console.log(error);
@@ -214,7 +211,10 @@ export async function getLastResult<T>(promises: Promise<T>[]) {
   return results[results.length - 1];
 }
 
-export async function getOrgManagementInfo(orgId: string, session: SessionWithToken) {
+export async function getOrgManagementInfo(
+  orgId: string,
+  session: SessionWithToken
+) {
   try {
     const orgResponse = await fetch(`${baseUrl}/org/auth/${orgId}/management`, {
       method: 'GET',
@@ -228,22 +228,27 @@ export async function getOrgManagementInfo(orgId: string, session: SessionWithTo
       return null;
     }
 
-    console.log('LOOKING FOR ORG:', orgResponse)
     return await orgResponse.json();
   } catch (error) {
     console.log(error);
-    return null
+    return null;
   }
 }
 
-export async function getCourseManagementInfo(course_id: string, session: SessionWithToken) {
+export async function getCourseManagementInfo(
+  course_id: string,
+  session: SessionWithToken
+) {
   try {
-    const courseResponse = await fetch(`${baseUrl}/course/auth/${course_id}/management`, {
-      method: 'GET',
-      headers: {
-        Authorization: session.accessToken,
-      },
-    });
+    const courseResponse = await fetch(
+      `${baseUrl}/course/auth/${course_id}/management`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
 
     if (!courseResponse.ok) {
       console.log('Course could not be retrieved');
@@ -253,6 +258,6 @@ export async function getCourseManagementInfo(course_id: string, session: Sessio
     return await courseResponse.json();
   } catch (error) {
     console.log(error);
-    return null
+    return null;
   }
 }

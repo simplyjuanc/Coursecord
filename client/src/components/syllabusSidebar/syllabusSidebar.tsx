@@ -44,10 +44,10 @@ export default function SyllabusSidebar(props: SyllabusSidebarProps) {
   return (
     <div className='h-screen min-h-full min-w-max bg-white shadow-xl relative box-border flex flex-col'>
       <div className='flex p-4'>
-        <h2 className='my-auto text-2xl text-primary-gray font-semibold w-[12vw]'>
+        <h2 className='my-auto text-2xl text-primary-2 font-semibold w-[12vw]'>
           {courseName}
         </h2>
-        <div className='w-10 h-10 rounded-full bg-primary-red bg-opacity-50 ml-4'></div>
+        <div className='w-10 h-10 rounded-full bg-primary-1 bg-opacity-50 ml-4'></div>
       </div>
       <div className='py-12 overflow-y-auto'>
         <ul>

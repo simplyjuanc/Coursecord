@@ -66,7 +66,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
       <div className='flex flex-row-reverse'>
         {mode != null && (
           <div
-            className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-red bg-opacity-50`}
+            className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-1 bg-opacity-50`}
           ></div>
         )}
         <div className='w-full pr-4 pl-4'>
@@ -74,8 +74,8 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
             className={
               `flex text-xl p-2 min-w-full rounded-xl` +
               (mode != null
-                ? ' bg-primary-red bg-opacity-10 text-primary-red'
-                : ' hover:bg-primary-red hover:bg-opacity-5')
+                ? ' bg-primary-1 bg-opacity-10 text-primary-1'
+                : ' hover:bg-primary-1 hover:bg-opacity-5')
             }
           >
             <button
@@ -98,7 +98,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
                   className={` hover:${
                     mode === 'active'
                       ? 'text-primary-black'
-                      : 'text-primary-red'
+                      : 'text-primary-1'
                   }`}
                 >
                   <MdOutlineEdit />
@@ -110,7 +110,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
                   className={` hover:${
                     mode === 'active'
                       ? 'text-primary-black'
-                      : 'text-primary-red'
+                      : 'text-primary-1'
                   }`}
                 >
                   <IoIosClose />
@@ -125,7 +125,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
           <label>Name:</label>
           <input
             type='text'
-            className='border-solid border-primary-gray border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2'
+            className='border-solid border-primary-2 border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2'
             required
             onChange={(e) => {
               setEditTitle(e.target.value);
@@ -134,7 +134,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
           />
           <button
             onClick={() => editSection()}
-            className='bg-primary-red bg-opacity-30 rounded-lg w-3/4 mx-auto hover:bg-opacity-50 hover:text-white'
+            className='bg-primary-1 bg-opacity-30 rounded-lg w-3/4 mx-auto hover:bg-opacity-50 hover:text-white'
           >
             Submit Change
           </button>
@@ -142,7 +142,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
       )}
       {mode === 'active' && (
         <div className='w-full pr-4 pl-4'>
-          <ol className='border-solid border-2 border-primary-gray border-opacity-20 mt-2 rounded-lg p-2'>
+          <ol className='border-solid border-2 border-primary-2 border-opacity-20 mt-2 rounded-lg p-2'>
             {section.course_units.map((unit, index) => {
               return (
                 <li key={index}>
@@ -150,8 +150,8 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
                     onClick={() => selectUnit(unit.unit)}
                     className={`flex items-center text-xl p-2 min-w-full rounded-xl mt-2 ${
                       selectedUnit === unit.unit.id
-                        ? 'bg-primary-red bg-opacity-10 text-primary-red'
-                        : 'hover:bg-primary-red hover:bg-opacity-5 rounded-xl p-2 w-full'
+                        ? 'bg-primary-1 bg-opacity-10 text-primary-1'
+                        : 'hover:bg-primary-1 hover:bg-opacity-5 rounded-xl p-2 w-full'
                     }`}
                   >
                     {unitIcons[unit.unit.type]}

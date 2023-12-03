@@ -59,9 +59,15 @@ export interface CourseInfo {
   organisation: { name: string };
   title: string;
   description: string;
-  students: { student: { name: string; image: string } }[];
-  instructors: { instructor: { name: string; image: string } }[];
+  students: {
+    student: { id: string; name: string; image: string; email: string };
+  }[];
+  instructors: {
+    instructor: { id: string; name: string; image: string; email: string };
+  }[];
 }
+
+//TODO: change this so that emails are only sent to management since they are info that students probably wouldn't want public.
 
 export interface CourseState {
   courseInfo?: CourseInfo;
@@ -102,8 +108,9 @@ export interface Unit {
   markdown_body: string;
 }
 
-export interface OrgState {
-  orgInfo: OrgInfo;
+export interface ManagementState {
+  orgInfo?: OrgInfo;
+  cachedCourses: Record<string, Course>;
 }
 
 export interface OrgInfo {
@@ -111,6 +118,5 @@ export interface OrgInfo {
   name: string;
   description: string;
   courses: { title: string; id: string }[];
-  members: { user: { name: string; id: string } }[];
-  roles: [];
+  members: { user: { name: string; email: string; id: string } }[];
 }

@@ -106,13 +106,13 @@ export default function Syllabus() {
   return (
     <>
       <section className='flex flex-grow h-screen bg-white'>
-        <div className='flex flex-col w-[60vw] mx-auto h-[95vh] overflow-y-auto bg-white shadow-lg m-auto rounded-xl px-4 border-2 border-primary-gray border-opacity-50'>
+        <div className='flex flex-col w-[60vw] mx-auto h-[95vh] overflow-y-auto bg-white shadow-lg m-auto rounded-xl px-4 border-2 border-primary-2 border-opacity-50'>
           <div className='flex w-full justify-end'>
-            <h2 className='text-4xl pl-4 py-1 my-4 mx-auto border-l-primary-red border-opacity-30 border-l-[0.5rem] border-l-solid rounded-tl rounded-bl align-middle font-semibold'>
+            <h2 className='text-4xl pl-4 py-1 my-4 mx-auto border-l-primary-1 border-opacity-30 border-l-[0.5rem] border-l-solid rounded-tl rounded-bl align-middle font-semibold'>
               {unit != null ? (
                 editMode ? (
                   <input
-                    className='rounded-lg p-1 border-primary-gray border-2 border-opacity-100'
+                    className='rounded-lg p-1 border-primary-2 border-2 border-opacity-100'
                     onChange={(e) =>
                       setUnit((prev) => ({ ...prev!, title: e.target.value }))
                     }
@@ -132,13 +132,13 @@ export default function Syllabus() {
               <>
                 <button
                   onClick={deleteUnit}
-                  className='mx-4 my-6 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                  className='mx-4 my-6 bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
                 >
                   <RiDeleteBin4Line />
                 </button>
                 <button
                   onClick={saveChanges}
-                  className='mx-4 my-6 bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                  className='mx-4 my-6 bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
                 >
                   <AiOutlineSave />
                 </button>
@@ -147,7 +147,7 @@ export default function Syllabus() {
             {isAdmin && unit != null && (
               <button
                 onClick={() => setEditMode((prev) => !prev)}
-                className='mx-4 my-6 max-h-min bg-primary-red bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-red hover:bg-opacity-50'
+                className='mx-4 my-6 max-h-min bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
               >
                 <MdOutlineEdit />
               </button>

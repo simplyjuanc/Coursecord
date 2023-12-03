@@ -31,14 +31,14 @@ export default function SectionForm(props: SectionFormProps) {
       course_id: course!.id,
     };
 
-    dispatch(addSectionReducer({ section: { ...newSection, units: [] } }));
+    dispatch(addSectionReducer({ section: { ...newSection, course_units: [] } }));
     const addedSection = await addSection(
       { title, course_id: course!.id },
       session as SessionWithToken
     );
     if (addedSection) {
       const newId = addedSection.id;
-      const section = { ...newSection, id: newId, units: [] };
+      const section = { ...newSection, id: newId, course_units: [] };
       dispatch(updateSection({ newSection: section }));
       setSaving('done');
       setTimeout(() => {
@@ -62,11 +62,11 @@ export default function SectionForm(props: SectionFormProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
-        className='border-solid border-primary-gray border-opacity-50 border-2 rounded-md h-10 w-full my-2 px-2'
+        className='border-solid border-primary-2 border-opacity-50 border-2 rounded-md h-10 w-full my-2 px-2'
       />
       <button
         type='submit'
-        className='bg-primary-red bg-opacity-20 rounded-lg text-xl w-3/4 h-10 hover:bg-opacity-50 hover:text-white'
+        className='bg-primary-1 bg-opacity-20 rounded-lg text-xl w-3/4 h-10 hover:bg-opacity-50 hover:text-white'
       >
         Submit
       </button>

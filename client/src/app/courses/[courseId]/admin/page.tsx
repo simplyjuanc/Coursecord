@@ -66,6 +66,7 @@ export default function AdminTable() {
 
   return (
     <section className='flex-grow bg-white h-screen overflow-y-auto'>
+    <section className='flex-grow bg-white h-screen overflow-y-auto'>
       <div className='mt-12 max-w-[60vw] mx-auto'>
         <div className='flex w-full items-center mb-4'>
           <div className='flex justify-between'>

@@ -20,6 +20,10 @@ authRouter.delete(
 authRouter.get('/:orgId/management', Organisation.getOrgManagementInfo);
 //TILL HERE
 
+//USED BY CLIENT
+authRouter.get('/:orgId/management', Organisation.getOrgManagementInfo);
+//TILL HERE
+
 router.get('/get', Organisation.getOrganisations);
 router.get('/:orgId', Organisation.getOrganisationById);
 

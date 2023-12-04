@@ -86,9 +86,6 @@ async function getUserCourses(req: Request, res: Response) {
 async function getUserRoles(req: Request, res: Response) {
   try {
     const { courseOrOrgId, isOrg } = req.params;
-    console.log('ID', courseOrOrgId);
-    console.log('ISORG', isOrg);
-
     const userId = (req as RequestWithUser).user.id;
 
     if (isOrg === 'true') {
@@ -98,7 +95,7 @@ async function getUserRoles(req: Request, res: Response) {
           admin_of: { some: { organisation_id: courseOrOrgId } },
         },
       });
-      console.log(user);
+
       return res.status(200).send({
         admin: user ? true : false,
         student: false,
@@ -106,7 +103,6 @@ async function getUserRoles(req: Request, res: Response) {
       });
     }
 
-    console.log('NOT ORG');
     const adminUser = await UserModel.findFirst({
       where: {
         id: userId,

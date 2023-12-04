@@ -26,7 +26,7 @@ async function getUserById(id: string) {
 
 async function getUsersByIds(ids: string[]) {
   try {
-    const users = await User.findMany({where: { id: { in: ids } }});
+    const users = await User.findMany({ where: { id: { in: ids } } });
     return users;
   } catch (error) {
     console.log(error);
@@ -89,15 +89,64 @@ async function getUserCourses(userId: string) {
 }
 
 
-async function isCourseInstructor(userId:string, courseId: string) {
+async function getInstructorsByCourse(courseId: string) {
   try {
+    const instructors = await User.findMany({
+      where: { instructor_of: { some: { course_id: courseId } } },
+    });
+    return instructors;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+async function isCourseInstructor(userId: string, courseId: string) {
+  try {
+    // console.log('model - isCourseInstructor - userId, courseId :>> ', userId, courseId);
     const instructors = await getInstructorsByCourse(courseId);
-    if (!instructors) throw new Error("No instructors found");
+    if (!instructors?.length) throw new Error("No instructors found");
+    // console.log('instructors :>> ', instructors);
     return instructors.some((instructor) => instructor.id === userId);
   } catch (error) {
     console.log(error)
   }
 }
+
+
+async function getUserCourseRoles(userId: string, courseId: string) {
+
+  const adminUser = await User.findFirst({
+    where: {
+      id: userId,
+      admin_of: {
+        some: { organisation: { courses: { some: { id: courseId } } } },
+      },
+    },
+  });
+
+  const instructorUser = await User.findFirst({
+    where: {
+      id: userId,
+      instructor_of: { some: { course_id: courseId } },
+    },
+  });
+
+  const studentUser = await User.findFirst({
+    where: {
+      id: userId,
+      student_of: { some: { course_id: courseId } },
+    },
+  });
+
+
+  return {
+    admin: adminUser ? true : false,
+    instructor: instructorUser ? true : false,
+    student: studentUser ? true : false,
+  }
+}
+
 
 export default {
   getUsers,
@@ -107,8 +156,9 @@ export default {
   createUser,
   updateUser,
   userIsOrgOwner,
-  getUserById,
   deleteUser,
   getUserCourses,
-  isCourseInstructor
+  getUserCourseRoles,
+  isCourseInstructor,
+  getInstructorsByCourse
 };

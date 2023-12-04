@@ -141,6 +141,7 @@ export async function getInstructorsByCourse(
   courseId: string,
 ) {
   try {
+    console.log('getInstructorsByCourse :>> ', courseId);
     const res = await fetch(`${baseUrl}/user/${courseId}/instructors`);
     const data:DbUser[] = await res.json();
     return data;

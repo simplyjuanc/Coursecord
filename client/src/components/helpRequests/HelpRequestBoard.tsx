@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { MdSupportAgent } from 'react-icons/md';
 import { Socket, io } from 'socket.io-client';
 import React from 'react';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import Image from 'next/image';
 import Spinner from '/public/spinner.svg';
 import BoardComponent from './BoardComponent';
@@ -40,11 +40,11 @@ export default function HelpRequestBoard() {
 
     socket.emit('getRequests', courseId, (res: THelpRequestDetails[]) => {
       setHelpRequests(res);
-      console.log('getRequests - res :>> ', res);
     });
 
-    socket.on('requestsUpdated', (res: THelpRequestDetails[]) => {
-      setHelpRequests(res);
+    socket.on('requestsUpdated', (requests: THelpRequestDetails[]) => {
+      console.log('updatedRequests :>> ', requests);
+      setHelpRequests(requests);
     });
 
     return () => {
@@ -53,12 +53,12 @@ export default function HelpRequestBoard() {
   }, [baseUrl, session]);
 
 
-  async function updateRequestStatus(coordinates: DropResult) {
-    const { source, destination } = coordinates;
+  const onDragEnd = (result:DropResult) => {
+    const { draggableId, destination } = result;
     if (!destination) return;
 
     const updatedHelpRequests = helpRequests.map((request) => {
-      if (request.id === source.droppableId) {
+      if (request.id === draggableId) {
         return {
           ...request,
           status: destination.droppableId as THelpRequest['status'],
@@ -70,9 +70,9 @@ export default function HelpRequestBoard() {
     setHelpRequests(updatedHelpRequests);
 
     socket.emit('updateStatus', {
-      course: courseId,
-      request: source.droppableId,
-      destination: destination.droppableId,
+      id: draggableId,
+      course_id: courseId,
+      status: destination.droppableId,
     });
   }
 
@@ -90,7 +90,7 @@ export default function HelpRequestBoard() {
             <Image src={Spinner} alt='Spinner' width={75} height={75} />
           </div>
         ) : (
-          <DragDropContext onDragEnd={updateRequestStatus}>
+          <DragDropContext onDragEnd={onDragEnd}>
             {['WAITING', 'ASSIGNED', 'FINISHED'].map((status) => (
               <BoardComponent
                 key={status}

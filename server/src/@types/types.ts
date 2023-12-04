@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import { Request } from "express";
 import { Socket } from "socket.io";
 
-export type GoogleUser ={
+export type GoogleUser = {
   email: string;
   name: string;
   picture: string;
@@ -31,12 +31,12 @@ export interface RequestWithUser extends Request {
   user: User;
 }
 
-export interface SocketWithUser extends Socket { 
-  user?: User 
-  isCourseInstructor?: boolean;
+export interface SocketWithUser extends Socket {
+  user?: User
+  courseRoles?: { admin: boolean; instructor: boolean; student: boolean; };
 }
 
-export type THelpRequest ={
+export type THelpRequest = {
   id: string;
   content: string;
   course_id: string;

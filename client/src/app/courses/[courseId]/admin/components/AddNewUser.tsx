@@ -4,8 +4,13 @@ import { UserSelect } from './UserSelect';
 import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import { useSession } from 'next-auth/react';
-import { addUserToCourse, getUsers } from '@/services/apiClientService';
-
+import {
+  addAdminToOrganisation,
+  addUserToCourse,
+  getUsers,
+} from '@/services/apiClientService';
+import { useAppDispatch } from '@/store';
+import { addUserToCourse as addUserReducer, addAdminToOrg } from '@/store/slices/managementSlice';
 type AddUserProps = {
   courseId: string;
   setShowExistingUser: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,6 +27,7 @@ export default function AddExistingUser({
   const [potentialUsers, setPotentialUsers] = useState<User[]>();
   const [selectedUser, setSelectedUser] = useState<User>();
   const session = useSession().data as SessionWithToken;
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     (async () => {
@@ -32,7 +38,7 @@ export default function AddExistingUser({
           const potentialUsers = users.filter(
             (user) => !existingUserIds.includes(user.id)
           );
-          console.log(users, potentialUsers)
+          console.log(users, potentialUsers);
           setPotentialUsers(potentialUsers);
         }
       } catch (e) {
@@ -56,9 +62,26 @@ export default function AddExistingUser({
   async function handleSubmit() {
     if (selectedUser) {
       try {
-        const userAdded = await addUserToCourse(courseId, role,selectedUser.id, session)
-        if (userAdded) closeModal();
-        else throw new Error('Something went wrong!');
+        if (role !== 'admin') {
+          const userAdded = await addUserToCourse(
+            courseId,
+            role,
+            selectedUser.id,
+            session
+          );
+          dispatch(addUserReducer({ courseId, role, user: selectedUser }));
+          if (userAdded) closeModal();
+          else throw new Error('Something went wrong!');
+        } else {
+          const userAdded = await addAdminToOrganisation(
+            '656b40666c0ea5f66060c942',
+            selectedUser.id,
+            session
+          );
+          dispatch(addAdminToOrg({ user: selectedUser }))
+          if (userAdded) closeModal();
+          else throw new Error('Something went wrong!');
+        }
       } catch (e) {
         console.error(e);
       }

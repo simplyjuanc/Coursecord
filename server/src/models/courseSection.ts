@@ -43,11 +43,6 @@ async function addUnitToSection(
   return updatedSection;
 }
 
-async function getSectionById(id: string) {
-  const section = await CourseSection.findUnique({ where: { id } });
-  return section;
-}
-
 async function removeUnitFromSection(
   sectionId: string,
   unitId: string,
@@ -64,33 +59,6 @@ async function removeUnitFromSection(
   });
 
   return updatedSection;
-}
-
-async function setSectionUnits(sectionId: string, units: string[]) {
-  const updatedSection = await CourseSection.update({
-    where: { id: sectionId },
-    data: {
-      course_units: {
-        deleteMany: { section_id: sectionId },
-        createMany: {
-          data: units.map((unitId) => ({
-            sectionId: sectionId,
-            unit_id: unitId,
-          })),
-        },
-      },
-    },
-  });
-
-  return updatedSection;
-}
-
-async function getSectionsWithUnit(unitId: string) {
-  const sections = await CourseSection.findMany({
-    where: { course_units: { some: { unit_id: unitId } } },
-  });
-
-  return sections;
 }
 
 async function deleteSection(id: string) {
@@ -115,10 +83,7 @@ export default {
   createSection,
   editSection,
   addUnitToSection,
-  getSectionById,
   removeUnitFromSection,
-  setSectionUnits,
-  getSectionsWithUnit,
   deleteSection,
   getSyllabus,
 };

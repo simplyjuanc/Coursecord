@@ -1,4 +1,4 @@
-import { CourseSectionInfo } from '../../@types/types';
+import { CourseSectionInfo } from '../@types/types';
 import { CourseSection } from './index';
 
 

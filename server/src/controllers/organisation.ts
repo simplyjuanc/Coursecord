@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Organisation from '../models/organisation';
-import { RequestWithUser } from '../../@types/types';
+import { RequestWithUser } from '../@types/types';
 import User from '../models/user';
 
 async function addOrganisation(req: Request, res: Response) {

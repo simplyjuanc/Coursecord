@@ -1,5 +1,5 @@
 import { HelpRequest } from ".";
-import { THelpRequest, TCreateHelpRequest } from "../../@types/types";
+import { THelpRequest, TCreateHelpRequest } from "../@types/types";
 
 
 async function createHelpRequest(data: TCreateHelpRequest) {

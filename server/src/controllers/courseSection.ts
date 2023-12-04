@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { RequestWithUser } from '../types';
+import { RequestWithUser } from '../@types/types';
 import Course from '../models/course';
 import CourseSection from '../models/courseSection';
 

@@ -1,6 +1,7 @@
 import { Course as CourseType } from '@prisma/client';
 import { Course, Organisation } from './index';
-import { CourseSectionInfo } from '../types';
+import { CourseSectionInfo } from '../../@types/types';
+
 
 async function createCourse(title: string, description: string, orgId: string) {
   const course = await Course.create({

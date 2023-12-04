@@ -14,7 +14,7 @@ export default async function setupWebSockets(io: Server) {
   io.on("connection", (socket: SocketWithUser) => {
     console.log("Connection established with user: ", socket.id);
     
-    if (socket.isCourseInstructor) setInstructorSockets(socket);
+    if (socket.courseRoles?.instructor) setInstructorSockets(socket);
     else setStudentSockets(socket);
 
     socket.on("disconnect", () => {

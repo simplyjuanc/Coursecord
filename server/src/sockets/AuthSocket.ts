@@ -17,7 +17,7 @@ export async function AuthSocket(socket: SocketWithUser, next: NextFunction) {
     if (!user) throw new Error("User not found");
     
     socket.user = user 
-    socket.isCourseInstructor = await UserModel.isCourseInstructor(user.id, '') // TODO get courseId from socket
+    socket.courseRoles = await UserModel.getUserCourseRoles(user.id, '656b40a56c0ea5f66060c947') // TODO get courseId from socket
     
     next();
   } catch (error) {

@@ -1,5 +1,5 @@
 import { CourseUnitInfo } from '../../@types/types';
-import { CourseUnit } from './index';
+import { CourseUnit, Organisation } from './index';
 
 async function createCourseUnit(
   organisation_id: string,

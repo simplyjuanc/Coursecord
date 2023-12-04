@@ -26,7 +26,7 @@ async function getUserById(id: string) {
 
 async function getUsersByIds(ids: string[]) {
   try {
-    const users = await User.findMany({where: { id: { in: ids } }});
+    const users = await User.findMany({ where: { id: { in: ids } } });
     return users;
   } catch (error) {
     console.log(error);
@@ -65,9 +65,11 @@ async function userIsOrgOwner(userId: string, orgId: string) {
 
 async function getInstructorsByCourse(courseId: string) {
   try {
+    console.log('model - getInstructorsByCourse - courseId :>> ', courseId);
     const instructors = await User.findMany({
-      where: { instructor_of: { some: { id: courseId } } },
+      where: { instructor_of: { some: { course_id: courseId } } },
     });
+    console.log('model - getInstructorsByCourse - instructors :>> ', instructors);
     return instructors;
   } catch (error) {
     console.log(error);
@@ -107,7 +109,7 @@ async function getUserCourses(userId: string) {
 }
 
 
-async function isCourseInstructor(userId:string, courseId: string) {
+async function isCourseInstructor(userId: string, courseId: string) {
   try {
     const instructors = await getInstructorsByCourse(courseId);
     if (!instructors) throw new Error("No instructors found");
@@ -116,6 +118,41 @@ async function isCourseInstructor(userId:string, courseId: string) {
     console.log(error)
   }
 }
+
+
+async function getUserCourseRoles(userId: string, courseId: string) {
+
+  const adminUser = await User.findFirst({
+    where: {
+      id: userId,
+      admin_of: {
+        some: { organisation: { courses: { some: { id: courseId } } } },
+      },
+    },
+  });
+
+  const instructorUser = await User.findFirst({
+    where: {
+      id: userId,
+      instructor_of: { some: { course_id: courseId } },
+    },
+  });
+
+  const studentUser = await User.findFirst({
+    where: {
+      id: userId,
+      student_of: { some: { course_id: courseId } },
+    },
+  });
+
+
+  return {
+    admin: adminUser ? true : false,
+    instructor: instructorUser ? true : false,
+    student: studentUser ? true : false,
+  }
+}
+
 
 export default {
   getUsers,
@@ -129,5 +166,6 @@ export default {
   getStudentsByCourse,
   deleteUser,
   getUserCourses,
+  getUserCourseRoles,
   isCourseInstructor
 };

@@ -5,6 +5,7 @@ import Auth from '../middlewares/auth';
 const router = Router();
 const authRouter = Router();
 
+//ALL USED BY CLIENT
 router.use('/auth', Auth.requireAuth, authRouter);
 
 authRouter.post('/:courseId/', Section.addSection);

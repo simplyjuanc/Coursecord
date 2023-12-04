@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import Role from '../controllers/role';
 
-
 const router = Router();
+
+//ACTUALLY THINK WE SHOULD DELETE THE WHOLE THING
 
 //role router
 router.get('/org/:orgId', Role.getRolesByOrg);

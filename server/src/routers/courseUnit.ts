@@ -5,12 +5,14 @@ import Unit from '../controllers/courseUnit';
 const router = Router();
 
 
-router.post('/unit/org/:orgId/:sectionId', Auth.requireAuth, Unit.addCourseUnit);
-router.put('/unit/section/:sectionId/:unitId', Auth.requireAuth, Unit.addUnitToSection);
-router.put('/unit/:unitId', Auth.requireAuth, Unit.editContent);
-router.delete('/unit/:sectionId/:unitId', Auth.requireAuth,Unit.removeUnitFromSection);
-router.delete('/unit/:unitId', Auth.requireAuth, Unit.deleteContent);
-router.get('/section/units/:sectionId', Unit.getUnitsBySection);
+authRouter.post('/org/:orgId/:sectionId', Unit.addCourseUnit);
+authRouter.put('/section/:sectionId/:unitId', Unit.addUnitToSection);
+authRouter.put('/:unitId', Unit.editUnit);
+authRouter.delete('/:unitId', Unit.deleteUnit);
+
+authRouter.delete('/:sectionId/:unitId', Unit.removeUnitFromSection); //TODO: add client side functionality for this
+
+router.get('/:unitId', Unit.getUnit); //SHOULD PROBABLY BE PROTECTED
 
 
 export default router;

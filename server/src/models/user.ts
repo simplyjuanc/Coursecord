@@ -1,12 +1,16 @@
-import { UserInfo } from '../types';
+
+import { UserInfo } from '../@types/types';
 import { User, Organisation } from './index';
-// import Organisation from './organisation';
-import Role from '../models/role';
-import Course from '../models/course';
-import { Organisation as TOrganisation } from '@prisma/client';
+
+async function getUsers() {
+  const users = await User.findMany();
+  return users;
+}
 
 async function getUserByEmail(email: string) {
-  const user = await User.findUnique({ where: { email } });
+  const user = await User.findUnique({
+    where: { email },
+  });
   return user;
 }
 
@@ -15,6 +19,15 @@ async function getUserById(id: string) {
     const user = await User.findUnique({ where: { id } });
     if (!user) throw new Error('Invalid User');
     return user;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function getUsersByIds(ids: string[]) {
+  try {
+    const users = await User.findMany({ where: { id: { in: ids } } });
+    return users;
   } catch (error) {
     console.log(error);
   }
@@ -34,15 +47,6 @@ async function updateUser(userInfo: UserInfo) {
       ...userInfo,
     },
   });
-
-  return updatedUser;
-}
-
-async function assignRoleToUser(id: string, roleId: string) {
-  const updatedUser = await User.update({
-    where: { id },
-    data: { roles: { connect: { id: roleId } } },
-  });
   return updatedUser;
 }
 
@@ -51,85 +55,6 @@ async function userIsOrgOwner(userId: string, orgId: string) {
     const org = await Organisation.findUnique({ where: { id: orgId }, select: { owner_id: true } });
     if (!org) throw new Error('Invalid Organisation ID');
     return userId === org.owner_id;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getUsersByOrg(orgId: string) {
-  try {
-    const users = await Organisation.findUnique({
-      where: { id: orgId },
-      select: {
-        members: { select: { user: true } }
-      }
-    });
-    if (!users) throw new Error('Invalid Organisation ID');
-    return users.members.map(member => member.user);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getUsersWithRoleByOrg(orgId: string, roleTitle: string) {
-  try {
-    const users = await User.findMany({
-      where: {
-        member_of: { every: { organisation_id: orgId } },
-        roles: {
-          some: {
-            role: { title: roleTitle }
-          }
-        }
-      },
-    });
-    return users;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getInstructorsByCourse(courseId: string) {
-  try {
-    const instructors = await User.findMany({
-      where: { instructor_of: { some: { id: courseId } } }
-    });
-    return instructors;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getStudentsByCourse(courseId: string) {
-  const students = await User.findMany({
-    where: { student_of: { some: { id: courseId } } },
-  });
-  return students;
-}
-
-async function addRoleToUser(userId: string, roleId: string) {
-  try {
-    const updatedUser = await User.update({
-      where: { id: userId },
-      data: {
-        roles: { connect: { id: roleId } }
-      }
-    });
-
-    return updatedUser;
-
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function removeRoleFromUser(userId: string, roleId: string) {
-  try {
-    const updatedUser = await User.update({
-      where: { id: userId },
-      data: { roles: { disconnect: { id: roleId } } },
-    });
-    return updatedUser;
   } catch (error) {
     console.log(error);
   }
@@ -144,18 +69,93 @@ async function deleteUser(userId: string) {
   }
 }
 
+async function getUserCourses(userId: string) {
+  try {
+    const courses = await User.findUnique({
+      where: { id: userId },
+      select: {
+        student_of: { select: { course: true } },
+        instructor_of: { select: { course: true } },
+      },
+    });
+
+    return courses;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+async function getInstructorsByCourse(courseId: string) {
+  try {
+    const instructors = await User.findMany({
+      where: { instructor_of: { some: { course_id: courseId } } },
+    });
+    return instructors;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+async function isCourseInstructor(userId: string, courseId: string) {
+  try {
+    // console.log('model - isCourseInstructor - userId, courseId :>> ', userId, courseId);
+    const instructors = await getInstructorsByCourse(courseId);
+    if (!instructors?.length) throw new Error("No instructors found");
+    // console.log('instructors :>> ', instructors);
+    return instructors.some((instructor) => instructor.id === userId);
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+async function getUserCourseRoles(userId: string, courseId: string) {
+
+  const adminUser = await User.findFirst({
+    where: {
+      id: userId,
+      admin_of: {
+        some: { organisation: { courses: { some: { id: courseId } } } },
+      },
+    },
+  });
+
+  const instructorUser = await User.findFirst({
+    where: {
+      id: userId,
+      instructor_of: { some: { course_id: courseId } },
+    },
+  });
+
+  const studentUser = await User.findFirst({
+    where: {
+      id: userId,
+      student_of: { some: { course_id: courseId } },
+    },
+  });
+
+
+  return {
+    admin: adminUser ? true : false,
+    instructor: instructorUser ? true : false,
+    student: studentUser ? true : false,
+  }
+}
+
+
 export default {
+  getUsers,
   getUserByEmail,
+  getUserById,
+  getUsersByIds,
   createUser,
   updateUser,
-  assignRoleToUser,
   userIsOrgOwner,
-  getUserById,
-  getUsersByOrg,
-  getUsersWithRoleByOrg,
-  getInstructorsByCourse,
-  getStudentsByCourse,
-  addRoleToUser,
-  removeRoleFromUser,
-  deleteUser
+  deleteUser,
+  getUserCourses,
+  getUserCourseRoles,
+  isCourseInstructor,
+  getInstructorsByCourse
 };

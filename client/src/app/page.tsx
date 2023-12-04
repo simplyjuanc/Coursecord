@@ -1,15 +1,12 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from 'next/image';
+import googleButtonImage from "../../public/login/googleB.png";
 
-import wave from "/public/login/Vector 1.png";
-import googleL from "/public/login/googleB.png";
-import logo from "/public/login/logo.png";
-
-export default function Login() {
+const LoginPage: React.FC = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -17,78 +14,90 @@ export default function Login() {
     router.push("/courses");
   };
 
+  const bubbleColor: string = "#1877F2";
+
+  const bubbleStyle = (size: string, left: string, delay: string): React.CSSProperties => ({
+    width: size,
+    height: size,
+    backgroundColor: bubbleColor,
+    borderRadius: '50%',
+    opacity: 0.6,
+    position: 'absolute' as 'absolute',
+    bottom: '-150px',
+    left: left,
+    animation: `rise ${Math.random() * (30 - 15) + 15}s ease-in infinite`,
+    animationDelay: delay,
+  });
+
+  const bubbles = Array.from({ length: 20 }, (_, index) => ({
+    size: `${Math.random() * (120 - 20) + 20}px`,
+    left: `${Math.random() * 100}%`,
+    delay: `${Math.random() * 5}s`,
+  }));
+
   return (
-    <div className="flex flex-col flex-nowrap min-h-screen justify-around">
-      <div className="relative">
-        {/* Logo positioned at the top left */}
-        <div className="absolute top-0 left-0 z-10">
-          <Image src={logo} alt="Logo" width={300} height={200} />
-        </div>
+    <div className="flex flex-col items-center justify-center min-h-screen relative" style={{ backgroundColor: "white" }}>
+      {bubbles.map((bubble, index) => (
+        <div key={index} style={bubbleStyle(bubble.size, bubble.left, bubble.delay)} />
+      ))}
 
-        <Image src={wave} alt="Wave Image" width={1700} height={400} />
-        
-        <div className="absolute top-1/2 left-0 transform -translate-y-1/2 pl-10">
-          <h1 className="text-white font-bold text-7xl">
-            <span>Studying Online is now</span>
-            <br />
-            much easier
-          </h1>
-          <p className="text-white text-xl">
-            Coursecord will help you learn, <br />
-            wherever and whenever you want
-          </p>
-          {session ? (
-            <div className="pt-6">
-              <button
-                onClick={handleCourses}
-                className="bg-white hover:bg-gray-100 rounded-xl text-2xl text-primary-red px-6 py-3"
-              >
-                Courses
-              </button>
-            </div>
-          ) : (
-            <Image
-              src={googleL}
-              alt="Google Login"
-              width={400}
-              height={600}
-              onClick={() => signIn("google")}
-              style={{ cursor: "pointer" }}
-            />
-          )}
-        </div>
-      </div>
-      <div className="flex flex-row flex-nowrap p-20 gap-12 mb-10 -mt-5">
-        <Image
-          src="/girl-homepage.png"
-          alt="Home Image"
-          width={(774 * 2) / 3}
-          height={(1000 * 2) / 3}
-          className="absolute bottom-0 right-9"
-        />
+      <style jsx global>{`
+        @keyframes rise {
+          0% { transform: translateY(100%); opacity: 0; }
+          50% { opacity: 0.6; }
+          100% { transform: translateY(-100vh); opacity: 0; }
+        }
+      `}</style>
+
+      <div className="text-center my-8 z-10">
+        <h1 className="text-5xl font-bold" style={{ color: "#58A6FF" }}>Studying Online is now much easier</h1>
+        <p className="text-xl" style={{ color: "#C9D1D9" }}>Courserecord will help you learn, wherever and whenever you want</p>
       </div>
 
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex space-x-5">
-        <div className="bg-white rounded-lg shadow-lg p-8" style={{ width: '300px', height: '150px' }}>
-          <div className="flex flex-col items-center justify-center h-full">
-            <span className="text-red-600 font-bold text-4xl">300+</span>
-            <p className="text-gray-800 text-lg">STUDENTS</p>
-          </div>
+      {session ? (
+        <button
+          onClick={handleCourses}
+          className="rounded-full shadow-md hover:bg-blue-700 font-bold text-white mt-4 px-6 py-2 z-10"
+          style={{ backgroundColor: bubbleColor }}
+        >
+          Courses
+        </button>
+      ) : (
+        <div onClick={() => signIn("google")} className="cursor-pointer mt-4 z-10">
+          <Image
+            src={googleButtonImage}
+            alt="Sign in with Google"
+            width={200}
+            height={50}
+          />
         </div>
-        <div className="bg-white rounded-lg shadow-lg p-8" style={{ width: '300px', height: '150px' }}>
-          <div className="flex flex-col items-center justify-center h-full">
-            <span className="text-red-600 font-bold text-4xl">97%</span>
-            <p className="text-gray-800 text-lg">HIRE RATE</p>
-          </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 w-full max-w-4xl z-10">
+        <div
+          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48"
+          style={{ backgroundColor: bubbleColor }}
+        >
+          <span className="text-2xl md:text-3xl font-semibold">12880+</span>
+          <span>STUDENTS</span>
         </div>
-        <div className="bg-white rounded-lg shadow-lg p-8" style={{ width: '300px', height: '150px' }}>
-          <div className="flex flex-col items-center justify-center h-full">
-            <span className="text-red-600 font-bold text-4xl">32</span>
-            <p className="text-gray-800 text-lg">INSTRUCTORS</p>
-          </div>
+        <div
+          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48"
+          style={{ backgroundColor: bubbleColor }}
+        >
+          <span className="text-2xl md:text-3xl font-semibold">4580%</span>
+          <span>HIRE RATE</span>
+        </div>
+        <div
+          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48"
+          style={{ backgroundColor: bubbleColor }}
+        >
+          <span className="text-2xl md:text-3xl font-semibold">35</span>
+          <span>INSTRUCTORS</span>
         </div>
       </div>
     </div>
-
   );
-}
+};
+
+export default LoginPage;

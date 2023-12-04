@@ -1,12 +1,14 @@
-import { Organisation as TOrganisation } from "@prisma/client";
-import { Organisation } from "./index";
-import Course from "./course";
-import Role from "./role";
+import { Organisation as TOrganisation } from '@prisma/client';
+import { Organisation } from './index';
 
 async function createOrganisation(name: string, owner: string) {
   const defaultRoles = await Role.createDefaultRoles();
   const newOrg = await Organisation.create({
-    data: { name, owner_id: owner, roles: defaultRoles },
+    data: {
+      name,
+      owner_id: owner,
+      admins: { create: { user_id: owner } },
+    },
   });
 
   return newOrg;
@@ -19,11 +21,6 @@ async function getOrganisations() {
 
 async function getOrganisationByName(name: string) {
   const org = await Organisation.findUnique({ where: { name } });
-  return org;
-}
-
-async function getOrganisationById(id: string) {
-  const org = await Organisation.findUnique({ where: { id } });
   return org;
 }
 
@@ -45,78 +42,60 @@ async function deleteOrganisation(id: string) {
   return deletedOrg;
 }
 
-async function getOrganisationWithUnit(unitId: string) {
-  const org = await Organisation.findFirst({
-    where: { course_units: { some: { id: unitId } } },
-  });
 
-  return org;
+async function addAdminToOrganisation(
+  orgId: string,
+  userId: string
+  // authUserId: string
+) {
+  const updatedOrg = await Organisation.update({
+    where: { id: orgId /* , admins: { some: { user_id: authUserId } } */ }, //temporary will later require authentication
+    data: { admins: { create: { user_id: userId } } },
+  });
+  return updatedOrg;
 }
 
-async function setOrganisationUnits(orgId: string, units: string[]) {
+async function removeAdminFromOrganisation(
+  orgId: string,
+  userId: string,
+  authUserId: string
+) {
   const updatedOrg = await Organisation.update({
-    where: { id: orgId },
-    data: {
-      course_units: {},
+    where: { id: orgId, admins: { some: { user_id: authUserId } } },
+    data: { admins: { deleteMany: { user_id: userId } } },
+  });
+  return updatedOrg;
+}
+
+async function getOrgManagementInfo(orgId: string, userId: string) {
+  console.log(orgId, userId);
+  const org = Organisation.findUnique({
+    where: {
+      id: orgId,
+      admins: {
+        some: {
+          user_id: userId,
+        },
+      },
+    },
+    select: {
+      name: true,
+      courses: { select: { title: true, id: true } },
+      admins: {
+        select: { user: true },
+      },
     },
   });
-
-  return updatedOrg;
-}
-
-async function getOrgWithSection(sectionId: string) {
-  const org = await Organisation.findFirst({
-    where: { courses: { some: { syllabus: { some: { id: sectionId } } } } },
-  });
-
-  return org;
-}
-
-async function getOrganisationWithCourse(courseId: string) {
-  const org = await Organisation.findFirst({
-    where: { courses: { some: { id: courseId } } },
-  });
-
-  return org;
-}
-
-async function getOrganisationWithRole(roleId: string) {
-  const org = await Organisation.findFirst({
-    where: { roles: { some: {id:roleId} } },
-  });
-
-  return org;
-}
-
-async function addMemberToOrganisation(orgId: string, userId: string) {
-  const updatedOrg = await Organisation.update({
-    where: { id: orgId },
-    data: { members: { create: {user_id:userId} } },
-  });
-
-  return updatedOrg;
-}
-
-async function getOrganisationsWithMember(userId: string) {
-  const org = await Organisation.findMany({
-    where: { members: { some: {user_id:userId} } },
-  });
-
   return org;
 }
 
 export default {
   createOrganisation,
   getOrganisations,
-  getOrganisationByName,
-  getOrganisationById,
   editOrganisation,
   deleteOrganisation,
-  getOrganisationWithUnit,
-  setOrganisationUnits,
-  getOrganisationWithCourse,
-  getOrganisationWithRole,
-  addMemberToOrganisation,
-  getOrganisationsWithMember,
-  getOrgWithSection,
+  addAdminToOrganisation,
+  removeAdminFromOrganisation,
+  getOrgManagementInfo,
+  getOrganisationByName
 };

@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import Organisation from '../models/organisation';
-import Course from '../models/course';
-import { RequestWithUser } from '../types';
+import { RequestWithUser } from '../@types/types';
 import User from '../models/user';
-import Role from '../models/role';
 
 async function addOrganisation(req: Request, res: Response) {
   try {
@@ -16,9 +14,6 @@ async function addOrganisation(req: Request, res: Response) {
 
     const ownerId = (req as RequestWithUser).user.id;
     const newOrg = await Organisation.createOrganisation(name, ownerId);
-
-    const adminRole = await Role.getRoleByTitle(newOrg.id, 'admin')
-    await User.assignRoleToUser(ownerId, adminRole!.id);
 
     res.status(201).send(newOrg);
   } catch (error) {
@@ -37,24 +32,17 @@ async function getOrganisations(req: Request, res: Response) {
   }
 }
 
-async function getOrganisationById(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const org = await Organisation.getOrganisationById(orgId);
-    res.status(200).send(org);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
 async function editOrganisation(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
     const newData = req.body;
 
     const userId = (req as RequestWithUser).user.id;
-    const updatedOrg = await Organisation.editOrganisation(orgId, newData, userId);
+    const updatedOrg = await Organisation.editOrganisation(
+      orgId,
+      newData,
+      userId
+    );
     //TODO: Make a more descriptive error when about unauthorised deletion
     res.status(200).send(updatedOrg);
   } catch (error) {
@@ -68,12 +56,61 @@ async function deleteOrganisation(req: Request, res: Response) {
     const { orgId } = req.params;
 
     const ownerId = (req as RequestWithUser).user.id;
-    if(!await User.userIsOrgOwner(ownerId, orgId)) {
-      return res.status(401).send({message: 'Unauthorised'})
+    if (!(await User.userIsOrgOwner(ownerId, orgId))) {
+      return res.status(401).send({ message: 'Unauthorised' });
     }
-    
+
     const deletedOrg = await Organisation.deleteOrganisation(orgId);
     res.status(204).send(deletedOrg);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+async function getOrgManagementInfo(req: Request, res: Response) {
+  try {
+    const { orgId } = req.params;
+
+    const userId = (req as RequestWithUser).user.id;
+    const org = await Organisation.getOrgManagementInfo(orgId, userId);
+
+    console.log(org);
+    res.status(200).send(org);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+async function addAdminToOrganisation(req: Request, res: Response) {
+  try {
+    const { orgId, userId } = req.params;
+    const authUserId = (req as RequestWithUser).user.id;
+
+    const org = await Organisation.addAdminToOrganisation(
+      orgId,
+      userId,
+      // authUserId
+    );
+    res.status(200).send(org);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+async function removeAdminFromOrganisation(req: Request, res: Response) {
+  try {
+    const { orgId, userId } = req.params;
+    const authUserId = (req as RequestWithUser).user.id;
+
+    const org = await Organisation.removeAdminFromOrganisation(
+      orgId,
+      userId,
+      authUserId
+    );
+    res.status(200).send(org);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -83,7 +120,9 @@ async function deleteOrganisation(req: Request, res: Response) {
 export default {
   addOrganisation,
   getOrganisations,
-  getOrganisationById,
   editOrganisation,
   deleteOrganisation,
+  getOrgManagementInfo,
+  addAdminToOrganisation,
+  removeAdminFromOrganisation,
 };

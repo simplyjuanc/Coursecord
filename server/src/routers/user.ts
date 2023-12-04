@@ -5,16 +5,16 @@ import Auth from '../middlewares/auth';
 
 
 const router = Router();
+const authRouter = Router();
+
+router.use('/auth', Auth.requireAuth, authRouter);
+
+authRouter.delete('/:userId', User.deleteUser);
+authRouter.get('/:userId/courses', User.getUserCourses);
+authRouter.get('/:courseOrOrgId/:isOrg', User.getUserRoles);
 
 router.post('/signIn', User.signIn);
-router.get('/:orgId/users', User.getUsersByOrg);
-router.put('/user/:userId/:roleId', Auth.requireAuth, User.assignRoleToUser);
-router.delete('/user/:userId/:roleId', Auth.requireAuth, User.removeRoleFromUser);
-router.delete('/user/:userId', Auth.requireAuth, User.deleteUser);
-router.get('/student/course/:userId', Course.getCoursesWithStudent);
-router.get('/instructor/course/:userId', Course.getCoursesWithInstructor);
-router.get('/:courseId/instructors', User.getInstructorsByCourse);
-router.get('/:courseId/students', User.getStudentsByCourse);
+router.get('/users', User.getUsers);
 
 
 export default router;

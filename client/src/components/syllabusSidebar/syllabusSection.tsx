@@ -22,8 +22,6 @@ type SyllabusSectionProps = {
   setSaving: (saving?: 'saving' | 'done' |'error') => void;
 };
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
-
 export default function SyllabusSection(props: SyllabusSectionProps) {
   const {
     isAdmin,
@@ -68,18 +66,17 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
   return (
     <>
       <div className='flex flex-row-reverse'>
-        {mode != null && (
-          <div
-            className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-red bg-opacity-50`}
-          ></div>
-        )}
+        <div
+          className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-1 bg-opacity-${mode != null ? '50' : '0'}`}
+        ></div>
+
         <div className='w-full pr-4 pl-4'>
           <div
             className={
               `flex text-xl p-2 min-w-full rounded-xl` +
               (mode != null
-                ? ' bg-primary-red bg-opacity-10 text-primary-red'
-                : ' hover:bg-primary-red hover:bg-opacity-5')
+                ? ' bg-primary-1 bg-opacity-10 text-primary-1'
+                : ' hover:bg-primary-1 hover:bg-opacity-5')
             }
           >
             <button
@@ -100,9 +97,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
                     setMode((prev) => (prev === undefined ? 'edit' : undefined))
                   }
                   className={` hover:${
-                    mode === 'active'
-                      ? 'text-primary-black'
-                      : 'text-primary-red'
+                    mode === 'active' ? 'text-primary-black' : 'text-primary-1'
                   }`}
                 >
                   <MdOutlineEdit />
@@ -112,9 +107,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
                     deleteSection(section.id);
                   }}
                   className={` hover:${
-                    mode === 'active'
-                      ? 'text-primary-black'
-                      : 'text-primary-red'
+                    mode === 'active' ? 'text-primary-black' : 'text-primary-1'
                   }`}
                 >
                   <IoIosClose />
@@ -129,7 +122,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
           <label>Name:</label>
           <input
             type='text'
-            className='border-solid border-primary-gray border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2'
+            className='border-solid border-primary-2 border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2'
             required
             onChange={(e) => {
               setEditTitle(e.target.value);
@@ -138,7 +131,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
           />
           <button
             onClick={() => editSection()}
-            className='bg-primary-red bg-opacity-30 rounded-lg w-3/4 mx-auto hover:bg-opacity-50 hover:text-white'
+            className='bg-primary-1 bg-opacity-30 rounded-lg w-3/4 mx-auto hover:bg-opacity-50 hover:text-white'
           >
             Submit Change
           </button>
@@ -146,16 +139,16 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
       )}
       {mode === 'active' && (
         <div className='w-full pr-4 pl-4'>
-          <ol className='border-solid border-2 border-primary-gray border-opacity-20 mt-2 rounded-lg p-2'>
-            {section.units.map((unit, index) => {
+          <ol className='border-solid border-2 border-primary-2 border-opacity-20 mt-2 rounded-lg p-2'>
+            {section.course_units.map((unit, index) => {
               return (
                 <li key={index}>
                   <button
                     onClick={() => selectUnit(unit)}
                     className={`flex items-center text-xl p-2 min-w-full rounded-xl mt-2 ${
-                      selectedUnit === unit.id
-                        ? 'bg-primary-red bg-opacity-10 text-primary-red'
-                        : 'hover:bg-primary-red hover:bg-opacity-5 rounded-xl p-2 w-full'
+                      selectedUnit === unit.unit.id
+                        ? 'bg-primary-1 bg-opacity-10 text-primary-1'
+                        : 'hover:bg-primary-1 hover:bg-opacity-5 rounded-xl p-2 w-full'
                     }`}
                   >
                     {unitIcons[unit.type]}

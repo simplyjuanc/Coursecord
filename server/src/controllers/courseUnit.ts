@@ -1,25 +1,21 @@
-import { Request, Response } from "express";
-import CourseUnit from "../models/courseUnit";
-import CourseSection from "../models/courseSection";
-import Organisation from "../models/organisation";
-import { RequestWithUser } from "../types";
-import Role from "../models/role";
+import { Request, Response } from 'express';
+import CourseUnit from '../models/courseUnit';
+import CourseSection from '../models/courseSection';
+import { RequestWithUser } from '../@types/types';
 
 async function addCourseUnit(req: Request, res: Response) {
   try {
     const { orgId, sectionId } = req.params;
     const unitData = req.body;
 
-    const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userHasRole(userRoles, "admin", orgId))) {
-      return res.status(401).send({ message: "Incorrect Permissions" });
-    }
+    const userId = (req as RequestWithUser).user.id;
 
-    const newUnit = await CourseUnit.createCourseUnit(orgId, unitData);
+    const newUnit = await CourseUnit.createCourseUnit(orgId, unitData, userId);
 
     const updatedSection = await CourseSection.addUnitToSection(
       sectionId,
-      newUnit.id
+      newUnit.id,
+      userId
     );
 
     res.status(201).send({ newUnit, updatedSection });
@@ -33,19 +29,12 @@ async function addUnitToSection(req: Request, res: Response) {
   try {
     const { sectionId, unitId } = req.params;
 
-    const { isValid, orgId } = await sectionAndUnitAreValid(sectionId, unitId);
-    if (!isValid) {
-      return res.status(401).send({ message: "Invalid section or unit" });
-    }
-
-    const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userHasRole(userRoles, "admin", orgId))) {
-      return res.status(401).send({ message: "Unauthorised" });
-    }
+    const userId = (req as RequestWithUser).user.id;
 
     const updatedSection = await CourseSection.addUnitToSection(
       sectionId,
-      unitId
+      unitId,
+      userId
     );
     res.status(200).send({ updatedSection });
   } catch (error) {
@@ -58,19 +47,12 @@ async function removeUnitFromSection(req: Request, res: Response) {
   try {
     const { sectionId, unitId } = req.params;
 
-    const { isValid, orgId } = await sectionAndUnitAreValid(sectionId, unitId);
-    if (!isValid) {
-      return res.status(401).send({ message: "Invalid section or unit" });
-    }
-
-    const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userHasRole(userRoles, "admin", orgId))) {
-      return res.status(401).send({ message: "Unauthorised" });
-    }
+    const userId = (req as RequestWithUser).user.id;
 
     const updatedSection = await CourseSection.removeUnitFromSection(
       sectionId,
-      unitId
+      unitId,
+      userId
     );
     res.status(200).send({ updatedSection });
   } catch (error) {
@@ -79,38 +61,13 @@ async function removeUnitFromSection(req: Request, res: Response) {
   }
 }
 
-async function deleteContent(req: Request, res: Response) {
+async function deleteUnit(req: Request, res: Response) {
   try {
     const { unitId } = req.params;
-    console.log('UNIT', unitId)
-    const org = await Organisation.getOrganisationWithUnit(unitId);
-    console.log('ORG', org);
-    if (!org) {
-      return res.status(401).send({ message: "Invalid unit" });
-    }
 
+    const userId = (req as RequestWithUser).user.id;
 
-    const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userHasRole(userRoles, 'admin', org.id))) {
-      return res.status(401).send({ message: 'Missing Permission' });
-    }
-
-    const deletedUnit = await CourseUnit.deleteCourseUnit(unitId);
-    console.log('DELETED', deletedUnit);
-    const sections = await CourseSection.getSectionsWithUnit(unitId);
-
-    const updateSectionPromises = sections.map(async (section) => {
-      const newUnits = section.content.filter((id) => id !== unitId);
-      await CourseSection.setSectionUnits(section.id, newUnits);
-    });
-
-    const newOrgUnits = org.content.filter((id) => id !== unitId);
-    const updateOrgPromise = Organisation.setOrganisationUnits(
-      org.id,
-      newOrgUnits
-    );
-
-    await Promise.all([...updateSectionPromises, updateOrgPromise]);
+    const deletedUnit = await CourseUnit.deleteCourseUnit(unitId, userId);
 
     res.status(200).send({ message: `Deleted content:\n ${deletedUnit}` });
   } catch (error) {
@@ -119,53 +76,34 @@ async function deleteContent(req: Request, res: Response) {
   }
 }
 
-async function editContent(req: Request, res: Response) {
+async function editUnit(req: Request, res: Response) {
   try {
     const { unitId } = req.params;
-    const org = await Organisation.getOrganisationWithUnit(unitId);
-    console.log(org)
-    if (!org) {
-      return res.status(401).send({ message: "Invalid Unit" });
-    }
-    const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userHasRole(userRoles, "admin", org.id))) {
-      return res.status(401).send({ message: "Unauthorised" });
-    }
+
+    const userId = (req as RequestWithUser).user.id;
 
     const unitData = req.body;
-    const updatedContent = await CourseUnit.editCourseUnit(unitId, unitData);
+    const updatedContent = await CourseUnit.editCourseUnit(
+      unitId,
+      unitData,
+      userId
+    );
     res.status(200).send({ message: `Updated content:\n ${updatedContent}` });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error:\n", error });
+    res.status(500).send({ message: 'Internal Server Error:\n', error });
   }
 }
 
-async function sectionAndUnitAreValid(sectionId: string, unitId: string) {
-  const orgWithSectionPromise =
-    Organisation.getOrgWithSection(sectionId);
-  const orgWithUnitPromise = Organisation.getOrganisationWithUnit(unitId);
-  const [orgWithSection, orgWithUnit] = await Promise.all([
-    orgWithSectionPromise,
-    orgWithUnitPromise,
-  ]);
-
-  if (orgWithSection && orgWithUnit && orgWithSection.id === orgWithUnit.id) {
-    return { isValid: true, orgId: orgWithSection.id };
-  }
-
-  return { isValid: false, orgId: "" };
-}
-
-async function getUnitsBySection(req: Request, res: Response) {
+async function getUnit(req: Request, res: Response) {
   try {
-    const { sectionId } = req.params;
-    const units = await CourseUnit.getUnitsBySection(sectionId);
+    const { unitId } = req.params;
+    const unit = await CourseUnit.getUnit(unitId);
 
-    res.status(200).send(units);
+    res.status(200).send(unit);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error:\n", error });
+    res.status(500).send({ message: 'Internal Server Error:\n', error });
   }
 }
 
@@ -173,7 +111,7 @@ export default {
   addCourseUnit,
   addUnitToSection,
   removeUnitFromSection,
-  deleteContent,
-  editContent,
-  getUnitsBySection,
+  deleteUnit,
+  editUnit,
+  getUnit,
 };

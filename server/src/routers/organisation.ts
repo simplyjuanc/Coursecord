@@ -5,11 +5,16 @@ import Organisation from '../controllers/organisation';
 const router = Router();
 
 
-router.post('/organisation', Auth.requireAuth, Organisation.addOrganisation);
-router.get('/organisation', Organisation.getOrganisations);
-router.get('/organisation/:orgId', Organisation.getOrganisationById);
-router.put('/organisation/:orgId', Auth.requireAuth, Organisation.editOrganisation);
-router.delete('/organisation/:orgId', Auth.requireAuth, Organisation.deleteOrganisation);
+authRouter.post('/add', Organisation.addOrganisation);
+authRouter.put('/:orgId', Organisation.editOrganisation);
+authRouter.delete('/:orgId', Organisation.deleteOrganisation);
+authRouter.put('/:orgId/admin/:userId', Organisation.addAdminToOrganisation);
+authRouter.delete(
+  '/:orgId/admin/:userId',
+  Organisation.removeAdminFromOrganisation
+);
+authRouter.get('/:orgId/management', Organisation.getOrgManagementInfo);
 
+router.get('/get', Organisation.getOrganisations);
 
 export default router;

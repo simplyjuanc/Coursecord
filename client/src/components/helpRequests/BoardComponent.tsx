@@ -1,4 +1,4 @@
-import { THelpRequest } from '@/types';
+import { THelpRequestDetails } from '@/types';
 import React from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { BsThreeDots } from 'react-icons/bs';
@@ -6,7 +6,7 @@ import ItemComponent from './ItemComponent';
 
 type BoardComponentProps = {
   status: string;
-  helpRequests: THelpRequest[];
+  helpRequests: THelpRequestDetails[];
 };
 
 export default function BoardComponent({
@@ -25,36 +25,20 @@ export default function BoardComponent({
         </h1>
       </div>
       <Droppable droppableId={status}>
-        {(droppableProvided, snapshot) => (
+        {(provided) => (
           <div
-            className='bg-white w-full max-h-min rounded-xl p-6 shadow-xl border-2 border-primary-gray border-opacity-40'
-            ref={droppableProvided.innerRef}
-            {...droppableProvided.droppableProps}
+            className='bg-white w-full max-h-min min-h-[50%] rounded-xl p-6 shadow-xl border-2 border-primary-gray border-opacity-40'
+            ref={provided.innerRef}
+            // innerRef={provided.innerRef}
+            {...provided.droppableProps}
           >
-            <div className=''>
-              {helpRequests.map(
-                (item, index) =>
-                  item.status === status && (
-                    <Draggable
-                      key={item.id}
-                      draggableId={item.id}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <div style={{ height: '1rem' }} />
-                          <ItemComponent item={item} />
-                        </div>
-                      )}
-                    </Draggable>
-                  )
-              )}
-            </div>
-            {droppableProvided.placeholder}
+            {helpRequests.map(
+              (item, idx) =>
+                item.status === status && (
+                  <ItemComponent key={item.id} item={item} idx={idx} />
+                )
+            )}
+            {provided.placeholder}
           </div>
         )}
       </Droppable>

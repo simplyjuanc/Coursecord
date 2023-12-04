@@ -1,5 +1,5 @@
 'use client';
-import { DbUser, SessionWithToken, THelpRequest } from '@/types';
+import { DbUser, SessionWithToken, THelpRequest, THelpRequestDetails } from '@/types';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { MdSupportAgent } from 'react-icons/md';
@@ -14,7 +14,7 @@ import { getInstructorsByCourse } from '@/services/apiClientService';
 
 let socket: Socket;
 export default function HelpRequestBoard() {
-  const [helpRequests, setHelpRequests] = useState<THelpRequest[]>([]);
+  const [helpRequests, setHelpRequests] = useState<THelpRequestDetails[]>([]);
   const [instructors, setInstructors] = useState<DbUser[]>([]);
   const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
@@ -39,12 +39,12 @@ export default function HelpRequestBoard() {
       },
     });
 
-    socket.emit('getRequests', courseId, (res: THelpRequest[]) => {
+    socket.emit('getRequests', courseId, (res: THelpRequestDetails[]) => {
       setHelpRequests(res);
       console.log('getRequests - res :>> ', res);
     });
 
-    socket.on('requestsUpdated', (res: THelpRequest[]) => {
+    socket.on('requestsUpdated', (res: THelpRequestDetails[]) => {
       setHelpRequests(res);
     });
 
@@ -78,7 +78,7 @@ export default function HelpRequestBoard() {
   }
 
   return (
-    <div className='flex-grow flex flex-col h-screen px-20 pt-10 bg-white'>
+    <div className='flex-grow flex flex-col h-screen px-20 pt-10'>
       <div className='bg-white flex text-3xl font-semibold px-8 py-4 mx-auto rounded-xl shadow-xl border-2 border-primary-gray border-opacity-40'>
         <div className='my-auto mr-4 text-primary-red text-4xl'>
           <MdSupportAgent />
@@ -92,9 +92,9 @@ export default function HelpRequestBoard() {
           </div>
         ) : (
           <DragDropContext onDragEnd={updateRequestStatus}>
-            {['WAITING', 'ASSIGNED', 'FINISHED'].map((status, idx) => (
+            {['WAITING', 'ASSIGNED', 'FINISHED'].map((status) => (
               <BoardComponent
-                key={idx}
+                key={status}
                 status={status}
                 helpRequests={helpRequests}
               />

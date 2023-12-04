@@ -1,7 +1,7 @@
-import { SocketWithUser, TCreateHelpRequest } from "../../@types/types";
+import { SocketWithUser, TCreateHelpRequest } from "../@types/types";
 import HelpRequestModel from "../models/helpRequest";
 import UserModel from "../models/user";
-import { UpdateRequestStatusData } from "../../@types/types";
+import { UpdateRequestStatusData } from "../@types/types";
 import { getLastResult } from "../helpers/getLastResult";
 
 

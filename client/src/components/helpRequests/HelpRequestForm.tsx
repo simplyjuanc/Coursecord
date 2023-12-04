@@ -8,9 +8,10 @@ import {
 } from "react";
 import { MdOutlineSupportAgent } from "react-icons/md";
 import { Socket, io } from "socket.io-client";
-import { DbUser, SessionWithToken } from "@/types";
+import { DbUser, SessionWithToken, THelpRequest } from "@/types";
 import { useSession } from "next-auth/react";
-import { usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
+import { getStudentsByCourse } from "@/services/apiClientService";
 
 type HelpRequestForm = {
   setSubmitted: Dispatch<SetStateAction<boolean>>;
@@ -18,34 +19,29 @@ type HelpRequestForm = {
 
 let socket: Socket;
 export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
+  const baseUrl = process.env.API_URL || "http://localhost:5000";
   const session = useSession().data as SessionWithToken;
   const userId = session.user.id;
-  const courseIdRegex = /[0-9a-fA-F]{24}/;
-  const courseId = usePathname().match(courseIdRegex)![0];
+  const { courseId } = useParams() as { courseId: string };
 
   const [message, setMessage] = useState("");
-  const [students, setStudents] = useState<Partial<DbUser>[]>([]);
+  const [students, setStudents] = useState<DbUser[]>([]);
   const [requestors, setRequestors] = useState<string[]>();
 
-  const baseUrl = process.env.API_URL || "http://localhost:5000";
 
   useEffect(() => {
-    socket = io("http://localhost:5000/", {
-      auth: {
-        accessToken: session.accessToken,
-      },
+    socket = io(baseUrl, {
+      auth: { accessToken: session.accessToken },
     });
-    socket.emit("join", courseId);
 
-    axios
-      .get<DbUser[]>(`${baseUrl}/${courseId}/students`)
-      .then((res) => setStudents(res.data))
+    getStudentsByCourse(courseId)
+      .then((students) => { if (students) setStudents(students) })
       .catch((e) => console.error(e));
 
     return () => {
       socket.disconnect();
     };
-  }, [baseUrl, courseId]);
+  }, [baseUrl, courseId, session]);
 
   const handleMessage = (e: ChangeEvent) => {
     const target = e.target as HTMLTextAreaElement;
@@ -64,10 +60,10 @@ export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
       "createRequest",
       {
         content: message,
-        course: courseId,
+        course_id: courseId,
         students: [userId, ...(requestors ?? [])],
       },
-      (res: any) => {
+      (res: THelpRequest) => {
         setSubmitted(true);
       }
     );
@@ -79,7 +75,7 @@ export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
     <section className="h-screen w-full flex items-center bg-white">
       <div className="mx-auto w-1/3 min-w-max aspect-square bg-white rounded-lg flex flex-col items-center justify-evenly border-2 border-gray border-opacity-90 shadow-lg">
         <div className="flex items-center text-4xl font-bold text-center">
-          <div className="text-5xl text-primary-red pr-4">
+          <div className="text-5xl text-primary-1 pr-4">
             <MdOutlineSupportAgent />
           </div>
           <h2>Help Request</h2>
@@ -123,7 +119,7 @@ export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
           onClick={handleSubmit}
           disabled={message.length === 0}
           className={
-            `my-5 mx-auto w-1/4 p-2 bg-primary-red bg-opacity-30 text-primary-red rounded-lg font-bold ` +
+            `my-5 mx-auto w-1/4 p-2 bg-primary-1 bg-opacity-30 text-primary-1 rounded-lg font-bold ` +
             (message.length === 0
               ? "cursor-not-allowed"
               : "hover:bg-opacity-40")

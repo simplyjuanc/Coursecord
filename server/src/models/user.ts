@@ -1,21 +1,35 @@
-import { UserInfo } from '../types';
-import { User } from './index';
-import Organisation from './organisation';
-import Role from '../models/role';
-import Course from '../models/course';
-import { Organisation as TOrganisation } from '@prisma/client';
+
+import { UserInfo } from '../@types/types';
+import { User, Organisation } from './index';
+
+async function getUsers() {
+  const users = await User.findMany();
+  return users;
+}
 
 async function getUserByEmail(email: string) {
-  const user = await User.findUnique({ where: { email } });
+  const user = await User.findUnique({
+    where: { email },
+  });
   return user;
 }
 
 async function getUserById(id: string) {
   try {
     const user = await User.findUnique({ where: { id } });
+    if (!user) throw new Error('Invalid User');
     return user;
   } catch (error) {
-    
+    console.log(error);
+  }
+}
+
+async function getUsersByIds(ids: string[]) {
+  try {
+    const users = await User.findMany({ where: { id: { in: ids } } });
+    return users;
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -33,119 +47,118 @@ async function updateUser(userInfo: UserInfo) {
       ...userInfo,
     },
   });
-
-  return updatedUser;
-}
-
-async function assignRoleToUser(id: string, roleId: string) {
-  const updatedUser = await User.update({
-    where: { id },
-    data: { roles: { push: roleId } },
-  });
   return updatedUser;
 }
 
 async function userIsOrgOwner(userId: string, orgId: string) {
-  const org = await Organisation.getOrganisationById(orgId);
-  return userId === org?.owner;
-}
-
-async function getUsersByOrg(orgId: string) {
-  const org = await Organisation.getOrganisationById(orgId);
-  const users = await User.findMany({ where: { id: { in: org?.members } } });
-  return users;
-}
-
-async function getUsersWithRoleByOrg(orgId: string, roleTitle: string) {
-  const org = await Organisation.getOrganisationById(orgId);
-  if (!org) {
-    throw new Error('Invalid Organisation');
+  try {
+    const org = await Organisation.findUnique({
+      where: { id: orgId },
+      select: { owner_id: true },
+    });
+    if (!org) throw new Error('Invalid Organisation ID');
+    return userId === org.owner_id;
+  } catch (error) {
+    console.log(error);
   }
-  const role = await Role.getRoleByTitle(org.roles, roleTitle);
-  if (!role) {
-    throw new Error('Invalid Role');
-  }
-  const users = await User.findMany({ where: { roles: { has: role.id } } });
-  return users;
-}
-
-async function getInstructorsByCourse(courseId: string) {
-  const course = await Course.getCourseById(courseId);
-
-  if (!course) {
-    throw new Error('Invalid Course');
-  }
-  const instructors = await User.findMany({
-    where: { id: { in: course.instructors } },
-  });
-
-  return instructors;
-}
-
-async function getStudentsByCourse(courseId: string) {
-  const course = await Course.getCourseById(courseId);
-
-  if (!course) {
-    throw new Error('Invalid Course');
-  }
-  const students = await User.findMany({
-    where: { id: { in: course.students } },
-  });
-
-  return students;
-}
-
-async function addRoleToUser(userId: string, roleId: string) {
-  const updatedUser = await User.update({
-    where: { id: userId },
-    data: { roles: { push: roleId } },
-  });
-
-  return updatedUser;
-}
-
-async function removeRoleFromUser(userId: string, roleId: string) {
-  const user = await getUserById(userId);
-  if (!user) throw new Error('Invalid User');
-  const updatedUser = await User.update({
-    where: { id: userId },
-    data: { roles: user.roles.filter((id) => id != roleId) },
-  });
-
-  return updatedUser;
 }
 
 async function deleteUser(userId: string) {
-  const deletedUser = await User.delete({ where: { id: userId } });
-  return deletedUser;
-}
-
-async function removeAllRolesFromOrgUsers(org: TOrganisation) {
-  const users = await User.findMany({ where: { id: { in: org.members } } });
-  let promises = [];
-  for (const user of users) {
-    promises.push(User.update({
-      where: { id: user.id },
-      data: { roles: user.roles.filter((id) => !org.roles.includes(id)) },
-    }));
+  try {
+    const deletedUser = await User.delete({ where: { id: userId } });
+    return deletedUser;
+  } catch (error) {
+    console.log(error);
   }
-
-  await Promise.all(promises);
 }
+
+async function getUserCourses(userId: string) {
+  try {
+    const courses = await User.findUnique({
+      where: { id: userId },
+      select: {
+        student_of: { select: { course: true } },
+        instructor_of: { select: { course: true } },
+      },
+    });
+
+    return courses;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+async function getInstructorsByCourse(courseId: string) {
+  try {
+    const instructors = await User.findMany({
+      where: { instructor_of: { some: { course_id: courseId } } },
+    });
+    return instructors;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+async function isCourseInstructor(userId: string, courseId: string) {
+  try {
+    // console.log('model - isCourseInstructor - userId, courseId :>> ', userId, courseId);
+    const instructors = await getInstructorsByCourse(courseId);
+    if (!instructors?.length) throw new Error("No instructors found");
+    // console.log('instructors :>> ', instructors);
+    return instructors.some((instructor) => instructor.id === userId);
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+async function getUserCourseRoles(userId: string, courseId: string) {
+
+  const adminUser = await User.findFirst({
+    where: {
+      id: userId,
+      admin_of: {
+        some: { organisation: { courses: { some: { id: courseId } } } },
+      },
+    },
+  });
+
+  const instructorUser = await User.findFirst({
+    where: {
+      id: userId,
+      instructor_of: { some: { course_id: courseId } },
+    },
+  });
+
+  const studentUser = await User.findFirst({
+    where: {
+      id: userId,
+      student_of: { some: { course_id: courseId } },
+    },
+  });
+
+
+  return {
+    admin: adminUser ? true : false,
+    instructor: instructorUser ? true : false,
+    student: studentUser ? true : false,
+  }
+}
+
 
 export default {
+  getUsers,
   getUserByEmail,
+  getUserById,
+  getUsersByIds,
   createUser,
   updateUser,
-  assignRoleToUser,
   userIsOrgOwner,
-  getUserById,
-  getUsersByOrg,
-  getUsersWithRoleByOrg,
-  getInstructorsByCourse,
-  getStudentsByCourse,
-  addRoleToUser,
-  removeRoleFromUser,
   deleteUser,
-  removeAllRolesFromOrgUsers,
+  getUserCourses,
+  getUserCourseRoles,
+  isCourseInstructor,
+  getInstructorsByCourse
 };

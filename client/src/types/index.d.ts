@@ -1,4 +1,4 @@
-import { Session, User } from "next-auth";
+import { Session, User } from 'next-auth';
 
 export interface SessionWithToken extends Session {
   accessToken: string;
@@ -19,73 +19,92 @@ export type THelpRequest = {
   id: string;
   course: string;
   students: DbUser[];
-  status: "WAITING" | "ASSIGNED" | "FINISHED";
+  status: 'WAITING' | 'ASSIGNED' | 'FINISHED';
   instructor: DbUser;
   content: string;
-  created_at: Date;
-  time_waiting: number;
-  time_in_call: number | null;
+  created_at: DateTime;
+  finished_at: DateTime | null;
 };
 
+
+
+export type THelpRequestDetails = {
+  id: string;
+  course_id: string;
+  instructor_id: string | null;
+  status: "WAITING" | "ASSIGNED" | "FINISHED";
+  content: string;
+  created_at: DateTime;
+  finished_at: DateTime;
+  students: {
+    id: string;
+    help_request_id: string;
+    student_id: string;
+    student: DbUser;
+  }[]
+  instructor: DbUser | null;
+};
 export interface Course {
   id: string;
   organisation: string;
   title: string;
   description: string;
-  instructors: string[];
-  students: string[];
-  syllabus: string[];
+  instructors: { instructor: { name: string; email: string; id: string } }[];
+  students: { student: { name: string; email: string; id: string } }[];
 }
 
 export interface Unit {
   id: string;
   owner: string;
   title: string;
-  type: "lesson" | "excercise" | "test";
+  type: "lesson" | "exercise" | "test";
   markdown_body: string;
 }
 
 export interface Section {
   id: string;
   title: string;
-  units: string[];
+  course_id: string;
 }
 
 export interface CompiledSection extends Section {
-  units: Unit[];
+  course_units: { unit: Unit }[];
 }
 
 export interface CourseInfo {
   id: string;
-  organisation: string;
+  organisation: { name: string };
   title: string;
   description: string;
-  students: DbUser[];
-  instructors: DbUser[];
+  students: {
+    student: { id: string; name: string; image: string; email: string };
+  }[];
+  instructors: {
+    instructor: { id: string; name: string; image: string; email: string };
+  }[];
 }
+
+//TODO: change this so that emails are only sent to management since they are info that students probably wouldn't want public.
 
 export interface CourseState {
   courseInfo?: CourseInfo;
-  syllabus?: CompiledSection[];
+  syllabus: CompiledSection[];
+  cachedUnits: Record<string, Unit>;
   students: DbUser[];
   instructors: DbUser[];
 }
 
 export interface UserState {
-  user?: DbUser;
+  id: string;
   coursesAsStudent: Course[];
   coursesAsInstructor: Course[];
-  roles: RoleWithOrg[];
+  roles: UserRoles;
 }
 
-export interface Role {
-  id: string;
-  title: string;
-  permissions: string[];
-}
-
-export interface RoleWithOrg extends Role {
-  organisation: string;
+export interface UserRoles {
+  admin: boolean;
+  instructor: boolean;
+  student: boolean;
 }
 
 export interface NavItem {
@@ -102,15 +121,21 @@ export interface Unit {
   markdown_body: string;
 }
 
-export interface OrgState {
-  orgInfo: OrgInfo;
+export interface ManagementState {
+  orgInfo?: OrgInfo;
+  cachedCourses: Record<string, Course>;
 }
 
 export interface OrgInfo {
   id: string;
   name: string;
   description: string;
-  courses: Course[];
-  members: string[];
-  roles: [];
+  courses: { title: string; id: string }[];
+  admins: { user: { name: string; email: string; id: string } }[];
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
 }

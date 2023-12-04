@@ -11,77 +11,129 @@ datasource db {
 }
 
 model Organisation {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  name    String   @unique
-  owner   String //references User
-  courses String[] @default([]) //references Course
-  members String[] @default([]) //references User
-  roles   String[] @default([])
-  content String[] @default([]) //references Unit
-}
-
-model Role {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  permissions String[]
+  id           String             @id @default(auto()) @map("_id") @db.ObjectId
+  name         String             @unique
+  owner        User               @relation(fields: [owner_id], references: [id], onUpdate: Cascade)
+  owner_id     String             @db.ObjectId
+  courses      Course[]           @relation
+  course_units CourseUnit[]       @relation
+  admins       OrganisationUser[] @relation
 }
 
 model User {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  oauth_id       String   @unique
-  oauth_provider String
-  email          String   @unique
-  name           String
-  image          String
-  roles          String[] @default([]) //references Role
+  id                String                @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  email             String                @unique
+  oauth_id          String                @unique
+  oauth_provider    String
+  image             String
+  owner_of          Organisation[]        @relation
+  admin_of          OrganisationUser[]    @relation
+  instructor_of     CourseInstructors[]   @relation
+  student_of        CourseStudents[]      @relation
+  requests_created  HelpRequestStudents[] @relation
+  requests_answered HelpRequest[]         @relation
+  student_notes     StudentNotes[]        @relation
+  student_feedback  StudentFeedback[]     @relation
 }
 
 model Course {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  organisation String //references organisation
-  title        String
-  description  String
-  instructors  String[] @default([]) //references User
-  students     String[] @default([]) //references User
-  syllabus     String[] @default([]) //references Unit
+  id              String              @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  description     String
+  organisation    Organisation        @relation(fields: [organisation_id], references: [id], onUpdate: Cascade)
+  organisation_id String              @db.ObjectId
+  instructors     CourseInstructors[] @relation
+  students        CourseStudents[]    @relation
+  syllabus        CourseSection[]     @relation
+  help_requests   HelpRequest[]       @relation
 }
 
 model CourseSection {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  title   String
-  content String[] @default([]) //references CourseUnit
+  id           String              @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  course_units CourseSectionUnit[] @relation
+  course       Course              @relation(fields: [course_id], references: [id], onUpdate: Cascade)
+  course_id    String              @db.ObjectId
 }
 
 model CourseUnit {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  owner         String //references Organisation
-  title         String
-  type          String
-  markdown_body String
+  id              String              @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  type            String
+  markdown_body   String              @default("")
+  organisation    Organisation        @relation(fields: [organisation_id], references: [id], onUpdate: Cascade)
+  organisation_id String              @db.ObjectId
+  section         CourseSectionUnit[] @relation
 }
 
 model HelpRequest {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  course       String //references course
-  students     String[] //references User
-  status       String   @default("WAITING") // WAITING | ASSIGNED | FINISHED
-  instructor   String? //references User
-  content      String
-  created_at   DateTime @default(now())
-  finished_at DateTime?
+  id            String                @id @default(auto()) @map("_id") @db.ObjectId
+  course        Course                @relation(fields: [course_id], references: [id], onUpdate: Cascade)
+  course_id     String                @db.ObjectId
+  students      HelpRequestStudents[] @relation
+  instructor    User?                 @relation(fields: [instructor_id], references: [id])
+  instructor_id String?               @db.ObjectId
+  status        String                @default("WAITING") // WAITING, ASSIGNED, FINISHED
+  content       String
+  created_at    DateTime              @default(now())
+  finished_at   DateTime?
+}
+
+// Relationship tables below
+
+model OrganisationUser {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  organisation    Organisation @relation(fields: [organisation_id], references: [id])
+  organisation_id String       @db.ObjectId
+  user            User         @relation(fields: [user_id], references: [id])
+  user_id         String       @db.ObjectId
+}
+
+model CourseInstructors {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  course        Course @relation(fields: [course_id], references: [id])
+  course_id     String @db.ObjectId
+  instructor    User   @relation(fields: [instructor_id], references: [id])
+  instructor_id String @db.ObjectId
+}
+
+model CourseStudents {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  course     Course @relation(fields: [course_id], references: [id])
+  course_id  String @db.ObjectId
+  student    User   @relation(fields: [student_id], references: [id])
+  student_id String @db.ObjectId
+}
+
+model CourseSectionUnit {
+  id         String        @id @default(auto()) @map("_id") @db.ObjectId
+  section    CourseSection @relation(fields: [section_id], references: [id])
+  section_id String        @db.ObjectId
+  unit       CourseUnit    @relation(fields: [unit_id], references: [id])
+  unit_id    String        @db.ObjectId
+}
+
+model HelpRequestStudents {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  help_request    HelpRequest @relation(fields: [help_request_id], references: [id])
+  help_request_id String      @db.ObjectId
+  student         User        @relation(fields: [student_id], references: [id])
+  student_id      String      @db.ObjectId
 }
 
 //Below is not part of MVP
-
 model StudentNotes {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  student String //references User
-  notes   String
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  student    User   @relation(fields: [student_id], references: [id])
+  student_id String @db.ObjectId
+  notes      String
 }
 
 model StudentFeedback {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
-  student    String //references User
+  student    User   @relation(fields: [student_id], references: [id])
+  student_id String @db.ObjectId
   assignment String //references CourseContent
   instructor String //references User
   content    String

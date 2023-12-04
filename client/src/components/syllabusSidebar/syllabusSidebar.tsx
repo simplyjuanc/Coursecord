@@ -5,17 +5,11 @@ import { CgAddR } from 'react-icons/cg';
 import { useState } from 'react';
 import IconButton from '../buttons/iconButton';
 import SectionForm from '../syllabusForms/sectionForm';
-import UnitForm from '../syllabusForms/unitForm';
-import { RiBook2Line } from 'react-icons/ri';
-import { FaPencilRuler } from 'react-icons/fa';
-import { IoDocumentTextOutline } from 'react-icons/io5';
-import { IoIosClose } from 'react-icons/io';
 import { useAppDispatch } from '@/store';
 import { deleteSection as deleteSectionReducer } from '@/store/slices/courseSlice';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { MdOutlineEdit } from 'react-icons/md';
 import SyllabusSection from './syllabusSection';
+import * as api from '@/services/apiClientService';
 
 interface SyllabusSidebarProps {
   sections: CompiledSection[];
@@ -44,20 +38,16 @@ export default function SyllabusSidebar(props: SyllabusSidebarProps) {
 
   async function deleteSection(sectionId: string) {
     dispatch(deleteSectionReducer({ sectionId }));
-    await axios.delete(`${baseUrl}/section/${sectionId}`, {
-      headers: {
-        Authorization: (session as SessionWithToken)!.accessToken,
-      },
-    });
+    await api.deleteSection(sectionId, session as SessionWithToken);
   }
 
   return (
     <div className='h-screen min-h-full min-w-max bg-white shadow-xl relative box-border flex flex-col'>
       <div className='flex p-4'>
-        <h2 className='my-auto text-2xl text-primary-gray font-semibold w-[12vw]'>
+        <h2 className='my-auto text-2xl text-primary-2 font-semibold w-[12vw]'>
           {courseName}
         </h2>
-        <div className='w-10 h-10 rounded-full bg-primary-red bg-opacity-50 ml-4'></div>
+        <div className='w-10 h-10 rounded-full bg-primary-1 bg-opacity-50 ml-4'></div>
       </div>
       <div className='py-12 overflow-y-auto'>
         <ul>

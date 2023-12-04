@@ -1,21 +1,21 @@
-import { Request, Response } from "express";
-import User from "../models/user";
-import Auth from "../middlewares/auth";
-import { RequestWithUser } from "../types";
-import Organisation from "../models/organisation";
-import Course from "../models/course";
-import Role from "../models/role";
+import { Request, Response } from 'express';
+import User from '../models/user';
+import Auth from '../middlewares/auth';
+import { RequestWithUser } from '../@types/types';
+import Organisation from '../models/organisation';
+import Course from '../models/course';
+import { User as UserModel } from '../models/index';
 
 async function signIn(req: Request, res: Response) {
   try {
     const { oauth_id, oauth_provider } = req.body;
     const accessToken = req.headers.authorization;
     if (!accessToken) {
-      return res.status(401).send("Unauthorised");
+      return res.status(401).send('Unauthorised');
     }
     const user = await Auth.getGoogleUser(accessToken);
     if (!user) {
-      return res.status(401).send("Unauthorised");
+      return res.status(401).send('Unauthorised');
     }
 
     const userInfo = {
@@ -30,7 +30,7 @@ async function signIn(req: Request, res: Response) {
     if (existingUser && existingUser.oauth_provider !== oauth_provider) {
       return res
         .status(409)
-        .send({ message: "User account exists with a different provider" });
+        .send({ message: 'User account exists with a different provider' });
     }
 
     if (existingUser) {
@@ -40,108 +40,16 @@ async function signIn(req: Request, res: Response) {
 
     const newUser = await User.createUser(userInfo);
     //TEMPORARY
-    await Organisation.addMemberToOrganisation(
-      "6565c3bdf515f6ec9392f30e",
+    await Organisation.addAdminToOrganisation(
+      '656b40666c0ea5f66060c942',
       newUser.id
     );
-    await Course.addStudentToCourse("6565c41df515f6ec9392f30f", newUser.id);
+    await Course.addStudentToCourse('656b40a56c0ea5f66060c947', newUser.id);
+
     //TEMPORARY^
     res.status(201).send(newUser);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
 
-async function getUsersByOrg(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const users = await User.getUsersByOrg(orgId);
-    res.status(200).send(users);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-async function getInstructorsByOrg(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const instructors = await User.getUsersWithRoleByOrg(orgId, "instructor");
-    res.status(200).send(instructors);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-async function getInstructorsByCourse(req: Request, res: Response) {
-  try {
-    const { courseId } = req.params;
-    const instructors = await User.getInstructorsByCourse(courseId);
-    res.status(200).send(instructors);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-async function getStudentsByOrg(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const students = await User.getUsersWithRoleByOrg(orgId, "student");
-    res.status(200).send(students);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-async function getStudentsByCourse(req: Request, res: Response) {
-  try {
-    const { courseId } = req.params;
-    const students = await User.getStudentsByCourse(courseId);
-    res.status(200).send(students);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-async function assignRoleToUser(req: Request, res: Response) {
-  try {
-    const { userId, roleId } = req.params;
-    const org = await Organisation.getOrganisationWithRole(roleId);
-    if (!org) {
-      return res.status(401).send({ message: "Invalid Role" });
-    }
-    const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
-      return res.status(401).send({ message: "Unauthorised" });
-    }
-
-    const updatedUser = await User.addRoleToUser(userId, roleId);
-    res.status(200).send(updatedUser);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
-  }
-}
-
-async function removeRoleFromUser(req: Request, res: Response) {
-  try {
-    const { userId, roleId } = req.params;
-    const org = await Organisation.getOrganisationWithRole(roleId);
-    if (!org) {
-      return res.status(401).send({ message: "Invalid Role" });
-    }
-    const userRoles = (req as RequestWithUser).user.roles;
-    if (!(await Role.userRolesIncludes(userRoles, "admin", org.id))) {
-      return res.status(401).send({ message: "Unauthorised" });
-    }
-
-    const updatedUser = await User.removeRoleFromUser(userId, roleId);
-    res.status(200).send(updatedUser);
+    //todo send back roles with newUser
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: "Internal Server Error" });
@@ -151,27 +59,96 @@ async function removeRoleFromUser(req: Request, res: Response) {
 async function deleteUser(req: Request, res: Response) {
   try {
     const { userId } = req.params;
-    const authUserId = (req as RequestWithUser).user.id;
-    if (userId != authUserId) {
-      return res.status(401).send(authUserId);
+    const reqUserId = (req as RequestWithUser).user.id;
+    if (userId != reqUserId) {
+      return res.status(401).send(reqUserId);
     }
 
     const deletedUser = await User.deleteUser(userId);
     res.status(204).send(deletedUser);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error" });
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+async function getUserCourses(req: Request, res: Response) {
+  try {
+    const { userId } = req.params;
+    const userWithCourses = await User.getUserCourses(userId);
+    res.status(200).send(userWithCourses);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+async function getUserRoles(req: Request, res: Response) {
+  try {
+    const { courseOrOrgId, isOrg } = req.params;
+    const userId = (req as RequestWithUser).user.id;
+
+    if (isOrg === 'true') {
+      const user = await UserModel.findFirst({
+        where: {
+          id: userId,
+          admin_of: { some: { organisation_id: courseOrOrgId } },
+        },
+      });
+
+      return res.status(200).send({
+        admin: user ? true : false,
+        student: false,
+        instructor: false,
+      });
+    }
+
+    const adminUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        admin_of: {
+          some: { organisation: { courses: { some: { id: courseOrOrgId } } } },
+        },
+      },
+    });
+
+    const instructorUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        instructor_of: { some: { course_id: courseOrOrgId } },
+      },
+    });
+
+    const studentUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        student_of: { some: { course_id: courseOrOrgId } },
+      },
+    });
+
+    res.status(200).send({
+      admin: adminUser ? true : false,
+      instructor: instructorUser ? true : false,
+      student: studentUser ? true : false,
+    });
+  } catch (error) {}
+}
+
+
+async function getUsers(req: Request, res: Response) {
+  try {
+    const users = await User.getUsers();
+    res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
   }
 }
 
 export default {
   signIn,
-  getUsersByOrg,
-  getInstructorsByOrg,
-  getInstructorsByCourse,
-  getStudentsByOrg,
-  getStudentsByCourse,
-  assignRoleToUser,
-  removeRoleFromUser,
   deleteUser,
+  getUserCourses,
+  getUserRoles,
+  getUsers,
 };

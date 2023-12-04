@@ -1,110 +1,134 @@
+import { DbUser, SessionWithToken, User } from '@/types';
 import React, { useEffect, useState } from 'react';
-import { RoleSelect } from './RoleSelect';
-import { Role } from '@/types';
+import { UserSelect } from './UserSelect';
 import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
-
+import { useSession } from 'next-auth/react';
+import {
+  addAdminToOrganisation,
+  addUserToCourse,
+  getUsers,
+} from '@/services/apiClientService';
+import { useAppDispatch } from '@/store';
+import { addUserToCourse as addUserReducer, addAdminToOrg } from '@/store/slices/managementSlice';
 type AddUserProps = {
   courseId: string;
-  setShowNewUser: React.Dispatch<React.SetStateAction<boolean>>;
-  roles: Role[];
+  setShowExistingUser: React.Dispatch<React.SetStateAction<boolean>>;
+  role: string;
+  existingUsers: User[];
 };
 
-export default function AddNewUser({
-  setShowNewUser,
-  courseId, // see TODO below
-  roles,
+export default function AddExistingUser({
+  setShowExistingUser,
+  courseId,
+  role,
+  existingUsers,
 }: AddUserProps) {
-  const [partialFormState, setPartialFormState] = useState({
-    name: '',
-    email: '',
-  });
-  const [selectedRole, setSelectedRole] = useState<Role>();
+  const [potentialUsers, setPotentialUsers] = useState<User[]>();
+  const [selectedUser, setSelectedUser] = useState<User>();
+  const session = useSession().data as SessionWithToken;
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const users = await getUsers();
+        const existingUserIds = existingUsers.map((user) => user.id);
+        if (users) {
+          const potentialUsers = users.filter(
+            (user) => !existingUserIds.includes(user.id)
+          );
+          console.log(users, potentialUsers);
+          setPotentialUsers(potentialUsers);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [courseId]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setShowNewUser(false);
+      if (event.key === 'Escape') setShowExistingUser(false);
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [setShowNewUser]);
-
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setPartialFormState({
-      ...partialFormState,
-      [e.target.name]: e.target.value,
-    });
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!partialFormState.name || !partialFormState.email || !selectedRole) {
-      window.alert('Please fill out all fields');
-    } else {
-      // TODO: Fetch request to add new user to course, looking for their email or their name
-      // TODO: Add new user to the course (need to create addUser route and controller in backend)
-      closeModal();
-    }
-  }
+  }, [setShowExistingUser]);
 
   function closeModal() {
-    setShowNewUser(false);
+    setShowExistingUser(false);
+  }
+
+  async function handleSubmit() {
+    if (selectedUser) {
+      try {
+        if (role !== 'admin') {
+          const userAdded = await addUserToCourse(
+            courseId,
+            role,
+            selectedUser.id,
+            session
+          );
+          dispatch(addUserReducer({ courseId, role, user: selectedUser }));
+          if (userAdded) closeModal();
+          else throw new Error('Something went wrong!');
+        } else {
+          const userAdded = await addAdminToOrganisation(
+            '656b40666c0ea5f66060c942',
+            selectedUser.id,
+            session
+          );
+          dispatch(addAdminToOrg({ user: selectedUser }))
+          if (userAdded) closeModal();
+          else throw new Error('Something went wrong!');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      window.alert('Please select a user and a role!');
+    }
   }
 
   return (
     <div className='absolute top-0 left-0 flex items-center justify-center w-full h-full bg-opacity-50 bg-slate-100 z-10'>
-      <div className='fixed w-1/3 p-8 bg-white rounded-lg shadow-lg z-20'>
-        <div
-          className='absolute text-xl cursor-pointer right-6 top-4'
-          onClick={closeModal}
-        >
-          X
+      <div className='fixed w-1/3 p-8 bg-white rounded-lg shadow-lg h-1/3 z-20'>
+        <div>
+          <div
+            className='absolute text-xl cursor-pointer right-6 top-4'
+            onClick={closeModal}
+          >
+            X
+          </div>
+          <h1 className='mx-auto mt-2 mb-6 text-2xl font-semibold text-center'>
+            Add Existing User
+          </h1>
+          {!potentialUsers || !potentialUsers.length ? (
+            <p>No new users found!</p>
+          ) : (
+            <>
+              <div className='flex flex-col gap-6 px-6 my-8 justify-evenly'>
+                <div className='flex flex-row justify-between mx-12'>
+                  <p className='text-xl font-semibold'>User</p>
+                  <UserSelect
+                    users={potentialUsers}
+                    setSelectedUser={setSelectedUser}
+                  />
+                </div>
+                <div className='flex flex-row justify-between mx-12'>
+                  <p className='text-xl font-semibold '>Role</p>
+                </div>
+              </div>
+              <div className='w-1/3 py-3 mx-auto'>
+                <IconButton
+                  icon={<MdOutlinePersonAddAlt />}
+                  title='Submit'
+                  onClick={handleSubmit}
+                />
+              </div>
+            </>
+          )}
         </div>
-        <h1 className='mx-auto mt-2 mb-6 text-2xl font-semibold text-center'>
-          Add New User
-        </h1>
-
-        <form onSubmit={handleSubmit} className='flex flex-col gap-6'>
-          <div className='flex flex-row justify-between mx-12'>
-            <label htmlFor='name' className='text-xl font-semibold'>
-              Name
-            </label>
-            <input
-              name='name'
-              onChange={handleInputChange}
-              type='text'
-              placeholder='Kynncer Doe'
-              className='px-5 ml-auto text-right border rounded-md'
-            />
-          </div>
-
-          <div className='flex flex-row justify-between mx-12'>
-            <label htmlFor='email' className='text-xl font-semibold'>
-              Email
-            </label>
-            <input
-              name='email'
-              onChange={handleInputChange}
-              type='email'
-              placeholder='required.madness@gmail.com'
-              className='px-5 ml-auto text-right border rounded-md'
-            />
-          </div>
-
-          <div className='flex flex-row justify-between mx-12'>
-            <label htmlFor='role' className='text-xl font-semibold'>
-              Role
-            </label>
-            <RoleSelect roles={roles} setRole={setSelectedRole} />
-          </div>
-          <div className='w-1/3 py-3 mx-auto'>
-            <IconButton
-              icon={<MdOutlinePersonAddAlt />}
-              title='Submit'
-              onClick={handleSubmit}
-            ></IconButton>
-          </div>
-        </form>
       </div>
     </div>
   );

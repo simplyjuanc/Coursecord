@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
-import { GoogleUser, RequestWithUser } from "../types";
+import { GoogleUser, RequestWithUser } from "../@types/types";
 import User from "../models/user";
 
 async function requireAuth(req: Request, res: Response, next: NextFunction) {
   try {
-    const accessToken = req.headers.authorization;
+
+    const accessToken = req.headers.authorization
+    
     if (!accessToken) {
       return res.status(401).send({ message: 'No access token found' });
     }

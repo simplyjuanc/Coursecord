@@ -1,134 +1,135 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { MdOutlinePersonAddAlt } from 'react-icons/md';
+import { SessionWithToken, User } from '@/types';
+import {
+  getOrgManagementInfo,
+  removeAdminFromOrganisation,
+} from '@/services/apiClientService';
+import { useSession } from 'next-auth/react';
+import CourseManagement from './components/Course';
+import UserTable from './components/UserTable';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { setOrgInfo, removeAdminFromOrg } from '@/store/slices/managementSlice';
 import IconButton from '@/components/buttons/iconButton';
-import { Course, DbUser, Role } from '@/types';
-import AddNewUser from './components/AddNewUser';
-import AddExistingUser from './components/AddExistingUser';
-import UserRow from './components/UserRow';
+import { MdOutlinePersonAddAlt } from 'react-icons/md';
+import AddExistingUser from './components/AddNewUser';
 
 export default function AdminTable() {
   // TODO once we have an org layer, we need to lift this entire component so the admin table is not course-specific
-  const courseId = useParams()['courseId'] as string;
+  const { data: session } = useSession();
+  const dispatch = useAppDispatch();
 
-  const baseUrl = process.env.API_URL || 'http://localhost:5000';
-  const courseUrl = `${baseUrl}/course/${courseId}`;
-  const instructorUrl = `${baseUrl}/${courseId}/instructors`;
-  const studentUrl = `${baseUrl}/${courseId}/students`;
-
+  const orgInfo = useAppSelector((state) => state.management.orgInfo);
+  const [courseId, setCourseId] = useState<string>('');
   const [showNewUser, setShowNewUser] = useState(false);
-  const [showExistingUser, setShowExistingUser] = useState(false);
-  const [course, setCourse] = useState<Course>();
-  const [courseUsers, setCourseUsers] = useState<DbUser[]>([]);
-  const [instructors, setInstructors] = useState<DbUser[]>();
-  const [students, setStudents] = useState<DbUser[]>();
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [existingUsers, setExistingUsers] = useState<User[]>([]);
+  const [role, setRole] = useState<'student' | 'instructor' | 'admin'>(
+    'student'
+  );
 
   useEffect(() => {
     (async () => {
-      const [courseRes, rolesRes, instructorRes, studentRes] =
-        await Promise.all([
-          fetch(courseUrl),
-          fetch(`http://localhost:5000/6565c3bdf515f6ec9392f30e/roles`), //TODO: replace with orgId once it's dynamic
-          fetch(instructorUrl),
-          fetch(studentUrl),
-        ]);
-
-      const [course, roles, instructors, students] = await Promise.all([
-        courseRes.json(),
-        rolesRes.json(),
-        instructorRes.json(),
-        studentRes.json(),
-      ]);
-
-      setCourse(course);
-      setCourseUsers([...(instructors || []), ...(students || [])]);
-      setRoles(roles);
+      if (!orgInfo) {
+        const orgManagementInfo = await getOrgManagementInfo(
+          '656b40666c0ea5f66060c942',
+          session as SessionWithToken
+        );
+        if (orgManagementInfo) {
+          dispatch(setOrgInfo(orgManagementInfo));
+        }
+      }
     })();
-  }, [courseUrl, instructorUrl, studentUrl]);
+  }, []);
 
-  function showNewUserModal() {
+  function showNewUserModal(
+    role: 'student' | 'instructor' | 'admin',
+    users: { [key: string]: User }[]
+  ) {
     setShowNewUser(true);
+    const existingUsers = users.map((user) => user[role]);
+    console.log(users);
+    console.log('EXISTING', existingUsers);
+    setExistingUsers(existingUsers);
+    setRole(role);
   }
 
-  function showExistingUserModal() {
-    setShowExistingUser(true);
+  async function removeAdmin(_: string, userId: string) {
+    dispatch(removeAdminFromOrg({ userId }));
+    const adminDeleted = await removeAdminFromOrganisation(
+      '656b40666c0ea5f66060c942',
+      userId,
+      session as SessionWithToken
+    );
   }
+
+  const admins = orgInfo?.admins || [];
 
   return (
-    <section className='flex-grow bg-white'>
+    <section className='flex-grow bg-white h-screen overflow-y-auto'>
       <div className='mt-12 max-w-[60vw] mx-auto'>
-        <div className='flex flex-row gap-4 align-middle justify-around'>
-          <h1 className='text-2xl font-bold text-center my-auto drop-shadow-lg'>
-            {course?.title} Course{' '}
-          </h1>
-          <div className='flex flex-col gap-2 align-middle justify-evenly w-1/4'>
-            <div>
-              <IconButton
-                icon={<MdOutlinePersonAddAlt />}
-                title='Add New User'
-                onClick={showNewUserModal}
-              ></IconButton>
+        <div className='flex w-full items-center mb-4'>
+          <div className='flex justify-between'>
+            <div className='flex items-center'>
+              <h2 className='text-xl font-semibold mr-6'>
+                Organisation Management:
+              </h2>
+              <h2 className='text-2xl font-semibold'>{orgInfo?.name}</h2>
             </div>
-            <div>
-              <IconButton
-                icon={<MdOutlinePersonAddAlt />}
-                title='Add Existing User'
-                onClick={showExistingUserModal}
-              ></IconButton>
-            </div>
+
+            {admins && (
+              <div>
+                <IconButton
+                  icon={<MdOutlinePersonAddAlt />}
+                  title='Add New User'
+                  onClick={() =>
+                    showNewUserModal(
+                      'admin',
+                      admins.map((admin) => ({ admin: admin.user }))
+                    )
+                  }
+                ></IconButton>
+              </div>
+            )}
           </div>
         </div>
-
-        {showNewUser && (
-          <AddNewUser
-            courseId={courseId}
+        <div className=''>
+          <h3 className='text-xl font-semibold'>Admins:</h3>
+          <UserTable removeUser={removeAdmin} users={admins} type='user' />
+        </div>
+        <div className='flex mx-auto max-w-[20vw] mb-6'>
+          <h2 className='text-lg font-semibold mr-4'>Select a course: </h2>
+          <select
+            value={courseId}
+            className='border-2 border-primary-2 border-opacity-40 rounded-lg'
+            onChange={(e) => setCourseId(e.target.value)}
+          >
+            <option value=''>...</option>
+            {orgInfo?.courses.map((course) => (
+              <option key={course.id} value={course.id}>
+                {course.title}
+              </option>
+            ))}
+          </select>
+        </div>
+        {courseId != '' && (
+          <CourseManagement
+            role={role}
+            existingUsers={existingUsers}
+            showNewUser={showNewUser}
             setShowNewUser={setShowNewUser}
-            roles={roles}
-          />
-        )}
-        {showExistingUser && (
-          <AddExistingUser
             courseId={courseId}
-            setShowExistingUser={setShowExistingUser}
-            roles={roles}
+            showNewUserModal={showNewUserModal}
           />
-        )}
-
-        {!courseUsers ? (
-          <p>No users currently assigned!</p>
-        ) : (
-          <div className='p-8 mx-auto drop-shadow'>
-            <div className='grid grid-cols-7 border border-primary-gray border-opacity-30 rounded-lg'>
-              <div className='col-span-1 py-1 pb-2 text-lg font-semibold text-center bg-opacity-25 border-1 text bg-primary-red border-primary-gray rounded-tl-lg'>
-                Actions
-              </div>
-              <div className='col-span-2 py-1 pb-2 text-lg font-semibold text-center bg-opacity-25 border-1 text bg-primary-red border-primary-gray'>
-                Name
-              </div>
-              <div className='col-span-2 py-1 pb-2 text-lg font-semibold text-center bg-opacity-25 border-1 text bg-primary-red border-primary-gray'>
-                Email
-              </div>
-              <div className='col-span-2 py-1 pb-2 text-lg font-semibold text-center bg-opacity-25 border-1 text bg-primary-red border-primary-gray rounded-tr-lg'>
-                Role
-              </div>
-              <div className='col-span-7 grid grid-cols-7 rounded-b-lg border-primary-gray'>
-                {courseUsers &&
-                  courseUsers.map((user) => (
-                    <UserRow
-                      key={user.id}
-                      user={user}
-                      roles={roles}
-                      courseId={courseId}
-                    />
-                  ))}
-              </div>
-              <div className='col-span-7 rounded-b-lg h-2 bg-white -mt-1'></div>
-            </div>
-          </div>
         )}
       </div>
+      {showNewUser && (
+        <AddExistingUser
+          courseId={courseId}
+          setShowExistingUser={setShowNewUser}
+          role={role}
+          existingUsers={existingUsers}
+        />
+      )}
     </section>
   );
 }

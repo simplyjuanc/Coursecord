@@ -52,7 +52,7 @@ async function signIn(req: Request, res: Response) {
     //todo send back roles with newUser
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
+    res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -133,6 +133,7 @@ async function getUserRoles(req: Request, res: Response) {
     });
   } catch (error) {}
 }
+
 
 async function getUsers(req: Request, res: Response) {
   try {

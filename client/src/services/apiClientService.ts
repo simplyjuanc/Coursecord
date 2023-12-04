@@ -1,4 +1,4 @@
-import { Section, SessionWithToken, Unit } from '@/types';
+import { DbUser, Section, SessionWithToken, Unit } from '@/types';
 
 const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
@@ -112,6 +112,54 @@ export async function addSection(
     console.log(error);
   }
 }
+
+
+export async function getCourseWithRoles(
+  courseId: string,
+  session: SessionWithToken
+) {
+  try {
+    //gets a course and includes the instructors, students and the roles for the organisation
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getStudentsByCourse(
+  courseId: string
+) {
+  try {
+    const res = await fetch(`${baseUrl}/user/${courseId}/students`);
+    const data:DbUser[] = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getInstructorsByCourse(
+  courseId: string,
+) {
+  try {
+    const res = await fetch(`${baseUrl}/user/${courseId}/instructors`);
+    const data:DbUser[] = await res.json();
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+async function fetchHelper (url:string, cb:Function) {
+   try {
+     const res = await fetch(url);
+     const data = await res.json();
+     cb(data);
+   } catch (err) {
+     console.log(err)
+   }
+}
+
 
 export async function editSection(
   sectionId: string,
@@ -292,7 +340,7 @@ export async function addUserToCourse(
   courseId: string,
   role: string,
   userId: string,
-  sesion: SessionWithToken
+  session: SessionWithToken
 ) {
   try {
     const userResponse = await fetch(
@@ -300,7 +348,7 @@ export async function addUserToCourse(
       {
         method: 'PUT',
         headers: {
-          Authorization: sesion.accessToken,
+          Authorization: session.accessToken,
         },
       }
     );

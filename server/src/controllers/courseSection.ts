@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import Organisation from '../models/organisation';
-import { RequestWithUser } from '../types';
+import { RequestWithUser } from '../../@types/types';
 import Course from '../models/course';
 import CourseSection from '../models/courseSection';
 

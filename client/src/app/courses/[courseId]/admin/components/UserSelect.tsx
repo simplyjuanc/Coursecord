@@ -1,9 +1,9 @@
-import { DbUser } from '@/types';
+import { DbUser, User } from '@/types';
 import React from 'react';
 
 type UserSelectProps = {
-  users: DbUser[];
-  setSelectedUser: React.Dispatch<React.SetStateAction<DbUser | undefined>>;
+  users: User[];
+  setSelectedUser: (user: User | undefined) => void;
 };
 export function UserSelect({ users, setSelectedUser }: UserSelectProps) {
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {

@@ -48,7 +48,7 @@ export default function MarkdownForm(props: MarkdownFormProps) {
     <div className='w-full flex-grow flex flex-col  p-6'>
       <div className='w-full flex justify-center my-4 text-xl'>
         <button
-          className={`mx-4 border-b-4 rounded-bl-md rounded-br-md border-b-primary-red ${
+          className={`mx-4 border-b-4 rounded-bl-md rounded-br-md border-b-primary-1 ${
             !preview ? 'border-opacity-30' : 'border-opacity-0'
           }`}
           onClick={() => setPreview(false)}
@@ -56,7 +56,7 @@ export default function MarkdownForm(props: MarkdownFormProps) {
           Edit
         </button>
         <button
-          className={`mx-4 border-b-4 rounded-bl-md rounded-br-md border-b-primary-red ${
+          className={`mx-4 border-b-4 rounded-bl-md rounded-br-md border-b-primary-1 ${
             preview ? 'border-opacity-30' : 'border-opacity-0'
           }`}
           onClick={() => setPreview(true)}
@@ -82,7 +82,7 @@ export default function MarkdownForm(props: MarkdownFormProps) {
         <Markdown markdown={text} />
       ) : (
         <textarea
-          className='w-full flex-grow p-6 rounded-xl resize-none border-solid border-2 border-primary-gray border-opacity-100'
+          className='w-full flex-grow p-6 rounded-xl resize-none border-solid border-2 border-primary-2 border-opacity-100'
           onKeyDown={handleKeyDown}
           value={text}
           onChange={(e) => setText(e.target.value)}

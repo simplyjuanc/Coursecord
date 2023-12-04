@@ -1,10 +1,9 @@
-import express, { Request } from "express";
+import express from "express";
 import cors from "cors";
-// import {createServer} from 'http';
 import { Server as SocketIOServer } from "socket.io";
 import http from "http";
 import setupWebSockets from "./sockets/index.sockets";
-import router from "./router";
+import router from "./routers/index.router";
 
 const app = express();
 const server = http.createServer(app);

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import Organisation from '../models/organisation';
 import Course from '../models/course';
-import { RequestWithUser } from '../types';
+import { RequestWithUser } from '../../@types/types';
 import User from '../models/user';
 
 async function addCourse(req: Request, res: Response) {

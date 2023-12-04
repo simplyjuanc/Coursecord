@@ -28,7 +28,7 @@ model User {
   oauth_provider    String
   image             String
   owner_of          Organisation[]        @relation
-  admin_of         OrganisationUser[]    @relation
+  admin_of          OrganisationUser[]    @relation
   instructor_of     CourseInstructors[]   @relation
   student_of        CourseStudents[]      @relation
   requests_created  HelpRequestStudents[] @relation
@@ -72,13 +72,12 @@ model HelpRequest {
   course        Course                @relation(fields: [course_id], references: [id], onUpdate: Cascade)
   course_id     String                @db.ObjectId
   students      HelpRequestStudents[] @relation
-  instructor    User                  @relation(fields: [instructor_id], references: [id])
-  instructor_id String                @db.ObjectId
-  status        String                @default("WAITING")
+  instructor    User?                 @relation(fields: [instructor_id], references: [id])
+  instructor_id String?               @db.ObjectId
+  status        String                @default("WAITING") // WAITING, ASSIGNED, FINISHED
   content       String
   created_at    DateTime              @default(now())
-  time_waiting  Int                   @default(0)
-  time_in_call  Int?
+  finished_at   DateTime?
 }
 
 // Relationship tables below

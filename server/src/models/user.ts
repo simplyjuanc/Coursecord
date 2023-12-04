@@ -1,4 +1,5 @@
-import { UserInfo } from '../types';
+
+import { UserInfo } from '../../@types/types';
 import { User, Organisation } from './index';
 
 async function getUsers() {
@@ -23,6 +24,15 @@ async function getUserById(id: string) {
   }
 }
 
+async function getUsersByIds(ids: string[]) {
+  try {
+    const users = await User.findMany({where: { id: { in: ids } }});
+    return users;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function createUser(userInfo: UserInfo) {
   const newUser = await User.create({
     data: userInfo,
@@ -37,7 +47,6 @@ async function updateUser(userInfo: UserInfo) {
       ...userInfo,
     },
   });
-
   return updatedUser;
 }
 
@@ -79,13 +88,27 @@ async function getUserCourses(userId: string) {
   }
 }
 
+
+async function isCourseInstructor(userId:string, courseId: string) {
+  try {
+    const instructors = await getInstructorsByCourse(courseId);
+    if (!instructors) throw new Error("No instructors found");
+    return instructors.some((instructor) => instructor.id === userId);
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export default {
   getUsers,
   getUserByEmail,
+  getUserById,
+  getUsersByIds,
   createUser,
   updateUser,
   userIsOrgOwner,
   getUserById,
   deleteUser,
   getUserCourses,
+  isCourseInstructor
 };

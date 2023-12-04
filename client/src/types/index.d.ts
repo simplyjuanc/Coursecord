@@ -22,11 +22,28 @@ export type THelpRequest = {
   status: 'WAITING' | 'ASSIGNED' | 'FINISHED';
   instructor: DbUser;
   content: string;
-  created_at: Date;
-  time_waiting: number;
-  time_in_call: number | null;
+  created_at: DateTime;
+  finished_at: DateTime | null;
 };
 
+
+
+export type THelpRequestDetails = {
+  id: string;
+  course_id: string;
+  instructor_id: string | null;
+  status: "WAITING" | "ASSIGNED" | "FINISHED";
+  content: string;
+  created_at: DateTime;
+  finished_at: DateTime;
+  students: {
+    id: string;
+    help_request_id: string;
+    student_id: string;
+    student: DbUser;
+  }[]
+  instructor: DbUser | null;
+};
 export interface Course {
   id: string;
   organisation: string;
@@ -40,7 +57,7 @@ export interface Unit {
   id: string;
   owner: string;
   title: string;
-  type: 'lesson' | 'excercise' | 'test';
+  type: "lesson" | "exercise" | "test";
   markdown_body: string;
 }
 

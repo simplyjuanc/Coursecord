@@ -159,6 +159,16 @@ async function getUserRoles(req: Request, res: Response) {
   } catch (error) {}
 }
 
+async function getUsers(req: Request, res: Response) {
+  try {
+    const users = await User.getUsers();
+    res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
 export default {
   signIn,
   getInstructorsByCourse,
@@ -166,4 +176,5 @@ export default {
   deleteUser,
   getUserCourses,
   getUserRoles,
+  getUsers,
 };

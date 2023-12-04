@@ -62,7 +62,7 @@ export async function addUnit(
         body: JSON.stringify(unit),
       }
     );
-    
+
     return unitResponse.ok ? await unitResponse.json() : null;
   } catch (error) {
     console.log(error);
@@ -163,12 +163,15 @@ export async function getUserRoles(
   session: SessionWithToken
 ) {
   try {
-    const userResponse = await fetch(`${baseUrl}/user/auth/${courseOrOrgId}/${isOrg}`, {
-      method: 'GET',
-      headers: {
-        Authorization: session.accessToken,
-      },
-    });
+    const userResponse = await fetch(
+      `${baseUrl}/user/auth/${courseOrOrgId}/${isOrg}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
 
     console.log(userResponse.status);
     if (!userResponse.ok) {
@@ -260,5 +263,48 @@ export async function getCourseManagementInfo(
   } catch (error) {
     console.log(error);
     return null;
+  }
+}
+
+export async function getUsers(): Promise<
+  { id: string; name: string; email: string }[] | null
+> {
+  try {
+    const usersResponse = await fetch(`${baseUrl}/user/users`, {
+      method: 'GET',
+    });
+
+    if (!usersResponse.ok) {
+      console.log('Users could not be retrieved');
+      return null;
+    }
+
+    return await usersResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function addUserToCourse(
+  courseId: string,
+  role: string,
+  userId: string,
+  sesion: SessionWithToken
+) {
+  try {
+    const userResponse = await fetch(
+      `${baseUrl}/course/auth/${courseId}/${role}/${userId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: sesion.accessToken,
+        },
+      }
+    );
+
+    return userResponse.ok;
+  } catch (error) {
+    console.log(error);
   }
 }

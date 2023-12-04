@@ -116,3 +116,9 @@ export interface OrgInfo {
   courses: { title: string; id: string }[];
   admins: { user: { name: string; email: string; id: string } }[];
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}

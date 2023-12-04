@@ -17,6 +17,9 @@ router.get('/course', Course.getCourses);
 router.get('/:courseId', Course.getCourseById);
 //TILL HERE
 
+authRouter.put('/:courseId/instructor/:userId', Course.addInstructorToCourse);
+authRouter.put('/:courseId/student/:userId', Course.addStudentToCourse);
+
 router.get('/:orgId/course', Course.getCoursesByOrganisation); //CAN DEFINITELY BE DELETED
 
 export default router;

@@ -1,9 +1,9 @@
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import IconButton from '@/components/buttons/iconButton';
 import { useEffect, useState } from 'react';
-import AddNewUser from './AddNewUser';
+import AddNewUser from './OLD';
 import AddExistingUser from './AddExistingUser';
-import { IRole, SessionWithToken } from '@/types';
+import { SessionWithToken, User } from '@/types';
 import { getCourseManagementInfo } from '@/services/apiClientService';
 import { useSession } from 'next-auth/react';
 import UserTable from './UserTable';
@@ -21,8 +21,8 @@ export default function CourseManagement(props: CourseManagementProps) {
   const courses = useAppSelector((state) => state.management.cachedCourses);
 
   const [showNewUser, setShowNewUser] = useState(false);
-  const [showExistingUser, setShowExistingUser] = useState(false);
-  const roles: IRole[] = [];
+  const [existingUsers, setExistingUsers] = useState<User[]>([]);
+  const [role, setRole] = useState<'student' | 'instructor'>('student');
 
   useEffect(() => {
     (async () => {
@@ -36,12 +36,15 @@ export default function CourseManagement(props: CourseManagementProps) {
     })();
   }, []);
 
-  function showNewUserModal() {
+  function showNewUserModal(
+    role: 'student' | 'instructor',
+    users: { [key: string]: User }[]
+  ) {
     setShowNewUser(true);
-  }
-
-  function showExistingUserModal() {
-    setShowExistingUser(true);
+    const existingUsers = users.map((user) => user.user);
+    console.log('EXISTING', existingUsers);
+    setExistingUsers(existingUsers);
+    setRole(role);
   }
 
   return (
@@ -50,29 +53,15 @@ export default function CourseManagement(props: CourseManagementProps) {
         <h1 className='text-2xl font-bold text-center my-auto drop-shadow-lg'>
           {courses[courseId]?.title} Course{' '}
         </h1>
-        <div className='flex flex-col gap-2 align-middle justify-evenly w-1/4'>
-          <div>
-            <IconButton
-              icon={<MdOutlinePersonAddAlt />}
-              title='Add Existing User'
-              onClick={showExistingUserModal}
-            ></IconButton>
-          </div>
-        </div>
+        <div className='flex flex-col gap-2 align-middle justify-evenly w-1/4'></div>
       </div>
 
       {showNewUser && (
-        <AddNewUser
-          courseId={courseId}
-          setShowNewUser={setShowNewUser}
-          roles={roles}
-        />
-      )}
-      {showExistingUser && (
         <AddExistingUser
           courseId={courseId}
-          setShowExistingUser={setShowExistingUser}
-          roles={roles}
+          setShowExistingUser={setShowNewUser}
+          role={role}
+          existingUsers={existingUsers}
         />
       )}
       {courses[courseId] != null && (
@@ -83,19 +72,23 @@ export default function CourseManagement(props: CourseManagementProps) {
               <IconButton
                 icon={<MdOutlinePersonAddAlt />}
                 title='Add New User'
-                onClick={showNewUserModal}
+                onClick={() =>
+                  showNewUserModal('instructor', courses[courseId].instructors)
+                }
               ></IconButton>
             </div>
           </div>
           <UserTable users={courses[courseId].instructors} type='instructor' />
 
           <div className='flex items-center my-5 justify-between'>
-          <h2 className='text-xl font-semibold'>Students:</h2>
+            <h2 className='text-xl font-semibold'>Students:</h2>
             <div>
               <IconButton
                 icon={<MdOutlinePersonAddAlt />}
                 title='Add New User'
-                onClick={showNewUserModal}
+                onClick={() =>
+                  showNewUserModal('student', courses[courseId].students)
+                }
               ></IconButton>
             </div>
           </div>

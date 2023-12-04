@@ -1,6 +1,11 @@
 import { UserInfo } from '../types';
 import { User, Organisation } from './index';
 
+async function getUsers() {
+  const users = await User.findMany();
+  return users;
+}
+
 async function getUserByEmail(email: string) {
   const user = await User.findUnique({
     where: { email },
@@ -93,6 +98,7 @@ async function getUserCourses(userId: string) {
 }
 
 export default {
+  getUsers,
   getUserByEmail,
   createUser,
   updateUser,

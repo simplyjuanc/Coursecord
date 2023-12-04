@@ -77,6 +77,15 @@ async function addStudentToCourse(courseId: string, userId: string) {
   return updatedCourse;
 }
 
+async function addInstructorToCourse(courseId: string, userId: string) {
+  const updatedCourse = await Course.update({
+    where: { id: courseId },
+    data: {
+      instructors: { create: { instructor_id: userId } },
+    },
+  });
+}
+
 async function getCoursesWithStudent(userId: string) {
   const courses = await Course.findMany({
     where: { students: { some: { student_id: userId } } },
@@ -182,4 +191,5 @@ export default {
   getCourseUsers,
   getCourseManagementInfo,
   createSection,
+  addInstructorToCourse,
 };

@@ -9,13 +9,13 @@ import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import Image from 'next/image';
 import Spinner from '/public/spinner.svg';
 import BoardComponent from './BoardComponent';
-import { getInstructorsByCourse } from '@/services/apiClientService';
+
 
 
 let socket: Socket;
 export default function HelpRequestBoard() {
   const [helpRequests, setHelpRequests] = useState<THelpRequestDetails[]>([]);
-  const [instructors, setInstructors] = useState<DbUser[]>([]);
+  // const [instructors, setInstructors] = useState<DbUser[]>([]);
   const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
   // TODO: get courseId from session
@@ -24,14 +24,6 @@ export default function HelpRequestBoard() {
   
   useEffect(() => {
     console.log('Loading HelpBoard');
-    // What is this for? Including useState hook above
-    getInstructorsByCourse(courseId)
-      .then(instructors => {
-        if (!instructors) throw new Error('No instructors found')
-        setInstructors(instructors)
-      })
-      .catch((e) => console.error(e));
-
     socket = io(baseUrl, {
       auth: {
         accessToken: (session as SessionWithToken).accessToken,
@@ -41,17 +33,17 @@ export default function HelpRequestBoard() {
     socket.emit('getRequests', courseId, (res: THelpRequestDetails[]) => {
       setHelpRequests(res);
     });
-
+    
     socket.on('requestsUpdated', (requests: THelpRequestDetails[]) => {
       console.log('updatedRequests :>> ', requests);
       setHelpRequests(requests);
     });
-
+    
     return () => {
       socket.disconnect();
     };
   }, [baseUrl, session]);
-
+  
 
   const onDragEnd = (result:DropResult) => {
     const { draggableId, destination } = result;
@@ -73,7 +65,8 @@ export default function HelpRequestBoard() {
       id: draggableId,
       course_id: courseId,
       status: destination.droppableId,
-    });
+    }, 
+    (requests: THelpRequestDetails[]) => { setHelpRequests(requests) });
   }
 
   return (

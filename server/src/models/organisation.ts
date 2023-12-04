@@ -1,5 +1,5 @@
 import { Organisation as TOrganisation } from '@prisma/client';
-import { Organisation, User } from './index';
+import { Organisation } from './index';
 
 async function createOrganisation(name: string, owner: string) {
   const newOrg = await Organisation.create({
@@ -138,49 +138,3 @@ export default {
   getOrgWithSection,
   getOrgManagementInfo,
 };
-
-//below is the query that would be used to get all the info needed to manage an org
-//it is pretty ridiculous so I don't think we should get all the organisation info at 1 time.
-//I think the smartest thing to do would be to get the admins of the org in one query and
-//and then have a dropdown menu that would allow you to select the course the wish to manage.
-//then we could make a query to get the course and all the info about it.
-//this way the initial query would be just the organisation, the titles and ids of the courses and the admins.
-//I am also realising that to add a check that the user has the admin role to this it becomes even longer so
-//that is kinda fucked up
-
-// const org = await Organisation.findUnique({
-//   where: { id: orgId },
-//   include: {
-//     roles: { select: { title: true, permissions: true } },
-//     members: {
-//       where: {
-//         user: {
-//           roles: {
-//             some: { role: { organisation_id: orgId, title: 'admin' } },
-//           },
-//         },
-//       },
-//     },
-//     courses: {
-//       select: {
-//         title: true,
-//         students: {
-//           include: {
-//             student: { select: { name: true, email: true, roles: true } },
-//           },
-//         },
-//         instructors: {
-//           include: {
-//             instructor: {
-//               select: {
-//                 name: true,
-//                 email: true,
-//                 roles: { where: { role: { organisation_id: orgId } } },
-//               },
-//             },
-//           },
-//         },
-//       },
-//     },
-//   },
-// });

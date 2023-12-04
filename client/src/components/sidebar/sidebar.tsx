@@ -16,9 +16,7 @@ import { useAppSelector } from '@/store';
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isUserAdmin = useAppSelector((state) =>
-    state.user.roles.some((role) => role.title === 'admin')
-  );
+  const isUserAdmin = useAppSelector((state) => state.user.roles.admin);
 
   const NavItems: NavItem[] = [
     {
@@ -49,7 +47,9 @@ export default function Sidebar() {
     return (
       <div className='flex'>
         <div
-          className={`w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-1 bg-opacity-${isActive ? '50' : '0'}`}
+          className={`w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-1 bg-opacity-${
+            isActive ? '50' : '0'
+          }`}
         ></div>
 
         <Link href={props.item.href} className='w-full pr-4 pl-4'>

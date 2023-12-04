@@ -4,6 +4,7 @@ import Auth from '../middlewares/auth';
 import { RequestWithUser } from '../types';
 import Organisation from '../models/organisation';
 import Course from '../models/course';
+import { User as UserModel } from '../models/index';
 
 async function signIn(req: Request, res: Response) {
   try {
@@ -41,7 +42,7 @@ async function signIn(req: Request, res: Response) {
     //TEMPORARY
     await Organisation.addAdminToOrganisation(
       '656b40666c0ea5f66060c942',
-      newUser.id,
+      newUser.id
     );
     await Course.addStudentToCourse('656b40a56c0ea5f66060c947', newUser.id);
     //TEMPORARY^
@@ -103,10 +104,66 @@ async function getUserCourses(req: Request, res: Response) {
   }
 }
 
+async function getUserRoles(req: Request, res: Response) {
+  try {
+    const { courseOrOrgId, isOrg } = req.params;
+    console.log('ID', courseOrOrgId);
+    console.log('ISORG', isOrg);
+
+    const userId = (req as RequestWithUser).user.id;
+
+    if (isOrg === 'true') {
+      const user = await UserModel.findFirst({
+        where: {
+          id: userId,
+          admin_of: { some: { organisation_id: courseOrOrgId } },
+        },
+      });
+      console.log(user);
+      return res.status(200).send({
+        admin: user ? true : false,
+        student: false,
+        instructor: false,
+      });
+    }
+
+    console.log('NOT ORG');
+    const adminUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        admin_of: {
+          some: { organisation: { courses: { some: { id: courseOrOrgId } } } },
+        },
+      },
+    });
+
+    const instructorUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        instructor_of: { some: { course_id: courseOrOrgId } },
+      },
+    });
+
+    const studentUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        student_of: { some: { course_id: courseOrOrgId } },
+      },
+    });
+
+    res.status(200).send({
+      admin: adminUser ? true : false,
+      instructor: instructorUser ? true : false,
+      student: studentUser ? true : false,
+    });
+  } catch (error) {}
+}
+
 export default {
   signIn,
   getInstructorsByCourse,
   getStudentsByCourse,
   deleteUser,
   getUserCourses,
+  getUserRoles,
 };

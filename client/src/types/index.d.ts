@@ -81,17 +81,13 @@ export interface UserState {
   id: string;
   coursesAsStudent: Course[];
   coursesAsInstructor: Course[];
-  roles: RoleWithOrg[];
+  roles: UserRoles;
 }
 
-export interface IRole {
-  id: string;
-  title: string;
-  permissions: string[];
-}
-
-export interface RoleWithOrg extends IRole {
-  organisation: string;
+export interface UserRoles {
+  admin: boolean;
+  instructor: boolean;
+  student: boolean;
 }
 
 export interface NavItem {
@@ -118,5 +114,5 @@ export interface OrgInfo {
   name: string;
   description: string;
   courses: { title: string; id: string }[];
-  members: { user: { name: string; email: string; id: string } }[];
+  admins: { user: { name: string; email: string; id: string } }[];
 }

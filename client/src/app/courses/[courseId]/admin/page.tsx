@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Course, DbUser, IRole, OrgInfo, SessionWithToken } from '@/types';
+import { SessionWithToken } from '@/types';
 import { getOrgManagementInfo } from '@/services/apiClientService';
 import { useSession } from 'next-auth/react';
 import CourseManagement from './components/Course';
@@ -30,7 +30,7 @@ export default function AdminTable() {
     })();
   }, []);
 
-  const admins = orgInfo?.members || [];
+  const admins = orgInfo?.admins || [];
 
   return (
     <section className='flex-grow bg-white h-screen overflow-y-auto'>

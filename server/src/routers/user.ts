@@ -11,6 +11,7 @@ router.use('/auth', Auth.requireAuth, authRouter);
 
 authRouter.delete('/:userId', User.deleteUser);
 authRouter.get('/:userId/courses', User.getUserCourses);
+authRouter.get('/:courseOrOrgId/:isOrg', User.getUserRoles);
 
 router.post('/signIn', User.signIn);
 router.get('/student/course/:userId', Course.getCoursesWithStudent); //PROBABLY CAN BE DELETED

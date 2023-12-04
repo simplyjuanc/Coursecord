@@ -28,9 +28,7 @@ export default function Syllabus() {
   const { data: session } = useSession();
   const { courseId } = useParams() as { courseId: string };
 
-  const isAdmin = useAppSelector((state) =>
-    state.user.roles.some((role) => role.title === 'admin')
-  );
+  const isAdmin = useAppSelector((state) => state.user.roles.admin);
   const courseInfo = useAppSelector((state) => state.course.courseInfo);
   const syllabus: CompiledSection[] | undefined = useAppSelector(
     (state) => state.course.syllabus
@@ -69,10 +67,7 @@ export default function Syllabus() {
   async function saveChanges() {
     setEditMode(false);
     setSaving('saving');
-    const unitEdited = await editUnit(
-      unit!,
-      session as SessionWithToken
-    );
+    const unitEdited = await editUnit(unit!, session as SessionWithToken);
     if (unitEdited) {
       dispatch(
         updateUnit({

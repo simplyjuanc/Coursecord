@@ -157,12 +157,13 @@ export async function deleteSection(
   }
 }
 
-export async function getRolesByUser(
-  userId: string,
+export async function getUserRoles(
+  courseOrOrgId: string,
+  isOrg: boolean,
   session: SessionWithToken
 ) {
   try {
-    const userResponse = await fetch(`${baseUrl}/role/user/${userId}`, {
+    const userResponse = await fetch(`${baseUrl}/user/auth/${courseOrOrgId}/${isOrg}`, {
       method: 'GET',
       headers: {
         Authorization: session.accessToken,

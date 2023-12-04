@@ -47,7 +47,7 @@ async function updateRequestStatus(id: string, status: THelpRequest['status']) {
     } else {
       request = await HelpRequest.update({
         where: { id },
-        data: { status }
+        data: { status, finished_at: null }
       });
     }
     // console.log('model - updateRequestStatus - request :>> ', request);

@@ -25,7 +25,7 @@ export function setInstructorSockets(socket: SocketWithUser) {
     callback(requests);
   });
 
-  socket.on("updateStatus", async (data: UpdateRequestStatusData) => {
+  socket.on("updateStatus", async (data: UpdateRequestStatusData, callback:Function) => {
     
     console.log('socket - updateStatus - data :>> ', data);
     const { id, course_id, status } = data;
@@ -49,6 +49,7 @@ export function setInstructorSockets(socket: SocketWithUser) {
     const requests = await HelpRequestModel.getHelpRequests(course_id);
     
     console.log('socket - updateStatus - requests :>> ', requests);
-    socket.to('instructors').emit("requestsUpdated", requests);
+    socket.in('instructors').emit("requestsUpdated", requests);
+    callback(requests);
   });
 }

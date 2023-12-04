@@ -15,22 +15,13 @@ export default function ItemComponent({
     <Draggable draggableId={item.id} index={index}>
       {(provided) => (
         <div
-          className='border-primary-red border-2 rounded-xl select-none p-2 my-4 bg-white'
+          className='border-primary-red border-2 rounded-xl select-none p-2 my-4 bg-white '
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-            <div>
-              <p className='font-semibold my-auto'>Students: </p>
-              <p>
-                {item.students
-                  .map((student) => student.student.name)
-                  .join(', ')}
-              </p>
-            </div>
-            <p className='py-2 font-medium'>{item.content}</p>
             {item.instructor && (
-              <div className='flex'>
+              <div className='flex justify-end mr-1'>
                 <Image
                   src={item.instructor.image || ''}
                   alt={'Instructor profile picture'}
@@ -44,7 +35,16 @@ export default function ItemComponent({
               </div>
             )}
             <div>
-              <p className=''>
+              <p className='font-semibold my-auto'>Students: </p>
+              <p>
+                {item.students
+                  .map((student) => student.student.name)
+                  .join(', ')}
+              </p>
+            </div>
+            <p className='py-3'>{item.content}</p>
+            <div>
+              <p className='italic text-sm'>
                 {!item.finished_at
                   ? 'Created ' +
                     formatDistanceToNow(new Date(item.created_at), {

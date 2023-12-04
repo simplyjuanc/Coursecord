@@ -11,9 +11,18 @@ router.use('/auth', Auth.requireAuth, authRouter);
 router.get('/', Course.getCourses);
 authRouter.post('/:orgId', Course.addCourse);
 authRouter.put('/:courseId', Course.editCourse);
-authRouter.delete(':orgId/:courseId', Course.deleteCourse);
+authRouter.delete('/:orgId/:courseId', Course.deleteCourse);
 
+//USED BY CLIENT
 router.get('/:orgId/course', Course.getCoursesByOrganisation);
+authRouter.get('/:courseId/management', Course.getCourseManagementInfo);
+router.get('/course', Course.getCourses);
 router.get('/:courseId', Course.getCourseById);
+//TILL HERE
+
+authRouter.put('/:courseId/instructor/:userId', Course.addInstructorToCourse);
+authRouter.put('/:courseId/student/:userId', Course.addStudentToCourse);
+
+router.get('/:orgId/course', Course.getCoursesByOrganisation); //CAN DEFINITELY BE DELETED
 
 export default router;

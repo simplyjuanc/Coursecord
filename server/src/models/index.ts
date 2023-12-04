@@ -4,7 +4,6 @@ const prisma = new PrismaClient();
 
 const Organisation = prisma.organisation;
 const User = prisma.user;
-const Role = prisma.role;
 
 const Course = prisma.course;
 const CourseUnit = prisma.courseUnit;
@@ -16,7 +15,6 @@ export {
   Organisation,
   Course,
   User,
-  Role,
   CourseUnit,
   HelpRequest,
   CourseSection

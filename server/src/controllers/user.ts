@@ -4,7 +4,7 @@ import Auth from '../middlewares/auth';
 import { RequestWithUser } from '../../@types/types';
 import Organisation from '../models/organisation';
 import Course from '../models/course';
-import Role from '../models/role';
+import { User as UserModel } from '../models/index';
 
 async function signIn(req: Request, res: Response) {
   try {
@@ -40,38 +40,16 @@ async function signIn(req: Request, res: Response) {
 
     const newUser = await User.createUser(userInfo);
     //TEMPORARY
-    await Organisation.addMemberToOrganisation(
-      '656b2fde7b32e44d802e342d',
-      newUser.id,
-      'admin'
+    await Organisation.addAdminToOrganisation(
+      '656b40666c0ea5f66060c942',
+      newUser.id
     );
-    await Course.addStudentToCourse('656b338c2ef4b28dc15893fb', newUser.id);
+    await Course.addStudentToCourse('656b40a56c0ea5f66060c947', newUser.id);
+
     //TEMPORARY^
     res.status(201).send(newUser);
 
     //todo send back roles with newUser
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
-async function getUsersByOrg(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const users = await User.getUsersByOrg(orgId);
-    res.status(200).send(users);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
-async function getInstructorsByOrg(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const instructors = await User.getUsersWithRoleByOrg(orgId, 'instructor');
-    res.status(200).send(instructors);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -89,62 +67,11 @@ async function getInstructorsByCourse(req: Request, res: Response) {
   }
 }
 
-async function getStudentsByOrg(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const students = await User.getUsersWithRoleByOrg(orgId, 'student');
-    res.status(200).send(students);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
 async function getStudentsByCourse(req: Request, res: Response) {
   try {
     const { courseId } = req.params;
     const students = await User.getStudentsByCourse(courseId);
     res.status(200).send(students);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
-async function assignRoleToUser(req: Request, res: Response) {
-  try {
-    const { userId, roleId } = req.params;
-    const org = await Organisation.getOrganisationWithRole(roleId);
-    if (!org) {
-      return res.status(401).send({ message: 'Invalid Role' });
-    }
-    const reqUserId = (req as RequestWithUser).user.id;
-    if (!(await Role.userHasRole(reqUserId, org.id, 'admin'))) {
-      return res.status(401).send({ message: 'Unauthorised' });
-    }
-
-    const updatedUser = await User.addRoleToUser(userId, roleId);
-    res.status(200).send(updatedUser);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
-async function removeRoleFromUser(req: Request, res: Response) {
-  try {
-    const { userId, roleId } = req.params;
-    const org = await Organisation.getOrganisationWithRole(roleId);
-    if (!org) {
-      return res.status(401).send({ message: 'Invalid Role' });
-    }
-    const reqUserId = (req as RequestWithUser).user.id;
-    if (!(await Role.userHasRole(reqUserId, org.id, 'admin'))) {
-      return res.status(401).send({ message: 'Unauthorised' });
-    }
-
-    const updatedUser = await User.removeRoleFromUser(userId, roleId);
-    res.status(200).send(updatedUser);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -178,15 +105,77 @@ async function getUserCourses(req: Request, res: Response) {
   }
 }
 
+async function getUserRoles(req: Request, res: Response) {
+  try {
+    const { courseOrOrgId, isOrg } = req.params;
+    console.log('ID', courseOrOrgId);
+    console.log('ISORG', isOrg);
+
+    const userId = (req as RequestWithUser).user.id;
+
+    if (isOrg === 'true') {
+      const user = await UserModel.findFirst({
+        where: {
+          id: userId,
+          admin_of: { some: { organisation_id: courseOrOrgId } },
+        },
+      });
+      console.log(user);
+      return res.status(200).send({
+        admin: user ? true : false,
+        student: false,
+        instructor: false,
+      });
+    }
+
+    console.log('NOT ORG');
+    const adminUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        admin_of: {
+          some: { organisation: { courses: { some: { id: courseOrOrgId } } } },
+        },
+      },
+    });
+
+    const instructorUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        instructor_of: { some: { course_id: courseOrOrgId } },
+      },
+    });
+
+    const studentUser = await UserModel.findFirst({
+      where: {
+        id: userId,
+        student_of: { some: { course_id: courseOrOrgId } },
+      },
+    });
+
+    res.status(200).send({
+      admin: adminUser ? true : false,
+      instructor: instructorUser ? true : false,
+      student: studentUser ? true : false,
+    });
+  } catch (error) {}
+}
+
+async function getUsers(req: Request, res: Response) {
+  try {
+    const users = await User.getUsers();
+    res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
 export default {
   signIn,
-  getUsersByOrg,
-  getInstructorsByOrg,
   getInstructorsByCourse,
-  getStudentsByOrg,
   getStudentsByCourse,
-  assignRoleToUser,
-  removeRoleFromUser,
   deleteUser,
   getUserCourses,
+  getUserRoles,
+  getUsers,
 };

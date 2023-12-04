@@ -24,9 +24,8 @@ export default function HelpRequestBoard() {
   
   useEffect(() => {
     console.log('Loading HelpBoard');
-    console.log('session :>> ', session);
     // What is this for? Including useState hook above
-    getInstructorsByCourse(courseId, session as SessionWithToken)
+    getInstructorsByCourse(courseId)
       .then(instructors => {
         if (!instructors) throw new Error('No instructors found')
         setInstructors(instructors)

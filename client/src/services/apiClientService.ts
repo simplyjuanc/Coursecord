@@ -2,59 +2,117 @@ import { DbUser, Section, SessionWithToken, Unit } from '@/types';
 
 const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
-export async function getCourseUsers(
-  courseId: string,
-  /* orgId: string, (constant for now)*/ session: SessionWithToken
-) {
+export async function getSyllabus(courseId: string, session: SessionWithToken) {
   try {
-    //gets all members of an organisation and includes the instructors and students a specific course
+    const syllabusResponse = await fetch(
+      `${baseUrl}/section/syllabus/${courseId}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
+
+    if (!syllabusResponse.ok) {
+      console.log('Syllabus could not be retrieved');
+      return undefined;
+    }
+
+    return await syllabusResponse.json();
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function assignRoleToUser(
-  userId: string,
-  roleId: string,
+export async function getUnit(unitId: string, session: SessionWithToken) {
+  try {
+    const unitResponse = await fetch(`${baseUrl}/unit/${unitId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: session.accessToken,
+      },
+    });
+
+    if (!unitResponse.ok) {
+      console.log('Unit could not be retrieved');
+      return undefined;
+    }
+
+    return await unitResponse.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+export async function addUnit(
+  unit: Partial<Unit>,
+  sectionId: string,
   session: SessionWithToken
 ) {
   try {
+    const unitResponse = await fetch(
+      `${baseUrl}/unit/auth/org/${'656b40666c0ea5f66060c942'}/${sectionId}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: session.accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(unit),
+      }
+    );
+
+    return unitResponse.ok ? await unitResponse.json() : null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function editUnit(unit: Unit, session: SessionWithToken) {
+  try {
+    console.log(session.accessToken);
+    const { id, ...unitData } = unit;
+    const unitResponse = await fetch(`${baseUrl}/unit/auth/${id}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: session.accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(unitData),
+    });
+
+    return unitResponse.ok;
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function removeRoleFromUser(
-  userId: string,
-  roleId: string,
+export async function addSection(
+  section: Partial<Section>,
   session: SessionWithToken
 ) {
   try {
-    //removes a role from a user
+    const sectionResponse = await fetch(
+      `${baseUrl}/section/auth/${section.course_id}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: session.accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(section),
+      }
+    );
+
+    return sectionResponse.ok ? await sectionResponse.json() : null;
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function setUserRoles(
-  userId: string,
-  roles: string[],
-  session: SessionWithToken
-) {
-  try {
-    //sets the roles for a user
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function deleteUser(userId: string, session: SessionWithToken) {
-  try {
-    //deletes a user
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 export async function getCourseWithRoles(
   courseId: string,
@@ -81,7 +139,6 @@ export async function getStudentsByCourse(
 
 export async function getInstructorsByCourse(
   courseId: string,
-  session: SessionWithToken
 ) {
   try {
     const res = await fetch(`${baseUrl}/user/${courseId}/instructors`);
@@ -91,8 +148,6 @@ export async function getInstructorsByCourse(
     console.log(error);
   }
 }
-
-
 
 
 async function fetchHelper (url:string, cb:Function) {
@@ -112,7 +167,19 @@ export async function editSection(
   session: SessionWithToken
 ) {
   try {
-    //edits a section
+    const sectionResponse = await fetch(
+      `${baseUrl}/section/auth/${sectionId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: session.accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newContent),
+      }
+    );
+
+    return sectionResponse.ok;
   } catch (error) {
     console.log(error);
   }
@@ -123,51 +190,37 @@ export async function deleteSection(
   session: SessionWithToken
 ) {
   try {
-    //deletes a section
+    const sectionResponse = await fetch(
+      `${baseUrl}/section/auth/${sectionId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
+
+    return sectionResponse.ok;
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function editUnit(
-  unitId: string,
-  newContent: Partial<Unit>,
+export async function getUserRoles(
+  courseOrOrgId: string,
+  isOrg: boolean,
   session: SessionWithToken
 ) {
   try {
-    //edits a unit
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function deleteUnit(unitId: string, session: SessionWithToken) {
-  try {
-    //deletes a unit
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function getCourses(courseId: string, session: SessionWithToken) {
-  try {
-    //gets a course
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function getRolesByUser(
-  userId: string,
-  session: SessionWithToken
-) {
-  try {
-    const userResponse = await fetch(`${baseUrl}/role/user/${userId}`, {
-      method: 'GET',
-      headers: {
-        Authorization: session.accessToken,
-      },
-    });
+    const userResponse = await fetch(
+      `${baseUrl}/user/auth/${courseOrOrgId}/${isOrg}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
 
     console.log(userResponse.status);
     if (!userResponse.ok) {
@@ -175,19 +228,132 @@ export async function getRolesByUser(
       return [];
     }
 
-    console.log('made it here');
     return await userResponse.json();
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function getCourseData(
-  courseId: string,
+export async function getCourseData(courseId: string) {
+  try {
+    const courseResponse = await fetch(`${baseUrl}/course/${courseId}`, {
+      method: 'GET',
+    });
+
+    if (!courseResponse.ok) {
+      console.log('Course could not be retrieved');
+      return null;
+    }
+
+    return await courseResponse.json();
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getLastResult<T>(promises: Promise<T>[]) {
+  if (!promises.length) throw new RangeError('No last result from no promises');
+  const results: T[] = [];
+  await Promise.all(
+    promises.map((p) =>
+      p.then((v) => {
+        results.push(v);
+      })
+    )
+  );
+  return results[results.length - 1];
+}
+
+export async function getOrgManagementInfo(
+  orgId: string,
   session: SessionWithToken
 ) {
   try {
-    //gets a course
+    const orgResponse = await fetch(`${baseUrl}/org/auth/${orgId}/management`, {
+      method: 'GET',
+      headers: {
+        Authorization: session.accessToken,
+      },
+    });
+
+    if (!orgResponse.ok) {
+      console.log('Organisation could not be retrieved');
+      return null;
+    }
+
+    return await orgResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function getCourseManagementInfo(
+  course_id: string,
+  session: SessionWithToken
+) {
+  try {
+    const courseResponse = await fetch(
+      `${baseUrl}/course/auth/${course_id}/management`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
+
+    if (!courseResponse.ok) {
+      console.log('Course could not be retrieved');
+      return null;
+    }
+
+    return await courseResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function getUsers(): Promise<
+  { id: string; name: string; email: string }[] | null
+> {
+  try {
+    const usersResponse = await fetch(`${baseUrl}/user/users`, {
+      method: 'GET',
+    });
+
+    if (!usersResponse.ok) {
+      console.log('Users could not be retrieved');
+      return null;
+    }
+
+    return await usersResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function addUserToCourse(
+  courseId: string,
+  role: string,
+  userId: string,
+  session: SessionWithToken
+) {
+  try {
+    const userResponse = await fetch(
+      `${baseUrl}/course/auth/${courseId}/${role}/${userId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
+
+    return userResponse.ok;
   } catch (error) {
     console.log(error);
   }

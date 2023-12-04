@@ -7,8 +7,8 @@ import HelpRequestModal from "../../../../components/helpRequests/HelpRequestCon
 
 const HelpRequest = () => {
   const [submitted, setSubmitted] = useState(false);
-  const isUserInstructor = useAppSelector((state) => state.user).roles.some(
-    (role) => role.title === "instructor"
+  const isUserInstructor = useAppSelector(
+    (state) => state.user.roles.instructor
   );
 
   return (

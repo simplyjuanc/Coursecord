@@ -14,11 +14,7 @@ export default async function setupWebSockets(io: Server) {
   io.on("connection", (socket: SocketWithUser) => {
     console.log("Connection established with user: ", socket.id);
     
-    // TODO  - update auth to include instructor only if part of org / course
-
-    const isInstructor = socket.roles!.some((role) => role.title === "instructor");
-
-    if (isInstructor) setInstructorSockets(socket);
+    if (socket.isCourseInstructor) setInstructorSockets(socket);
     else setStudentSockets(socket);
 
     socket.on("disconnect", () => {

@@ -1,19 +1,19 @@
 'use client';
+import { addSection } from '@/services/apiClientService';
 import { useAppSelector } from '@/store';
-import { addSection, updateSection } from '@/store/slices/courseSlice';
+import {
+  addSection as addSectionReducer,
+  updateSection,
+} from '@/store/slices/courseSlice';
 import { SessionWithToken } from '@/types';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-const baseUr = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
-
 type SectionFormProps = {
   closeForm: () => void;
-  setSaving(saving?: 'saving' | 'done' |'error'): void;
+  setSaving(saving?: 'saving' | 'done' | 'error'): void;
 };
-
 
 export default function SectionForm(props: SectionFormProps) {
   const { closeForm, setSaving } = props;
@@ -25,28 +25,21 @@ export default function SectionForm(props: SectionFormProps) {
   async function submitForm(e: React.FormEvent<HTMLFormElement>) {
     setSaving('saving');
     e.preventDefault();
-    const newSection =  {
+    const newSection = {
       id: 'placeholder',
       title,
-      units: [],
+      course_id: course!.id,
     };
 
-    dispatch(addSection({section: newSection}));
-    const response = await axios.post(
-      `${baseUr}/${course?.id}/section`,
-      {
-        title,
-      },
-      {
-        headers: {
-          Authorization: (session as SessionWithToken)!.accessToken,
-        },
-      }
+    dispatch(addSectionReducer({ section: { ...newSection, course_units: [] } }));
+    const addedSection = await addSection(
+      { title, course_id: course!.id },
+      session as SessionWithToken
     );
-    if(response.status === 201) {
-      const newId = response.data.id;
-      const section = {...newSection, id: newId}
-      dispatch(updateSection({newSection: section}));
+    if (addedSection) {
+      const newId = addedSection.id;
+      const section = { ...newSection, id: newId, course_units: [] };
+      dispatch(updateSection({ newSection: section }));
       setSaving('done');
       setTimeout(() => {
         setSaving(undefined);
@@ -58,9 +51,8 @@ export default function SectionForm(props: SectionFormProps) {
       }, 1000);
     }
     setTitle('');
-    closeForm()
+    closeForm();
   }
-
 
   return (
     <form onSubmit={submitForm} className='flex flex-col py-4 items-center'>
@@ -70,11 +62,11 @@ export default function SectionForm(props: SectionFormProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
-        className='border-solid border-primary-gray border-opacity-50 border-2 rounded-md h-10 w-full my-2 px-2'
+        className='border-solid border-primary-2 border-opacity-50 border-2 rounded-md h-10 w-full my-2 px-2'
       />
       <button
         type='submit'
-        className='bg-primary-red bg-opacity-20 rounded-lg text-xl w-3/4 h-10 hover:bg-opacity-50 hover:text-white'
+        className='bg-primary-1 bg-opacity-20 rounded-lg text-xl w-3/4 h-10 hover:bg-opacity-50 hover:text-white'
       >
         Submit
       </button>

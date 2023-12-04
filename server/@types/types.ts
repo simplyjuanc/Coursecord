@@ -1,4 +1,4 @@
-import { Role, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { Request } from "express";
 import { Socket } from "socket.io";
 
@@ -33,7 +33,7 @@ export interface RequestWithUser extends Request {
 
 export interface SocketWithUser extends Socket { 
   user?: User 
-  roles?: Role[];
+  isCourseInstructor?: boolean;
 }
 
 export type THelpRequest ={

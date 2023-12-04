@@ -1,9 +1,9 @@
-import { Course, RoleWithOrg, UserState } from '@/types';
+import { Course , UserRoles, UserState } from '@/types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: UserState = {
   id: '',
-  roles: [],
+  roles: {admin: false, instructor: false, student: false},
   coursesAsInstructor: [],
   coursesAsStudent: [],
 };
@@ -15,7 +15,7 @@ const userSlice = createSlice({
     setUser: (state, { payload }: PayloadAction<{ userId: string }>) => {
       state.id = payload.userId;
     },
-    setRoles: (state, { payload }: PayloadAction<{ roles: RoleWithOrg[] }>) => {
+    setRoles: (state, { payload }: PayloadAction<{ roles: UserRoles }>) => {
       state.roles = payload.roles;
       console.log('roles', state.roles)
     },

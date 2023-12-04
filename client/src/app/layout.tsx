@@ -3,8 +3,6 @@ import { Inter } from 'next/font/google';
 import { getServerSession } from 'next-auth';
 import './globals.css';
 import SessionProvider from '@/components/sessionProvider';
-import { getUserData } from '@/services/reduxFetchService';
-import { SessionWithToken } from '@/types';
 import { authOptions } from './api/auth/[...nextauth]/route';
 import ReduxProvider from '@/components/reduxProvider';
 

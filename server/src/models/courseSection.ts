@@ -11,19 +11,30 @@ async function createSection(sectionData: CourseSectionInfo) {
 }
 
 async function editSection(
-  id: string,
-  sectionData: Partial<CourseSectionInfo>
+  sectionId: string,
+  sectionData: Partial<CourseSectionInfo>,
+  userId: string
 ) {
   const updatedSection = await CourseSection.update({
-    where: { id },
+    where: {
+      id: sectionId,
+      course: { organisation: { admins: { some: { user_id: userId } } } },
+    },
     data: sectionData,
   });
   return updatedSection;
 }
 
-async function addUnitToSection(sectionId: string, unitId: string) {
+async function addUnitToSection(
+  sectionId: string,
+  unitId: string,
+  userId: string
+) {
   const updatedSection = await CourseSection.update({
-    where: { id: sectionId },
+    where: {
+      id: sectionId,
+      course: { organisation: { admins: { some: { user_id: userId } } } },
+    },
     data: {
       course_units: { create: { unit_id: unitId } },
     },
@@ -37,9 +48,16 @@ async function getSectionById(id: string) {
   return section;
 }
 
-async function removeUnitFromSection(sectionId: string, unitId: string) {
+async function removeUnitFromSection(
+  sectionId: string,
+  unitId: string,
+  userId: string
+) {
   const updatedSection = await CourseSection.update({
-    where: { id: sectionId },
+    where: {
+      id: sectionId,
+      course: { organisation: { admins: { some: { user_id: userId } } } },
+    },
     data: {
       course_units: { deleteMany: { section_id: sectionId, unit_id: unitId } },
     },

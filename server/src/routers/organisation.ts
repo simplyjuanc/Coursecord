@@ -11,6 +11,10 @@ authRouter.post('/add', Organisation.addOrganisation);
 authRouter.put('/:orgId', Organisation.editOrganisation);
 authRouter.delete('/:orgId', Organisation.deleteOrganisation);
 
+//USED BY CLIENT
+authRouter.get('/:orgId/management', Organisation.getOrgManagementInfo);
+//TILL HERE
+
 router.get('/get', Organisation.getOrganisations);
 router.get('/:orgId', Organisation.getOrganisationById);
 

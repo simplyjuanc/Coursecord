@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { RoleSelect } from './RoleSelect';
-import { IRole } from '@/types';
 import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 
 type AddUserProps = {
   courseId: string;
   setShowNewUser: React.Dispatch<React.SetStateAction<boolean>>;
-  roles: IRole[];
+  roles: any[];
 };
 
 export default function AddNewUser({
@@ -19,7 +17,7 @@ export default function AddNewUser({
     name: '',
     email: '',
   });
-  const [selectedRole, setSelectedRole] = useState<IRole>();
+  const [selectedRole, setSelectedRole] = useState();
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -95,7 +93,7 @@ export default function AddNewUser({
             <label htmlFor='role' className='text-xl font-semibold'>
               Role
             </label>
-            <RoleSelect roles={roles} setRole={setSelectedRole} />
+            {/* <RoleSelect roles={roles} setRole={setSelectedRole} /> */}
           </div>
           <div className='w-1/3 py-3 mx-auto'>
             <IconButton

@@ -1,5 +1,4 @@
 import UserModel from "../models/user";
-import RoleModel from "../models/role";
 import Auth from "../middlewares/auth";
 import { NextFunction } from 'connect';
 import { SocketWithUser } from "../../@types/types";
@@ -17,9 +16,8 @@ export async function AuthSocket(socket: SocketWithUser, next: NextFunction) {
     const user = await UserModel.getUserByEmail(googleUser.email);
     if (!user) throw new Error("User not found");
     
-    const roles = await RoleModel.getUserOrgRoles(user.id, '656b40666c0ea5f66060c942'); // TODO: get org id from socket
     socket.user = user 
-    socket.roles = roles
+    socket.isCourseInstructor = await UserModel.isCourseInstructor(user.id, '') // TODO get courseId from socket
     
     next();
   } catch (error) {

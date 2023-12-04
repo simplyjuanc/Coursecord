@@ -33,13 +33,20 @@ export function setInstructorSockets(socket: SocketWithUser) {
     const isInstructor = await UserModel.isCourseInstructor(socket.user!.id, course_id);
     if (!isInstructor) return;
     
-    const updatedInstructor = HelpRequestModel.updateRequestInstructor(id, socket.user!.id);
     const updatedStatus = HelpRequestModel.updateRequestStatus(id, status);
-    
+
+    const updatedInstructor = (status === 'WAITING') 
+      ? HelpRequestModel.updateRequestInstructor(id, undefined)
+      : HelpRequestModel.updateRequestInstructor(id, socket.user!.id);
+
+  
     const latestRequest = await getLastResult([updatedInstructor, updatedStatus]);
     if (!latestRequest) return;
 
+
     const requests = await HelpRequestModel.getHelpRequests(course_id);
+    
+    console.log('socket - updateStatus - requests :>> ', requests);
     socket.to('instructors').emit("requestsUpdated", requests);
   });
 }

@@ -40,11 +40,11 @@ export default function HelpRequestBoard() {
 
     socket.emit('getRequests', courseId, (res: THelpRequestDetails[]) => {
       setHelpRequests(res);
-      console.log('getRequests - res :>> ', res);
     });
 
-    socket.on('requestsUpdated', (res: THelpRequestDetails[]) => {
-      setHelpRequests(res);
+    socket.on('requestsUpdated', (requests: THelpRequestDetails[]) => {
+      console.log('updatedRequests :>> ', requests);
+      setHelpRequests(requests);
     });
 
     return () => {
@@ -56,7 +56,6 @@ export default function HelpRequestBoard() {
   const onDragEnd = (result:DropResult) => {
     const { draggableId, destination } = result;
     if (!destination) return;
-    console.log('result :>> ', result);
 
     const updatedHelpRequests = helpRequests.map((request) => {
       if (request.id === draggableId) {

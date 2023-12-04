@@ -11,7 +11,7 @@ type BoardComponentProps = {
 
 export default function BoardComponent({
   status,
-  helpRequests,
+  helpRequests
 }: BoardComponentProps) {
   return (
     <div className='flex-grow flex flex-col '>

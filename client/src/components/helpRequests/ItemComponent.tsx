@@ -15,7 +15,7 @@ export default function ItemComponent({
     <Draggable draggableId={item.id} index={index}>
       {(provided) => (
         <div
-          className='border-primary-red border-2 rounded-xl select-none p-2 my-4'
+          className='border-primary-red border-2 rounded-xl select-none p-2 my-4 bg-white'
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}

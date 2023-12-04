@@ -1,17 +1,31 @@
-"use client";
+'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { NextPage } from 'next';
-import { useAppSelector } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { useParams } from 'next/navigation';
+import { getCourseData } from '@/services/apiClientService';
+import { setCourseInfo } from '@/store/slices/courseSlice';
 
 const Dashboard: NextPage = () => {
+  const { courseId } = useParams() as { courseId: string };
+  const dispatch = useAppDispatch();
   const [selectedDiv, setSelectedDiv] = useState<string | null>(null);
-  const courseInfo = useAppSelector(state => state.course.courseInfo);
-  const students = useAppSelector(state => state.course.students);
-  const instructors = useAppSelector(state => state.course.instructors);
+  const courseInfo = useAppSelector((state) => state.course.courseInfo);
+
+  console.log(courseInfo);
+
+  useEffect(() => {
+    if (courseInfo) return;
+
+    (async function () {
+      const courseData = await getCourseData(courseId);
+      dispatch(setCourseInfo({ info: courseData }));
+    })();
+  }, []);
 
   const handleDivClick = (divName: string) => {
-    setSelectedDiv(prev => (prev === divName ? null : divName));
+    setSelectedDiv((prev) => (prev === divName ? null : divName));
   };
 
   const applyBlur = (sectionName: string) => {
@@ -19,8 +33,8 @@ const Dashboard: NextPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-white shadow-md">
-      <h1 className="text-2xl font-bold mb-4">Course Dashboard</h1>
+    <div className='container mx-auto p-4 bg-white shadow-md'>
+      <h1 className='text-2xl font-bold mb-4'>Course Dashboard</h1>
 
       <div className={selectedDiv ? 'blurBackground' : ''}>
         <div
@@ -31,9 +45,11 @@ const Dashboard: NextPage = () => {
         >
           {courseInfo && (
             <>
-              <h2 className="text-xl font-semibold mb-2">{courseInfo.title}</h2>
-              <p className="mb-2">{courseInfo.description}</p>
-              <p className="font-medium">Organisation: {courseInfo.organisation}</p>
+              <h2 className='text-xl font-semibold mb-2'>{courseInfo.title}</h2>
+              <p className='mb-2'>{courseInfo.description}</p>
+              <p className='font-medium'>
+                Organisation: {courseInfo.organisation.name}
+              </p>
             </>
           )}
         </div>
@@ -46,8 +62,10 @@ const Dashboard: NextPage = () => {
         >
           <h2 className='text-lg font-semibold mb-2'>Students</h2>
           <ul>
-            {students.map((student, index) => (
-              <li key={index} className="list-disc list-inside mb-1">{student.name}</li>
+            {courseInfo && courseInfo.students.map((student, index) => (
+              <li key={index} className='list-disc list-inside mb-1'>
+                {student.student.name}
+              </li>
             ))}
           </ul>
         </div>
@@ -60,8 +78,10 @@ const Dashboard: NextPage = () => {
         >
           <h2 className='text-lg font-semibold mb-2'>Instructors</h2>
           <ul>
-            {instructors.map((instructor, index) => (
-              <li key={index} className="list-disc list-inside mb-1">{instructor.name}</li>
+            {courseInfo && courseInfo.instructors.map((instructor, index) => (
+              <li key={index} className='list-disc list-inside mb-1'>
+                {instructor.instructor.name}
+              </li>
             ))}
           </ul>
         </div>

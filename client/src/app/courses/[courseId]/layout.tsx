@@ -9,8 +9,10 @@ import Sidebar from '@/components/sidebar/sidebar';
 import { getUserRoles } from '@/services/apiClientService';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const course = useAppSelector((state) => state.course.courseInfo);
   const { data: session } = useSession();
+  const dispatch = useAppDispatch();
+
+  const userId = useAppSelector((state) => state.user.id);
   const { courseId } = useParams() as { courseId: string };
 
   useEffect(() => {
@@ -22,7 +24,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         
         if (userRoles) dispatch(setRoles({ roles: userRoles }));
       }
-      if (session) getUserData((session as SessionWithToken).user);
     })();
   }, [courseId, dispatch, session, userId]);
 

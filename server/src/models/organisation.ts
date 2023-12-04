@@ -2,7 +2,6 @@ import { Organisation as TOrganisation } from '@prisma/client';
 import { Organisation } from './index';
 
 async function createOrganisation(name: string, owner: string) {
-  const defaultRoles = await Role.createDefaultRoles();
   const newOrg = await Organisation.create({
     data: {
       name,

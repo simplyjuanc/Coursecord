@@ -16,8 +16,6 @@ async function addCourse(req: Request, res: Response) {
     }
 
     const newCourse = await Course.createCourse(title, description, orgId);
-    await Organisation.addCourseToOrganisation(orgId, newCourse.id);
-
     res.status(201).send(newCourse);
   } catch (error) {
     console.log(error);
@@ -39,11 +37,12 @@ async function getCourseById(req: Request, res: Response) {
   try {
     const { courseId } = req.params;
     const course = await Course.getCourseById(courseId);
+
     if (!course) {
       return res.status(404).send({ message: 'Course not found' });
-    } else {
-      res.status(200).send(course);
     }
+
+    res.status(200).send(course);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });

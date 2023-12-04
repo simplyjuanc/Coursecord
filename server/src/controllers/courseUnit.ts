@@ -21,7 +21,7 @@ async function addCourseUnit(req: Request, res: Response) {
     res.status(201).send({ newUnit, updatedSection });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error:\n", error });
+    res.status(500).send({ message: 'Internal Server Error:\n', error });
   }
 }
 
@@ -39,7 +39,7 @@ async function addUnitToSection(req: Request, res: Response) {
     res.status(200).send({ updatedSection });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error:\n", error });
+    res.status(500).send({ message: 'Internal Server Error:\n', error });
   }
 }
 
@@ -57,7 +57,7 @@ async function removeUnitFromSection(req: Request, res: Response) {
     res.status(200).send({ updatedSection });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error:\n", error });
+    res.status(500).send({ message: 'Internal Server Error:\n', error });
   }
 }
 
@@ -72,7 +72,7 @@ async function deleteUnit(req: Request, res: Response) {
     res.status(200).send({ message: `Deleted content:\n ${deletedUnit}` });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Internal Server Error:\n", error });
+    res.status(500).send({ message: 'Internal Server Error:\n', error });
   }
 }
 

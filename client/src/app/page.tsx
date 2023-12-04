@@ -8,6 +8,7 @@ import googleButtonImage from "../../public/login/googleB.png";
 
 const LoginPage: React.FC = () => {
   const { data: session } = useSession();
+  console.log('session', session);
   const router = useRouter();
 
   const handleCourses = () => {

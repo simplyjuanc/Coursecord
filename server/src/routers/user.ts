@@ -16,5 +16,4 @@ authRouter.get('/:courseOrOrgId/:isOrg', User.getUserRoles);
 router.post('/signIn', User.signIn);
 router.get('/users', User.getUsers);
 
-
 export default router;

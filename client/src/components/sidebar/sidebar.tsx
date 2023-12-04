@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { FaUsersCog } from "react-icons/fa";
-import { IoIosHelpBuoy } from "react-icons/io";
-import { IoCaretBackOutline } from "react-icons/io5";
-import { MdTextSnippet } from "react-icons/md";
-import { RiDashboardFill, RiLogoutBoxLine } from "react-icons/ri";
-import IconButton from "../buttons/iconButton";
-import { useRouter } from "next/navigation";
-import { NavItem } from "@/types";
-import { signOut } from "next-auth/react";
-import { useAppSelector } from "@/store";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { FaUsersCog } from 'react-icons/fa';
+import { IoIosHelpBuoy } from 'react-icons/io';
+import { IoCaretBackOutline } from 'react-icons/io5';
+import { MdTextSnippet } from 'react-icons/md';
+import { RiDashboardFill, RiLogoutBoxLine } from 'react-icons/ri';
+import IconButton from '../buttons/iconButton';
+import { useRouter } from 'next/navigation';
+import { NavItem } from '@/types';
+import { signOut } from 'next-auth/react';
+import { useAppSelector } from '@/store';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -20,30 +20,30 @@ export default function Sidebar() {
 
   const NavItems: NavItem[] = [
     {
-      title: "Dashboard",
-      href: "dashboard",
+      title: 'Dashboard',
+      href: 'dashboard',
       icon: <RiDashboardFill />,
     },
     {
-      title: "Syllabus",
-      href: "syllabus",
+      title: 'Syllabus',
+      href: 'syllabus',
       icon: <MdTextSnippet />,
     },
     {
-      title: "Help",
-      href: "help",
+      title: 'Help',
+      href: 'help',
       icon: <IoIosHelpBuoy />,
     },
   ];
 
   const NavAdminPanel: NavItem = {
-    title: "User Management",
-    href: "admin",
+    title: 'User Management',
+    href: 'admin',
     icon: <FaUsersCog />,
   };
 
   const NavItemComponent = (props: { item: NavItem }) => {
-    const isActive = pathname.split("/")[3] === props.item.href;
+    const isActive = pathname.split('/')[3] === props.item.href;
     return (
       <div className='flex'>
         <div
@@ -61,8 +61,8 @@ export default function Sidebar() {
                 : ' hover:bg-primary-1 hover:bg-opacity-5')
             }
           >
-            <div className="my-auto">{props.item.icon}</div>
-            <h2 className="font-semibold pl-3">{props.item.title}</h2>
+            <div className='my-auto'>{props.item.icon}</div>
+            <h2 className='font-semibold pl-3'>{props.item.title}</h2>
           </button>
         </Link>
       </div>
@@ -76,10 +76,10 @@ export default function Sidebar() {
           Coursecord
         </h1>
       </div>
-      <div className="py-12">
+      <div className='py-12'>
         <ul>
           {NavItems.map((item, index) => (
-            <li key={index} className="pt-4">
+            <li key={index} className='pt-4'>
               <NavItemComponent item={item} />
             </li>
           ))}
@@ -90,22 +90,22 @@ export default function Sidebar() {
           )}
         </ul>
       </div>
-      <div onClick={() => {}} className="absolute bottom-0 mx-auto w-full p-3">
-        <div className="pb-3">
+      <div onClick={() => {}} className='absolute bottom-0 mx-auto w-full p-3'>
+        <div className='pb-3'>
           <IconButton
-            title="Courses"
+            title='Courses'
             icon={<IoCaretBackOutline />}
             onClick={() => {
-              router.push("/courses");
+              router.push('/courses');
             }}
           />
         </div>
         <IconButton
-          title="Logout"
+          title='Logout'
           icon={<RiLogoutBoxLine />}
           onClick={() => {
             signOut();
-            router.push("/");
+            router.push('/');
           }}
         />
       </div>

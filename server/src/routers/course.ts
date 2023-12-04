@@ -2,7 +2,6 @@ import { Router } from 'express';
 import Course from '../controllers/course';
 import Auth from '../middlewares/auth';
 
-
 const router = Router();
 const authRouter = Router();
 

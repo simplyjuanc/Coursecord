@@ -1,8 +1,5 @@
 "use client";
 
-import { Course } from "@/types";
-import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"; 
 import { useSession } from "next-auth/react";
@@ -13,6 +10,8 @@ import { Course as CourseType, SessionWithToken } from "@/types";
 export default function Courses() {
   const [courses, setCourses] = useState<CourseType | CourseType[]>([]);
   const router = useRouter();
+  const { data: session } = useSession();
+
   useEffect(() => {
     if (session) {
       const fetchCourses = async () => {
@@ -47,15 +46,15 @@ export default function Courses() {
     return (
       <div className="relative bg-white rounded-xl shadow-md hover:bg-gray-50 transition duration-200 ease-in-out">
         <div className="flex">
-          <div className="w-20 h-15 mx-2 mt-2 bg-primary-red bg-opacity-50 text-center rounded-xl">
-            <h1 className="my-auto pt-5 text-2xl font-bold text-primary-red">
+          <div className="w-20 h-15 mx-2 mt-2 bg-primary-1 bg-opacity-50 text-center rounded-xl">
+            <h1 className="my-auto pt-5 text-2xl font-bold text-primary-1">
               {title[0].toUpperCase()}
             </h1>
           </div>
           <div className="p-2">
             <h2 className="text-2xl">{title}</h2>
             <h3 className="truncate font-light pb-1 w-1/2">
-              {props.course.description}
+              {course.description}
             </h3>
             <h3>{studentCount} members</h3>
           </div>
@@ -63,7 +62,7 @@ export default function Courses() {
         <div className="absolute right-0 top-0">
           <button
             onClick={() => handleJoinCourse(course.id)}
-            className="bg-primary-red bg-opacity-50 mt-4 mr-3 rounded-xl text-primary-red px-4 py-2 text-xl font-semibold transition duration-200 ease-in-out transform hover:scale-105"
+            className="bg-primary-1 bg-opacity-50 mt-4 mr-3 rounded-xl text-primary-1 px-4 py-2 text-xl font-semibold transition duration-200 ease-in-out transform hover:scale-105"
           >
             Join
           </button>

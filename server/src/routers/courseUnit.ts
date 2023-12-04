@@ -3,7 +3,9 @@ import Auth from '../middlewares/auth';
 import Unit from '../controllers/courseUnit';
 
 const router = Router();
+const authRouter = Router();
 
+router.use('/auth', Auth.requireAuth, authRouter);
 
 authRouter.post('/org/:orgId/:sectionId', Unit.addCourseUnit);
 authRouter.put('/section/:sectionId/:unitId', Unit.addUnitToSection);

@@ -52,7 +52,10 @@ async function updateUser(userInfo: UserInfo) {
 
 async function userIsOrgOwner(userId: string, orgId: string) {
   try {
-    const org = await Organisation.findUnique({ where: { id: orgId }, select: { owner_id: true } });
+    const org = await Organisation.findUnique({
+      where: { id: orgId },
+      select: { owner_id: true },
+    });
     if (!org) throw new Error('Invalid Organisation ID');
     return userId === org.owner_id;
   } catch (error) {

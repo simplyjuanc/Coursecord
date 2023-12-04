@@ -16,7 +16,18 @@ async function getCourses() {
 }
 
 async function getCourseById(id: string) {
-  const course = await Course.findUnique({ where: { id } });
+  const course = await Course.findUnique({
+    where: { id },
+    include: {
+      organisation: { select: { name: true } },
+      instructors: {
+        select: { instructor: { select: { name: true, image: true } } },
+      },
+      students: {
+        select: { student: { select: { name: true, image: true } } },
+      },
+    },
+  });
   return course;
 }
 

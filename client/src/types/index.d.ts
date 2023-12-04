@@ -64,7 +64,7 @@ export interface Unit {
 export interface Section {
   id: string;
   title: string;
-  units: string[];
+  course_id: string;
 }
 
 export interface CompiledSection extends Section {
@@ -88,13 +88,14 @@ export interface CourseInfo {
 
 export interface CourseState {
   courseInfo?: CourseInfo;
-  syllabus?: CompiledSection[];
+  syllabus: CompiledSection[];
+  cachedUnits: Record<string, Unit>;
   students: DbUser[];
   instructors: DbUser[];
 }
 
 export interface UserState {
-  user?: DbUser;
+  id: string;
   coursesAsStudent: Course[];
   coursesAsInstructor: Course[];
   roles: UserRoles;

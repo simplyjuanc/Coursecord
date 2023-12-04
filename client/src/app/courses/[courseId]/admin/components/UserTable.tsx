@@ -1,4 +1,3 @@
-import { Course } from '@/types';
 import UserRow from './UserRow';
 
 type CourseTableProps = {

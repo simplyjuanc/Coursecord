@@ -58,11 +58,8 @@ async function signIn(req: Request, res: Response) {
 
 async function getInstructorsByCourse(req: Request, res: Response) {
   try {
-    const { courseId } = req.params;
-    
-    console.log('controller - getInstructorsByCourse - courseId :>> ', courseId);
+    const { courseId } = req.params;    
     const instructors = await User.getInstructorsByCourse(courseId);
-    console.log('controller - getInstructorsByCourse - instructors :>> ', instructors);
     res.status(200).send(instructors);
   } catch (error) {
     console.log(error);

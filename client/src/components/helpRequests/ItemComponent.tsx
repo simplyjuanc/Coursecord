@@ -2,17 +2,17 @@ import React from 'react';
 import Image from 'next/image';
 import { THelpRequestDetails } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
-import { Draggable } from 'react-beautiful-dnd';
-
+import { Draggable } from '@hello-pangea/dnd';
+ 
 export default function ItemComponent({
   item,
-  idx,
+  index,
 }: {
   item: THelpRequestDetails;
-  idx: number;
+  index: number;
 }) {
   return (
-    <Draggable draggableId={item.id} index={idx}>
+    <Draggable draggableId={item.id} index={index}>
       {(provided) => (
         <div
           className='border-primary-red border-2 rounded-xl select-none p-2 my-4'
@@ -28,7 +28,7 @@ export default function ItemComponent({
                   .join(', ')}
               </p>
             </div>
-            <h2 className='py-2 font-medium'>{item.content}</h2>
+            <p className='py-2 font-medium'>{item.content}</p>
             {item.instructor && (
               <div className='flex'>
                 <Image
@@ -38,13 +38,13 @@ export default function ItemComponent({
                   height={25}
                   className='object-contain rounded-full mr-1 my-auto'
                 />
-                <h1 className='my-auto text-lg font-medium'>
+                <p className='my-auto text-lg font-medium'>
                   {item.instructor.name}
-                </h1>
+                </p>
               </div>
             )}
             <div>
-              <h3 className=''>
+              <p className=''>
                 {!item.finished_at
                   ? 'Created ' +
                     formatDistanceToNow(new Date(item.created_at), {
@@ -54,7 +54,7 @@ export default function ItemComponent({
                     formatDistanceToNow(new Date(item.finished_at), {
                       addSuffix: true,
                     })}
-              </h3>
+              </p>
             </div>
         </div>
       )}

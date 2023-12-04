@@ -65,11 +65,9 @@ async function userIsOrgOwner(userId: string, orgId: string) {
 
 async function getInstructorsByCourse(courseId: string) {
   try {
-    console.log('model - getInstructorsByCourse - courseId :>> ', courseId);
     const instructors = await User.findMany({
       where: { instructor_of: { some: { course_id: courseId } } },
     });
-    console.log('model - getInstructorsByCourse - instructors :>> ', instructors);
     return instructors;
   } catch (error) {
     console.log(error);

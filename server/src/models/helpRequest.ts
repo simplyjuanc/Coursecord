@@ -22,7 +22,6 @@ async function createHelpRequest(data: TCreateHelpRequest) {
 
 
 async function getHelpRequests(courseId: THelpRequest['course_id']) {
-  console.log('model - getHelpRequests - courseId :>> ', courseId);
   const requests = await HelpRequest.findMany({
     where: { course_id: courseId },
     include: {
@@ -30,13 +29,13 @@ async function getHelpRequests(courseId: THelpRequest['course_id']) {
       instructor: true
     }
   });
-  console.log('model - getHelpRequests - requests :>> ', requests);
   return requests;
 }
 
 
 async function updateRequestStatus(id: string, status: THelpRequest['status']) {
   try {
+    console.log('id, status :>> ', id, status);
     const request = await HelpRequest.update({
       where: { id },
       data: { status }

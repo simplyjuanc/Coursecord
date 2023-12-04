@@ -1,7 +1,7 @@
-import { SocketWithUser, TCreateHelpRequest } from "../../@types/types";
+import { SocketWithUser, TCreateHelpRequest } from "../@types/types";
 import HelpRequestModel from "../models/helpRequest";
 import UserModel from "../models/user";
-import { UpdateRequestStatusData } from "../../@types/types";
+import { UpdateRequestStatusData } from "../@types/types";
 import { getLastResult } from "../helpers/getLastResult";
 
 
@@ -31,7 +31,9 @@ export function setInstructorSockets(socket: SocketWithUser) {
     const { id, course_id, status } = data;
     
     const isInstructor = await UserModel.isCourseInstructor(socket.user!.id, course_id);
+    // console.log('isInstructor :>> ', isInstructor);
     if (!isInstructor) return;
+    // console.log('Instructor is authorized to update status');
     
     const updatedStatus = HelpRequestModel.updateRequestStatus(id, status);
 

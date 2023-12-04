@@ -1,5 +1,5 @@
 import { HelpRequest } from ".";
-import { THelpRequest, TCreateHelpRequest } from "../../@types/types";
+import { THelpRequest, TCreateHelpRequest } from "../@types/types";
 
 
 async function createHelpRequest(data: TCreateHelpRequest) {
@@ -37,6 +37,7 @@ async function getHelpRequests(courseId: THelpRequest['course_id']) {
 
 async function updateRequestStatus(id: string, status: THelpRequest['status']) {
   try {
+    // console.log('model - updateRequestStatus - id,status :>> ', id,status);
     let request;
     if (status === 'FINISHED') {
       request = await HelpRequest.update({
@@ -49,6 +50,7 @@ async function updateRequestStatus(id: string, status: THelpRequest['status']) {
         data: { status }
       });
     }
+    // console.log('model - updateRequestStatus - request :>> ', request);
     return request;
   } catch (error) {
     console.error(error);

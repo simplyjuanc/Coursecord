@@ -33,7 +33,7 @@ export default function SectionForm(props: SectionFormProps) {
 
     dispatch(addSectionReducer({ section: { ...newSection, course_units: [] } }));
     const addedSection = await addSection(
-      { title, course_id: course!.id },
+      { title }, course!.id,
       session as SessionWithToken
     );
     if (addedSection) {

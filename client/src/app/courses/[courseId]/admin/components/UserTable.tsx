@@ -1,13 +1,13 @@
-import { Course } from '@/types';
 import UserRow from './UserRow';
 
 type CourseTableProps = {
   users: { [userType: string]: { name: string; email: string; id: string }}[];
   type: string;
+  removeUser: (role: string, userId: string) => void;
 };
 
 export default function UserTable(props: CourseTableProps) {
-  const { users, type } = props;
+  const { users, type, removeUser } = props;
 
   return (
     <div>
@@ -30,6 +30,8 @@ export default function UserTable(props: CourseTableProps) {
                   <UserRow
                     key={user[type].id}
                     user={user[type]}
+                    role={type}
+                    removeUser={removeUser}
                   />
                 ))}
             </div>

@@ -1,7 +1,7 @@
 import UserModel from "../models/user";
 import Auth from "../middlewares/auth";
 import { NextFunction } from 'connect';
-import { SocketWithUser } from "../../@types/types";
+import { SocketWithUser } from "../@types/types";
 
 export async function AuthSocket(socket: SocketWithUser, next: NextFunction) {
   try {

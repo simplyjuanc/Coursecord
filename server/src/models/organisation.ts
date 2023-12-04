@@ -23,11 +23,6 @@ async function getOrganisationByName(name: string) {
   return org;
 }
 
-async function getOrganisationById(id: string) {
-  const org = await Organisation.findUnique({ where: { id } });
-  return org;
-}
-
 async function editOrganisation(
   id: string,
   newData: Partial<TOrganisation>,
@@ -46,59 +41,29 @@ async function deleteOrganisation(id: string) {
   return deletedOrg;
 }
 
-async function getOrganisationWithUnit(unitId: string) {
-  const org = await Organisation.findFirst({
-    where: { course_units: { some: { id: unitId } } },
-  });
-
-  return org;
-}
-
-async function setOrganisationUnits(orgId: string, units: string[]) {
-  const updatedOrg = await Organisation.update({
-    where: { id: orgId },
-    data: {
-      course_units: {},
-    },
-  });
-
-  return updatedOrg;
-}
-
-async function getOrgWithSection(sectionId: string) {
-  const org = await Organisation.findFirst({
-    where: { courses: { some: { syllabus: { some: { id: sectionId } } } } },
-  });
-
-  return org;
-}
-
-async function getOrganisationWithCourse(courseId: string) {
-  const org = await Organisation.findFirst({
-    where: { courses: { some: { id: courseId } } },
-  });
-
-  return org;
-}
 
 async function addAdminToOrganisation(
   orgId: string,
-  userId: string,
+  userId: string
+  // authUserId: string
 ) {
   const updatedOrg = await Organisation.update({
-    where: { id: orgId },
+    where: { id: orgId /* , admins: { some: { user_id: authUserId } } */ }, //temporary will later require authentication
     data: { admins: { create: { user_id: userId } } },
   });
-
   return updatedOrg;
 }
 
-async function getOrganisationsWithAdmin(userId: string) {
-  const org = await Organisation.findMany({
-    where: { admins: { some: { user_id: userId } } },
+async function removeAdminFromOrganisation(
+  orgId: string,
+  userId: string,
+  authUserId: string
+) {
+  const updatedOrg = await Organisation.update({
+    where: { id: orgId, admins: { some: { user_id: authUserId } } },
+    data: { admins: { deleteMany: { user_id: userId } } },
   });
-
-  return org;
+  return updatedOrg;
 }
 
 async function getOrgManagementInfo(orgId: string, userId: string) {
@@ -126,15 +91,10 @@ async function getOrgManagementInfo(orgId: string, userId: string) {
 export default {
   createOrganisation,
   getOrganisations,
-  getOrganisationByName,
-  getOrganisationById,
   editOrganisation,
   deleteOrganisation,
-  getOrganisationWithUnit,
-  setOrganisationUnits,
-  getOrganisationWithCourse,
-  addAdminToOrganisation: addAdminToOrganisation,
-  getOrganisationsWithAdmin,
-  getOrgWithSection,
+  addAdminToOrganisation,
+  removeAdminFromOrganisation,
   getOrgManagementInfo,
+  getOrganisationByName
 };

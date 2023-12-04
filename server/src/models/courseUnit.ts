@@ -1,5 +1,6 @@
-import { CourseUnitInfo } from '../../@types/types';
+import { CourseUnitInfo } from '../@types/types';
 import { CourseUnit, Organisation } from './index';
+
 
 async function createCourseUnit(
   organisation_id: string,
@@ -39,14 +40,6 @@ async function editCourseUnit(
   return updatedCourseUnit;
 }
 
-async function getUnitsBySection(sectionId: string) {
-  const units = await CourseUnit.findMany({
-    where: { section: { some: { section_id: sectionId } } },
-  });
-
-  return units;
-}
-
 async function getUnit(id: string) {
   const unit = await CourseUnit.findUnique({ where: { id } });
   return unit;
@@ -56,6 +49,5 @@ export default {
   createCourseUnit,
   deleteCourseUnit,
   editCourseUnit,
-  getUnitsBySection,
   getUnit,
 };

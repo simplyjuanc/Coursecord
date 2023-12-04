@@ -1,6 +1,6 @@
 import { AuthSocket } from "./AuthSocket";
 import { Server } from "socket.io";
-import { SocketWithUser } from "../../@types/types";
+import { SocketWithUser } from "../@types/types";
 import {
   setStudentSockets,
   setInstructorSockets,

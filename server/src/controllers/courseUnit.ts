@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import CourseUnit from '../models/courseUnit';
 import CourseSection from '../models/courseSection';
-import { RequestWithUser } from '../../@types/types';
+import { RequestWithUser } from '../@types/types';
 
 async function addCourseUnit(req: Request, res: Response) {
   try {
@@ -76,27 +76,19 @@ async function deleteUnit(req: Request, res: Response) {
   }
 }
 
-async function editContent(req: Request, res: Response) {
+async function editUnit(req: Request, res: Response) {
   try {
     const { unitId } = req.params;
 
-    const userId = (req as RequestWithUser).user.id
+    const userId = (req as RequestWithUser).user.id;
 
     const unitData = req.body;
-    const updatedContent = await CourseUnit.editCourseUnit(unitId, unitData, userId);
+    const updatedContent = await CourseUnit.editCourseUnit(
+      unitId,
+      unitData,
+      userId
+    );
     res.status(200).send({ message: `Updated content:\n ${updatedContent}` });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error:\n', error });
-  }
-}
-
-async function getUnitsBySection(req: Request, res: Response) {
-  try {
-    const { sectionId } = req.params;
-    const units = await CourseUnit.getUnitsBySection(sectionId);
-
-    res.status(200).send(units);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error:\n', error });
@@ -115,14 +107,11 @@ async function getUnit(req: Request, res: Response) {
   }
 }
 
-
-
 export default {
   addCourseUnit,
   addUnitToSection,
   removeUnitFromSection,
-  deleteContent: deleteUnit,
-  editContent,
-  getUnitsBySection,
+  deleteUnit,
+  editUnit,
   getUnit,
 };

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
 import Auth from '../middlewares/auth';
-import { RequestWithUser } from '../../@types/types';
+import { RequestWithUser } from '../@types/types';
 import Organisation from '../models/organisation';
 import Course from '../models/course';
 import { User as UserModel } from '../models/index';
@@ -50,28 +50,6 @@ async function signIn(req: Request, res: Response) {
     res.status(201).send(newUser);
 
     //todo send back roles with newUser
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
-async function getInstructorsByCourse(req: Request, res: Response) {
-  try {
-    const { courseId } = req.params;    
-    const instructors = await User.getInstructorsByCourse(courseId);
-    res.status(200).send(instructors);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
-async function getStudentsByCourse(req: Request, res: Response) {
-  try {
-    const { courseId } = req.params;
-    const students = await User.getStudentsByCourse(courseId);
-    res.status(200).send(students);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -168,8 +146,6 @@ async function getUsers(req: Request, res: Response) {
 
 export default {
   signIn,
-  getInstructorsByCourse,
-  getStudentsByCourse,
   deleteUser,
   getUserCourses,
   getUserRoles,

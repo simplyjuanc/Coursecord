@@ -1,20 +1,12 @@
 import { Organisation as TOrganisation } from '@prisma/client';
-import { Organisation, User } from './index';
+import { Organisation } from './index';
 
 async function createOrganisation(name: string, owner: string) {
   const newOrg = await Organisation.create({
     data: {
       name,
       owner_id: owner,
-      roles: {
-        createMany: {
-          data: [
-            { title: 'admin', permissions: ['admin'] },
-            { title: 'instructor', permissions: ['instructor'] },
-            { title: 'student', permissions: ['student'] },
-          ],
-        },
-      },
+      admins: { create: { user_id: owner } },
     },
   });
 
@@ -89,43 +81,45 @@ async function getOrganisationWithCourse(courseId: string) {
   return org;
 }
 
-async function getOrganisationWithRole(roleId: string) {
-  const org = await Organisation.findFirst({
-    where: { roles: { some: { id: roleId } } },
-  });
-
-  return org;
-}
-
-async function addMemberToOrganisation(
+async function addAdminToOrganisation(
   orgId: string,
   userId: string,
-  roleTitle: string
 ) {
   const updatedOrg = await Organisation.update({
     where: { id: orgId },
-    data: { members: { create: { user_id: userId } } },
-    include: {roles: true}
-  });
-
-  const tileRole = updatedOrg.roles.find((role) => role.title === roleTitle);
-  if (!tileRole) {
-    throw new Error('Invalid Role');
-  }
-
-  await User.update({
-    where: { id: userId },
-    data: { roles: { create: { role_id: tileRole.id } } },
+    data: { admins: { create: { user_id: userId } } },
   });
 
   return updatedOrg;
 }
 
-async function getOrganisationsWithMember(userId: string) {
+async function getOrganisationsWithAdmin(userId: string) {
   const org = await Organisation.findMany({
-    where: { members: { some: { user_id: userId } } },
+    where: { admins: { some: { user_id: userId } } },
   });
 
+  return org;
+}
+
+async function getOrgManagementInfo(orgId: string, userId: string) {
+  console.log(orgId, userId);
+  const org = Organisation.findUnique({
+    where: {
+      id: orgId,
+      admins: {
+        some: {
+          user_id: userId,
+        },
+      },
+    },
+    select: {
+      name: true,
+      courses: { select: { title: true, id: true } },
+      admins: {
+        select: { user: true },
+      },
+    },
+  });
   return org;
 }
 
@@ -139,8 +133,8 @@ export default {
   getOrganisationWithUnit,
   setOrganisationUnits,
   getOrganisationWithCourse,
-  getOrganisationWithRole,
-  addMemberToOrganisation,
-  getOrganisationsWithMember,
+  addAdminToOrganisation: addAdminToOrganisation,
+  getOrganisationsWithAdmin,
   getOrgWithSection,
+  getOrgManagementInfo,
 };

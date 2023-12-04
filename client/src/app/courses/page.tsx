@@ -26,8 +26,8 @@ export default function Courses() {
     return (
       <div className="relative bg-white rounded-xl shadow-md hover:bg-gray-50">
         <div className="flex">
-          <div className="w-20 h-20  mx-2 mt-2 bg-primary-red bg-opacity-50 text-center rounded-xl">
-            <h1 className="my-auto pt-5 text-3xl font-bold text-primary-red">
+          <div className="w-20 h-20  mx-2 mt-2 bg-primary-1 bg-opacity-50 text-center rounded-xl">
+            <h1 className="my-auto pt-5 text-3xl font-bold text-primary-1">
               {props.course.title[0].toUpperCase()}
             </h1>
           </div>
@@ -42,7 +42,7 @@ export default function Courses() {
         <div className="absolute right-0 top-0">
           <button
             onClick={(e) => handleJoinCourse(props.course.id)}
-            className="bg-primary-red bg-opacity-50 mt-4 mr-3 rounded-xl text-primary-red px-4 py-2 text-xl font-semibold"
+            className="bg-primary-1 bg-opacity-50 mt-4 mr-3 rounded-xl text-primary-1 px-4 py-2 text-xl font-semibold"
           >
             Join
           </button>

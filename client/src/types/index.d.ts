@@ -1,4 +1,4 @@
-import { Session, User } from "next-auth";
+import { Session, User } from 'next-auth';
 
 export interface SessionWithToken extends Session {
   accessToken: string;
@@ -19,7 +19,7 @@ export type THelpRequest = {
   id: string;
   course: string;
   students: DbUser[];
-  status: "WAITING" | "ASSIGNED" | "FINISHED";
+  status: 'WAITING' | 'ASSIGNED' | 'FINISHED';
   instructor: DbUser;
   content: string;
   created_at: Date;
@@ -32,16 +32,15 @@ export interface Course {
   organisation: string;
   title: string;
   description: string;
-  instructors: string[];
-  students: string[];
-  syllabus: string[];
+  instructors: { instructor: { name: string; email: string; id: string } }[];
+  students: { student: { name: string; email: string; id: string } }[];
 }
 
 export interface Unit {
   id: string;
   owner: string;
   title: string;
-  type: "lesson" | "excercise" | "test";
+  type: 'lesson' | 'excercise' | 'test';
   markdown_body: string;
 }
 
@@ -52,17 +51,23 @@ export interface Section {
 }
 
 export interface CompiledSection extends Section {
-  course_units: {unit: Unit}[];
+  course_units: { unit: Unit }[];
 }
 
 export interface CourseInfo {
   id: string;
-  organisation: {name: string};
+  organisation: { name: string };
   title: string;
   description: string;
-  students: {student: {name: string, image: string}}[]
-  instructors: {instructor: {name: string, image: string}}[]
+  students: {
+    student: { id: string; name: string; image: string; email: string };
+  }[];
+  instructors: {
+    instructor: { id: string; name: string; image: string; email: string };
+  }[];
 }
+
+//TODO: change this so that emails are only sent to management since they are info that students probably wouldn't want public.
 
 export interface CourseState {
   courseInfo?: CourseInfo;
@@ -76,17 +81,13 @@ export interface UserState {
   id: string;
   coursesAsStudent: Course[];
   coursesAsInstructor: Course[];
-  roles: RoleWithOrg[];
+  roles: UserRoles;
 }
 
-export interface IRole {
-  id: string;
-  title: string;
-  permissions: string[];
-}
-
-export interface RoleWithOrg extends IRole {
-  organisation: string;
+export interface UserRoles {
+  admin: boolean;
+  instructor: boolean;
+  student: boolean;
 }
 
 export interface NavItem {
@@ -103,15 +104,21 @@ export interface Unit {
   markdown_body: string;
 }
 
-export interface OrgState {
-  orgInfo: OrgInfo;
+export interface ManagementState {
+  orgInfo?: OrgInfo;
+  cachedCourses: Record<string, Course>;
 }
 
 export interface OrgInfo {
   id: string;
   name: string;
   description: string;
-  courses: Course[];
-  members: string[];
-  roles: [];
+  courses: { title: string; id: string }[];
+  admins: { user: { name: string; email: string; id: string } }[];
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
 }

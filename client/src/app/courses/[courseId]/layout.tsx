@@ -1,5 +1,4 @@
 'use client';
-import { getCourseData } from '@/services/reduxFetchService';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setUser, setRoles } from '@/store/slices/userSlice';
 import { useParams } from 'next/navigation';
@@ -7,7 +6,7 @@ import { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { SessionWithToken } from '@/types';
 import Sidebar from '@/components/sidebar/sidebar';
-import { getRolesByUser } from '@/services/apiClientService';
+import { getUserRoles } from '@/services/apiClientService';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
@@ -21,11 +20,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       const userSession = session as SessionWithToken | undefined;
       if (userSession && userSession.user.id !== userId) {
         dispatch(setUser({ userId: userSession.user.id }));
-        const userRoles = await getRolesByUser(
-          userSession.user.id,
-          userSession
-        );
-        dispatch(setRoles({ roles: userRoles }));
+        const userRoles = await getUserRoles(courseId, false, userSession);
+        
+        if (userRoles) dispatch(setRoles({ roles: userRoles }));
       }
     })();
   }, [courseId]);

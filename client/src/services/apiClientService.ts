@@ -63,6 +63,7 @@ export async function addUnit(
         body: JSON.stringify(unit),
       }
     );
+
     return unitResponse.ok ? await unitResponse.json() : null;
   } catch (error) {
     console.log(error);
@@ -70,13 +71,10 @@ export async function addUnit(
   }
 }
 
-export async function editUnit(
-  unit: Unit,
-  session: SessionWithToken
-) {
+export async function editUnit(unit: Unit, session: SessionWithToken) {
   try {
     console.log(session.accessToken);
-    const {id, ...unitData} = unit;
+    const { id, ...unitData } = unit;
     const unitResponse = await fetch(`${baseUrl}/unit/auth/${id}`, {
       method: 'PUT',
       headers: {
@@ -139,7 +137,7 @@ export async function editSection(
   }
 }
 
-export async function deletSection(
+export async function deleteSection(
   sectionId: string,
   session: SessionWithToken
 ) {
@@ -160,17 +158,21 @@ export async function deletSection(
   }
 }
 
-export async function getRolesByUser(
-  userId: string,
+export async function getUserRoles(
+  courseOrOrgId: string,
+  isOrg: boolean,
   session: SessionWithToken
 ) {
   try {
-    const userResponse = await fetch(`${baseUrl}/role/user/${userId}`, {
-      method: 'GET',
-      headers: {
-        Authorization: session.accessToken,
-      },
-    });
+    const userResponse = await fetch(
+      `${baseUrl}/user/auth/${courseOrOrgId}/${isOrg}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
 
     console.log(userResponse.status);
     if (!userResponse.ok) {
@@ -178,7 +180,6 @@ export async function getRolesByUser(
       return [];
     }
 
-    console.log('made it here');
     return await userResponse.json();
   } catch (error) {
     console.log(error);
@@ -216,3 +217,96 @@ export async function getLastResult<T>(promises: Promise<T>[]) {
   return results[results.length - 1];
 }
 
+export async function getOrgManagementInfo(
+  orgId: string,
+  session: SessionWithToken
+) {
+  try {
+    const orgResponse = await fetch(`${baseUrl}/org/auth/${orgId}/management`, {
+      method: 'GET',
+      headers: {
+        Authorization: session.accessToken,
+      },
+    });
+
+    if (!orgResponse.ok) {
+      console.log('Organisation could not be retrieved');
+      return null;
+    }
+
+    return await orgResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function getCourseManagementInfo(
+  course_id: string,
+  session: SessionWithToken
+) {
+  try {
+    const courseResponse = await fetch(
+      `${baseUrl}/course/auth/${course_id}/management`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
+
+    if (!courseResponse.ok) {
+      console.log('Course could not be retrieved');
+      return null;
+    }
+
+    return await courseResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function getUsers(): Promise<
+  { id: string; name: string; email: string }[] | null
+> {
+  try {
+    const usersResponse = await fetch(`${baseUrl}/user/users`, {
+      method: 'GET',
+    });
+
+    if (!usersResponse.ok) {
+      console.log('Users could not be retrieved');
+      return null;
+    }
+
+    return await usersResponse.json();
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function addUserToCourse(
+  courseId: string,
+  role: string,
+  userId: string,
+  sesion: SessionWithToken
+) {
+  try {
+    const userResponse = await fetch(
+      `${baseUrl}/course/auth/${courseId}/${role}/${userId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: sesion.accessToken,
+        },
+      }
+    );
+
+    return userResponse.ok;
+  } catch (error) {
+    console.log(error);
+  }
+}

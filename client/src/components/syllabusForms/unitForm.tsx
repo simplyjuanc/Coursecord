@@ -78,10 +78,10 @@ export default function UnitForm(props: UnitFormProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
-        className='border-solid border-primary-gray border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2'
+        className='border-solid border-primary-2 border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2'
       />
       <select
-        className='p-2 mb-2 font-semibold border-solid border-primary-gray border-opacity-30 border-2 rounded-lg'
+        className='p-2 mb-2 font-semibold border-solid border-primary-2 border-opacity-30 border-2 rounded-lg'
         value={type}
         onChange={(e) => setType(e.target.value)}
       >
@@ -91,7 +91,7 @@ export default function UnitForm(props: UnitFormProps) {
       </select>
       <button
         type='submit'
-        className='bg-primary-red bg-opacity-20 rounded-lg text-xl w-3/4 h-10 hover:bg-opacity-50 hover:text-white'
+        className='bg-primary-1 bg-opacity-20 rounded-lg text-xl w-3/4 h-10 hover:bg-opacity-50 hover:text-white'
       >
         Submit
       </button>

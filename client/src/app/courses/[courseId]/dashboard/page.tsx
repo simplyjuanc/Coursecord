@@ -38,7 +38,7 @@ const Dashboard: NextPage = () => {
 
       <div className={selectedDiv ? 'blurBackground' : ''}>
         <div
-          className={`my-4 p-4 bg-white rounded-lg border-2 border-primary-gray border-opacity-50 shadow-md ${applyBlur(
+          className={`my-4 p-4 bg-white rounded-lg border-2 border-primary-2 border-opacity-50 shadow-md ${applyBlur(
             'courseInfo'
           )}`}
           onClick={() => handleDivClick('courseInfo')}
@@ -55,7 +55,7 @@ const Dashboard: NextPage = () => {
         </div>
 
         <div
-          className={`my-4 p-4 bg-white rounded-lg shadow-md border-2 border-primary-gray border-opacity-50 ${applyBlur(
+          className={`my-4 p-4 bg-white rounded-lg shadow-md border-2 border-primary-2 border-opacity-50 ${applyBlur(
             'students'
           )}`}
           onClick={() => handleDivClick('students')}
@@ -71,7 +71,7 @@ const Dashboard: NextPage = () => {
         </div>
 
         <div
-          className={`my-4 p-4 bg-white rounded-lg shadow-md border-2 border-primary-gray border-opacity-50  ${applyBlur(
+          className={`my-4 p-4 bg-white rounded-lg shadow-md border-2 border-primary-2 border-opacity-50  ${applyBlur(
             'instructors'
           )}`}
           onClick={() => handleDivClick('instructors')}

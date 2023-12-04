@@ -17,17 +17,7 @@ model Organisation {
   owner_id     String             @db.ObjectId
   courses      Course[]           @relation
   course_units CourseUnit[]       @relation
-  members      OrganisationUser[] @relation
-  roles        Role[]             @relation
-}
-
-model Role {
-  id              String       @id @default(auto()) @map("_id") @db.ObjectId
-  title           String
-  permissions     String[]
-  organisation    Organisation @relation(fields: [organisation_id], references: [id])
-  organisation_id String       @db.ObjectId
-  users           UserRole[]   @relation
+  admins       OrganisationUser[] @relation
 }
 
 model User {
@@ -38,8 +28,7 @@ model User {
   oauth_provider    String
   image             String
   owner_of          Organisation[]        @relation
-  member_of         OrganisationUser[]    @relation
-  roles             UserRole[]            @relation
+  admin_of         OrganisationUser[]    @relation
   instructor_of     CourseInstructors[]   @relation
   student_of        CourseStudents[]      @relation
   requests_created  HelpRequestStudents[] @relation
@@ -93,14 +82,6 @@ model HelpRequest {
 }
 
 // Relationship tables below
-
-model UserRole {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    User   @relation(fields: [user_id], references: [id])
-  user_id String @db.ObjectId
-  role    Role   @relation(fields: [role_id], references: [id])
-  role_id String @db.ObjectId
-}
 
 model OrganisationUser {
   id              String       @id @default(auto()) @map("_id") @db.ObjectId

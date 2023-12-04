@@ -79,7 +79,7 @@ export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
     <section className="h-screen w-full flex items-center bg-white">
       <div className="mx-auto w-1/3 min-w-max aspect-square bg-white rounded-lg flex flex-col items-center justify-evenly border-2 border-gray border-opacity-90 shadow-lg">
         <div className="flex items-center text-4xl font-bold text-center">
-          <div className="text-5xl text-primary-red pr-4">
+          <div className="text-5xl text-primary-1 pr-4">
             <MdOutlineSupportAgent />
           </div>
           <h2>Help Request</h2>
@@ -123,7 +123,7 @@ export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
           onClick={handleSubmit}
           disabled={message.length === 0}
           className={
-            `my-5 mx-auto w-1/4 p-2 bg-primary-red bg-opacity-30 text-primary-red rounded-lg font-bold ` +
+            `my-5 mx-auto w-1/4 p-2 bg-primary-1 bg-opacity-30 text-primary-1 rounded-lg font-bold ` +
             (message.length === 0
               ? "cursor-not-allowed"
               : "hover:bg-opacity-40")

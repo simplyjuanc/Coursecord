@@ -1,54 +1,40 @@
-import { DbUser, SessionWithToken, IRole } from '@/types';
+import { DbUser, SessionWithToken, User } from '@/types';
 import React, { useEffect, useState } from 'react';
 import { UserSelect } from './UserSelect';
-import { RoleSelect } from './RoleSelect';
 import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import { useSession } from 'next-auth/react';
+import { addUserToCourse, getUsers } from '@/services/apiClientService';
 
 type AddUserProps = {
   courseId: string;
   setShowExistingUser: React.Dispatch<React.SetStateAction<boolean>>;
-  roles: IRole[];
+  role: string;
+  existingUsers: User[];
 };
 
 export default function AddExistingUser({
   setShowExistingUser,
   courseId,
-  roles,
+  role,
+  existingUsers,
 }: AddUserProps) {
-  const [potentialUsers, setPotentialUsers] = useState<DbUser[]>();
-  const [selectedUser, setSelectedUser] = useState<DbUser>();
-  const [selectedRole, setSelectedRole] = useState<IRole>();
+  const [potentialUsers, setPotentialUsers] = useState<User[]>();
+  const [selectedUser, setSelectedUser] = useState<User>();
   const session = useSession().data as SessionWithToken;
 
   useEffect(() => {
     (async () => {
       try {
-        const [totalUsersRes, instructorsRes, studentsRes] = await Promise.all([
-          fetch(`http://localhost:5000/656b2fde7b32e44d802e342d/users`), // TODO: replace with process.env.API_URL once orgId is dynamic
-          fetch(`http://localhost:5000/${courseId}/instructors`),
-          fetch(`http://localhost:5000/${courseId}/students`),
-        ]);
-
-        const [totalUsers, instructors, students]: [
-          DbUser[],
-          DbUser[],
-          DbUser[]
-        ] = await Promise.all([
-          totalUsersRes.json(),
-          instructorsRes.json(),
-          studentsRes.json(),
-        ]);
-
-        const existingUsersIds = [...instructors, ...students].map(
-          (user) => user.id
-        );
-        const potentialUsers = totalUsers.filter(
-          (user) => !existingUsersIds.includes(user.id)
-        );
-
-        setPotentialUsers(potentialUsers);
+        const users = await getUsers();
+        const existingUserIds = existingUsers.map((user) => user.id);
+        if (users) {
+          const potentialUsers = users.filter(
+            (user) => !existingUserIds.includes(user.id)
+          );
+          console.log(users, potentialUsers)
+          setPotentialUsers(potentialUsers);
+        }
       } catch (e) {
         console.error(e);
       }
@@ -68,18 +54,10 @@ export default function AddExistingUser({
   }
 
   async function handleSubmit() {
-    if (selectedUser && selectedRole) {
+    if (selectedUser) {
       try {
-        const res = await fetch(
-          `${process.env.API_URL || 'http://localhost:5000'}/user/${selectedUser.id}/${selectedRole.id}`,
-          {
-            method: 'PUT',
-            headers: {
-              Authorization: session.accessToken,
-            },
-          }
-        );
-        if (res.ok) closeModal();
+        const userAdded = await addUserToCourse(courseId, role,selectedUser.id, session)
+        if (userAdded) closeModal();
         else throw new Error('Something went wrong!');
       } catch (e) {
         console.error(e);
@@ -116,7 +94,6 @@ export default function AddExistingUser({
                 </div>
                 <div className='flex flex-row justify-between mx-12'>
                   <p className='text-xl font-semibold '>Role</p>
-                  <RoleSelect roles={roles} setRole={setSelectedRole} />
                 </div>
               </div>
               <div className='w-1/3 py-3 mx-auto'>

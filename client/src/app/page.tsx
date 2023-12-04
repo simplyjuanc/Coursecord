@@ -42,7 +42,7 @@ export default function Login() {
             <div className="pt-6">
               <button
                 onClick={handleCourses}
-                className="bg-white hover:bg-gray-100 rounded-xl text-2xl text-primary-red px-6 py-3"
+                className="bg-white hover:bg-gray-100 rounded-xl text-2xl text-primary-1 px-6 py-3"
               >
                 Courses
               </button>

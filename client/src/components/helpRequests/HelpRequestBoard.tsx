@@ -47,7 +47,7 @@ export default function HelpRequestBoard() {
 
   const ItemComponent = (props: { item: THelpRequest }) => {
     return (
-      <div className="border-primary-red border-2 rounded-xl select-none">
+      <div className="border-primary-1 border-2 rounded-xl select-none">
         <div className="p-2">
           <div className="flex">
             <div className="my-auto">
@@ -101,7 +101,7 @@ export default function HelpRequestBoard() {
     return (
       <div className="flex-grow flex flex-col ">
         <div className="flex font-bold text-3xl">
-          <div className="my-auto text-primary-red text-4xl pr-4 pb-6">
+          <div className="my-auto text-primary-1 text-4xl pr-4 pb-6">
             <BsThreeDots />
           </div>
           <h1 className="drop-shadow-lg">
@@ -151,7 +151,7 @@ export default function HelpRequestBoard() {
   return (
     <div className="flex-grow flex flex-col h-screen px-20 pt-10 bg-white">
       <div className="bg-white flex text-3xl font-semibold px-8 py-4 mx-auto rounded-xl shadow-xl border-2 border-primary-gray border-opacity-40">
-        <div className="my-auto mr-4 text-primary-red text-4xl">
+        <div className="my-auto mr-4 text-primary-1 text-4xl">
           <MdSupportAgent />
         </div>
         <h1 className="my-auto">Help Requests</h1>

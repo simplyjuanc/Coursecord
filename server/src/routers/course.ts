@@ -7,21 +7,18 @@ const authRouter = Router();
 
 router.use('/auth', Auth.requireAuth, authRouter);
 
+//TODO: add client side functionality for this
 authRouter.post('/:orgId', Course.addCourse);
 authRouter.put('/:courseId', Course.editCourse);
-authRouter.delete('/:orgId/:courseId', Course.deleteCourse);
+authRouter.delete('/:courseId', Course.deleteCourse);
 
-//USED BY CLIENT
 authRouter.get('/:courseId/management', Course.getCourseManagementInfo);
 router.get('/course', Course.getCourses);
 router.get('/:courseId', Course.getCourseById);
-//TILL HERE
 
 authRouter.put('/:courseId/instructor/:userId', Course.addInstructorToCourse);
 authRouter.put('/:courseId/student/:userId', Course.addStudentToCourse);
 authRouter.delete('/:courseId/instructor/:userId', Course.removeInstructorFromCourse);
 authRouter.delete('/:courseId/student/:userId', Course.removeStudentFromCourse);
-
-router.get('/:orgId/course', Course.getCoursesByOrganisation); //CAN DEFINITELY BE DELETED
 
 export default router;

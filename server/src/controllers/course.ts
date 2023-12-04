@@ -49,17 +49,6 @@ async function getCourseById(req: Request, res: Response) {
   }
 }
 
-async function getCoursesByOrganisation(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const courses = await Course.getCoursesInOrg(orgId);
-    res.status(200).send(courses);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
 async function editCourse(req: Request, res: Response) {
   try {
     const { courseId } = req.params;
@@ -83,28 +72,6 @@ async function deleteCourse(req: Request, res: Response) {
 
     const deletedCourse = await Course.deleteCourse(courseId, userId);
     res.status(204).send(deletedCourse);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
-async function getCoursesWithStudent(req: Request, res: Response) {
-  try {
-    const { userId } = req.params;
-    const courses = await Course.getCoursesWithStudent(userId);
-    res.status(200).send(courses);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
-async function getCoursesWithInstructor(req: Request, res: Response) {
-  try {
-    const { userId } = req.params;
-    const courses = await Course.getCoursesWithInstructor(userId);
-    res.status(200).send(courses);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error' });
@@ -182,11 +149,8 @@ export default {
   addCourse,
   getCourses,
   getCourseById,
-  getCoursesByOrganisation,
   editCourse,
   deleteCourse,
-  getCoursesWithStudent,
-  getCoursesWithInstructor,
   getCourseManagementInfo,
   addInstructorToCourse,
   addStudentToCourse,

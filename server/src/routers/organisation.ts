@@ -15,16 +15,8 @@ authRouter.delete(
   '/:orgId/admin/:userId',
   Organisation.removeAdminFromOrganisation
 );
-
-//USED BY CLIENT
 authRouter.get('/:orgId/management', Organisation.getOrgManagementInfo);
-//TILL HERE
-
-//USED BY CLIENT
-authRouter.get('/:orgId/management', Organisation.getOrgManagementInfo);
-//TILL HERE
 
 router.get('/get', Organisation.getOrganisations);
-router.get('/:orgId', Organisation.getOrganisationById);
 
 export default router;

@@ -7,19 +7,14 @@ const authRouter = Router();
 
 router.use('/auth', Auth.requireAuth, authRouter);
 
-//USED BY CLIENT
 authRouter.post('/org/:orgId/:sectionId', Unit.addCourseUnit);
 authRouter.put('/section/:sectionId/:unitId', Unit.addUnitToSection);
-authRouter.put('/:unitId', Unit.editContent);
-authRouter.delete('/:unitId', Unit.deleteContent);
+authRouter.put('/:unitId', Unit.editUnit);
+authRouter.delete('/:unitId', Unit.deleteUnit);
+
+authRouter.delete('/:sectionId/:unitId', Unit.removeUnitFromSection); //TODO: add client side functionality for this
 
 router.get('/:unitId', Unit.getUnit); //SHOULD PROBABLY BE PROTECTED
-//TILL HERE
 
-
-authRouter.delete('/:sectionId/:unitId', Unit.removeUnitFromSection);
-
-//can definitely be deleted
-router.get('/section/:sectionId', Unit.getUnitsBySection);
 
 export default router;

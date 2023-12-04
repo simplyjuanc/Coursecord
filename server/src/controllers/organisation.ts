@@ -32,17 +32,6 @@ async function getOrganisations(req: Request, res: Response) {
   }
 }
 
-async function getOrganisationById(req: Request, res: Response) {
-  try {
-    const { orgId } = req.params;
-    const org = await Organisation.getOrganisationById(orgId);
-    res.status(200).send(org);
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ message: 'Internal Server Error' });
-  }
-}
-
 async function editOrganisation(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
@@ -131,7 +120,6 @@ async function removeAdminFromOrganisation(req: Request, res: Response) {
 export default {
   addOrganisation,
   getOrganisations,
-  getOrganisationById,
   editOrganisation,
   deleteOrganisation,
   getOrgManagementInfo,

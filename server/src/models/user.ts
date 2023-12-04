@@ -54,24 +54,6 @@ async function userIsOrgOwner(userId: string, orgId: string) {
   }
 }
 
-async function getInstructorsByCourse(courseId: string) {
-  try {
-    const instructors = await User.findMany({
-      where: { instructor_of: { some: { id: courseId } } },
-    });
-    return instructors;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-async function getStudentsByCourse(courseId: string) {
-  const students = await User.findMany({
-    where: { student_of: { some: { id: courseId } } },
-  });
-  return students;
-}
-
 async function deleteUser(userId: string) {
   try {
     const deletedUser = await User.delete({ where: { id: userId } });
@@ -104,8 +86,6 @@ export default {
   updateUser,
   userIsOrgOwner,
   getUserById,
-  getInstructorsByCourse,
-  getStudentsByCourse,
   deleteUser,
   getUserCourses,
 };

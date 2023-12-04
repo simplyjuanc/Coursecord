@@ -91,11 +91,12 @@ export async function editUnit(unit: Unit, session: SessionWithToken) {
 
 export async function addSection(
   section: Partial<Section>,
+  course_id: string,
   session: SessionWithToken
 ) {
   try {
     const sectionResponse = await fetch(
-      `${baseUrl}/section/auth/${section.course_id}`,
+      `${baseUrl}/section/auth/${course_id}`,
       {
         method: 'POST',
         headers: {

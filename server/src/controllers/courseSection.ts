@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import Organisation from '../models/organisation';
 import { RequestWithUser } from '../types';
 import Course from '../models/course';
 import CourseSection from '../models/courseSection';
@@ -13,7 +12,6 @@ async function addSection(req: Request, res: Response) {
     const sectionData = req.body;
     const newSection = await Course.createSection(sectionData, courseId, userId);
 
-    await Course.addSectionToCourse(courseId, newSection.id);
     res.status(201).send(newSection);
   } catch (error) {
     console.log(error);

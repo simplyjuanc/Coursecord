@@ -1,32 +1,31 @@
 import { CourseSectionInfo } from '../types';
 import { CourseSection } from './index';
-import Course from './course';
-import { CourseSection as TCourseSection } from '@prisma/client';
-
-//right now course section info is just a title but I am sure that is
-//going to change so I am putting the type there to make it easier to change later
-
-async function createSection(sectionData: CourseSectionInfo, courseId: string) {
-  const newSection = await CourseSection.create({
-    data: { ...sectionData, course_id: courseId },
-  });
-  return newSection;
-}
 
 async function editSection(
-  id: string,
-  sectionData: Partial<CourseSectionInfo>
+  sectionId: string,
+  sectionData: Partial<CourseSectionInfo>,
+  userId: string
 ) {
   const updatedSection = await CourseSection.update({
-    where: { id },
+    where: {
+      id: sectionId,
+      course: { organisation: { admins: { some: { user_id: userId } } } },
+    },
     data: sectionData,
   });
   return updatedSection;
 }
 
-async function addUnitToSection(sectionId: string, unitId: string) {
+async function addUnitToSection(
+  sectionId: string,
+  unitId: string,
+  userId: string
+) {
   const updatedSection = await CourseSection.update({
-    where: { id: sectionId },
+    where: {
+      id: sectionId,
+      course: { organisation: { admins: { some: { user_id: userId } } } },
+    },
     data: {
       course_units: { create: { unit_id: unitId } },
     },
@@ -40,9 +39,16 @@ async function getSectionById(id: string) {
   return section;
 }
 
-async function removeUnitFromSection(sectionId: string, unitId: string) {
+async function removeUnitFromSection(
+  sectionId: string,
+  unitId: string,
+  userId: string
+) {
   const updatedSection = await CourseSection.update({
-    where: { id: sectionId },
+    where: {
+      id: sectionId,
+      course: { organisation: { admins: { some: { user_id: userId } } } },
+    },
     data: {
       course_units: { deleteMany: { section_id: sectionId, unit_id: unitId } },
     },
@@ -97,7 +103,6 @@ async function getSyllabus(courseId: string) {
 }
 
 export default {
-  createSection,
   editSection,
   addUnitToSection,
   getSectionById,

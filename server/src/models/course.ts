@@ -1,5 +1,6 @@
 import { Course as CourseType } from '@prisma/client';
 import { Course, Organisation } from './index';
+import { CourseSectionInfo } from '../types';
 
 async function createCourse(title: string, description: string, orgId: string) {
   const course = await Course.create({
@@ -34,13 +35,28 @@ async function getCoursesInOrg(orgId: string) {
   return courses;
 }
 
-async function editCourse(id: string, newData: Partial<CourseType>) {
-  const updatedCourse = await Course.update({ where: { id }, data: newData });
+async function editCourse(
+  courseId: string,
+  newData: Partial<CourseType>,
+  userId: string
+) {
+  const updatedCourse = await Course.update({
+    where: {
+      id: courseId,
+      organisation: { admins: { some: { user_id: userId } } },
+    },
+    data: newData,
+  });
   return updatedCourse;
 }
 
-async function deleteCourse(id: string) {
-  const deletedCourse = await Course.delete({ where: { id } });
+async function deleteCourse(courseId: string, userId: string) {
+  const deletedCourse = await Course.delete({
+    where: {
+      id: courseId,
+      organisation: { admins: { some: { user_id: userId } } },
+    },
+  });
   return deletedCourse;
 }
 
@@ -95,17 +111,32 @@ async function getCourseUsers(courseId: string) {
   const course = await Course.findUnique({
     where: { id: courseId },
     select: {
-      students: { select: { student: { include: { roles: true } } } },
-      instructors: { select: { instructor: { include: { roles: true } } } },
+      students: { select: { student: true } },
+      instructors: { select: { instructor: true } },
     },
   });
 
   return course;
 }
 
+async function createSection(
+  sectionData: CourseSectionInfo,
+  courseId: string,
+  userId: string
+) {
+  const newSection = await Course.update({
+    where: {
+      id: courseId,
+      organisation: { admins: { some: { user_id: userId } } },
+    },
+    data: { syllabus: { create: { ...sectionData } } },
+  });
+  return newSection;
+}
+
 async function getCourseManagementInfo(courseId: string, userId: string) {
   const course = await Course.findUnique({
-    where: { id: courseId } ,
+    where: { id: courseId },
     select: {
       id: true,
       instructors: {
@@ -150,4 +181,5 @@ export default {
   getCourseWithSection,
   getCourseUsers,
   getCourseManagementInfo,
+  createSection,
 };

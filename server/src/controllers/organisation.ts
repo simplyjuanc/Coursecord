@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import Organisation from '../models/organisation';
-import Course from '../models/course';
 import { RequestWithUser } from '../types';
 import User from '../models/user';
-import Role from '../models/role';
 
 async function addOrganisation(req: Request, res: Response) {
   try {
@@ -16,9 +14,6 @@ async function addOrganisation(req: Request, res: Response) {
 
     const ownerId = (req as RequestWithUser).user.id;
     const newOrg = await Organisation.createOrganisation(name, ownerId);
-
-    const adminRole = await Role.getRoleByTitle(newOrg.id, 'admin')
-    await User.assignRoleToUser(ownerId, adminRole!.id);
 
     res.status(201).send(newOrg);
   } catch (error) {

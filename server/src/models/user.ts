@@ -1,5 +1,5 @@
 
-import { UserInfo } from '../../@types/types';
+import { UserInfo } from '../@types/types';
 import { User, Organisation } from './index';
 
 async function getUsers() {

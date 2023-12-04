@@ -12,7 +12,6 @@ import { DbUser, SessionWithToken, THelpRequest } from "@/types";
 import { useSession } from "next-auth/react";
 import { useParams } from "next/navigation";
 import { getStudentsByCourse } from "@/services/apiClientService";
-import { set } from "date-fns";
 
 type HelpRequestForm = {
   setSubmitted: Dispatch<SetStateAction<boolean>>;
@@ -32,9 +31,7 @@ export default function HelpRequestForm({ setSubmitted }: HelpRequestForm) {
 
   useEffect(() => {
     socket = io(baseUrl, {
-      auth: {
-        accessToken: session.accessToken,
-      },
+      auth: { accessToken: session.accessToken },
     });
 
     getStudentsByCourse(courseId)

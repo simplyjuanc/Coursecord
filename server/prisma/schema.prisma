@@ -89,8 +89,7 @@ model HelpRequest {
   status        String                @default("WAITING") // WAITING, ASSIGNED, FINISHED
   content       String
   created_at    DateTime              @default(now())
-  time_waiting  Int                   @default(0)
-  time_in_call  Int?
+  finished_at   DateTime?
 }
 
 // Relationship tables below

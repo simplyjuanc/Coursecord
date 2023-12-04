@@ -1,6 +1,5 @@
 'use client';
 import { DbUser, SessionWithToken, THelpRequest } from '@/types';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { MdSupportAgent } from 'react-icons/md';
@@ -39,16 +38,13 @@ export default function HelpRequestBoard() {
         accessToken: (session as SessionWithToken).accessToken,
       },
     });
-    console.log('socket :>> ', socket);
-
 
     socket.emit('getRequests', courseId, (res: THelpRequest[]) => {
-      console.log('getRequests :>> ', res);
       setHelpRequests(res);
+      console.log('getRequests - res :>> ', res);
     });
 
     socket.on('requestsUpdated', (res: THelpRequest[]) => {
-      console.log('req updated', res);
       setHelpRequests(res);
     });
 

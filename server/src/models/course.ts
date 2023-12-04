@@ -1,13 +1,17 @@
 import { Course as TCourse } from '@prisma/client';
-import { Course } from './index';
+import { Course, Organisation } from './index';
 import { CourseSectionInfo } from '../@types/types';
 
-
-async function createCourse(title: string, description: string, orgId: string) {
-  const course = await Course.create({
-    data: { title, description, organisation_id: orgId },
+async function createCourse(
+  courseData: { title: string; description: string },
+  orgId: string,
+  userId: string
+) {
+  const updatedOrg = await Organisation.update({
+    where: { id: orgId, admins: { some: { user_id: userId } } },
+    data: { courses: { create: courseData } },
   });
-  return course;
+  return updatedOrg;
 }
 
 async function getCourses() {
@@ -176,5 +180,5 @@ export default {
   addStudentToCourse,
   addInstructorToCourse,
   removeInstructorFromCourse,
-  removeStudentFromCourse
+  removeStudentFromCourse,
 };

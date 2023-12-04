@@ -7,15 +7,14 @@ import User from '../models/user';
 async function addCourse(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
-    const { title, description } = req.body;
+    const courseData = req.body;
     const userId = (req as RequestWithUser).user.id;
 
-    //TODO: edit this so that admins can do it
-    if (!(await User.userIsOrgOwner(userId, orgId))) {
-      return res.status(401).send({ message: 'Unauthorised' });
-    }
-
-    const newCourse = await Course.createCourse(title, description, orgId);
+    const newCourse = await Course.createCourse(
+      courseData,
+      orgId,
+      userId
+    );
     res.status(201).send(newCourse);
   } catch (error) {
     console.log(error);

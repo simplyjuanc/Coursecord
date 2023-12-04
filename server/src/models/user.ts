@@ -88,6 +88,16 @@ async function getUserCourses(userId: string) {
   }
 }
 
+async function getInstructorsByCourse(courseId: string) {
+  try {
+    const instructors = await User.findMany({
+      where: { instructor_of: { some: { id: courseId } } },
+    });
+    return instructors;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function isCourseInstructor(userId:string, courseId: string) {
   try {
@@ -107,7 +117,6 @@ export default {
   createUser,
   updateUser,
   userIsOrgOwner,
-  getUserById,
   deleteUser,
   getUserCourses,
   isCourseInstructor

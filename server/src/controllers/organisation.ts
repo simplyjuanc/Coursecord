@@ -49,7 +49,11 @@ async function editOrganisation(req: Request, res: Response) {
     const newData = req.body;
 
     const userId = (req as RequestWithUser).user.id;
-    const updatedOrg = await Organisation.editOrganisation(orgId, newData, userId);
+    const updatedOrg = await Organisation.editOrganisation(
+      orgId,
+      newData,
+      userId
+    );
     //TODO: Make a more descriptive error when about unauthorised deletion
     res.status(200).send(updatedOrg);
   } catch (error) {
@@ -63,10 +67,10 @@ async function deleteOrganisation(req: Request, res: Response) {
     const { orgId } = req.params;
 
     const ownerId = (req as RequestWithUser).user.id;
-    if(!await User.userIsOrgOwner(ownerId, orgId)) {
-      return res.status(401).send({message: 'Unauthorised'})
+    if (!(await User.userIsOrgOwner(ownerId, orgId))) {
+      return res.status(401).send({ message: 'Unauthorised' });
     }
-    
+
     const deletedOrg = await Organisation.deleteOrganisation(orgId);
     res.status(204).send(deletedOrg);
   } catch (error) {
@@ -90,6 +94,40 @@ async function getOrgManagementInfo(req: Request, res: Response) {
   }
 }
 
+async function addAdminToOrganisation(req: Request, res: Response) {
+  try {
+    const { orgId, userId } = req.params;
+    const authUserId = (req as RequestWithUser).user.id;
+
+    const org = await Organisation.addAdminToOrganisation(
+      orgId,
+      userId,
+      // authUserId
+    );
+    res.status(200).send(org);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+async function removeAdminFromOrganisation(req: Request, res: Response) {
+  try {
+    const { orgId, userId } = req.params;
+    const authUserId = (req as RequestWithUser).user.id;
+
+    const org = await Organisation.removeAdminFromOrganisation(
+      orgId,
+      userId,
+      authUserId
+    );
+    res.status(200).send(org);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
 export default {
   addOrganisation,
   getOrganisations,
@@ -97,4 +135,6 @@ export default {
   editOrganisation,
   deleteOrganisation,
   getOrgManagementInfo,
+  addAdminToOrganisation,
+  removeAdminFromOrganisation,
 };

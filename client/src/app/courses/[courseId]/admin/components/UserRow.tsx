@@ -16,7 +16,6 @@ export default function UserRow({
   role,
   removeUser,
 }: UserRowProps): React.JSX.Element {
-  const session = useSession().data as SessionWithToken;
 
   return (
     <>

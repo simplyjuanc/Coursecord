@@ -1,8 +1,7 @@
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import IconButton from '@/components/buttons/iconButton';
-import { useEffect, useState } from 'react';
-import AddNewUser from './OLD';
-import AddExistingUser from './AddExistingUser';
+import { useEffect } from 'react';
+import AddExistingUser from './AddNewUser';
 import { SessionWithToken, User } from '@/types';
 import {
   deleteUserFromCourse,
@@ -18,17 +17,25 @@ import {
 
 type CourseManagementProps = {
   courseId: string;
+  showNewUserModal: (
+    role: 'student' | 'instructor',
+    users: { [key: string]: User }[]
+  ) => void;
+  showNewUser: boolean;
+  setShowNewUser: React.Dispatch<React.SetStateAction<boolean>>;
+  role: string;
+  existingUsers: User[];
 };
 
 export default function CourseManagement(props: CourseManagementProps) {
-  const { courseId } = props;
+  const {
+    courseId,
+    showNewUserModal,
+  } = props;
+
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const courses = useAppSelector((state) => state.management.cachedCourses);
-
-  const [showNewUser, setShowNewUser] = useState(false);
-  const [existingUsers, setExistingUsers] = useState<User[]>([]);
-  const [role, setRole] = useState<'student' | 'instructor'>('student');
 
   useEffect(() => {
     (async () => {
@@ -41,18 +48,6 @@ export default function CourseManagement(props: CourseManagementProps) {
       }
     })();
   }, []);
-
-  function showNewUserModal(
-    role: 'student' | 'instructor',
-    users: { [key: string]: User }[]
-  ) {
-    setShowNewUser(true);
-    const existingUsers = users.map((user) => user[role]);
-    console.log(users);
-    console.log('EXISTING', existingUsers);
-    setExistingUsers(existingUsers);
-    setRole(role);
-  }
 
   async function removeUser(role: string, userId: string) {
     try {
@@ -80,14 +75,6 @@ export default function CourseManagement(props: CourseManagementProps) {
         <div className='flex flex-col gap-2 align-middle justify-evenly w-1/4'></div>
       </div>
 
-      {showNewUser && (
-        <AddExistingUser
-          courseId={courseId}
-          setShowExistingUser={setShowNewUser}
-          role={role}
-          existingUsers={existingUsers}
-        />
-      )}
       {courses[courseId] != null && (
         <div className='mt-5 mx-auto'>
           <div className='flex items-center mb-5 justify-between'>

@@ -83,13 +83,25 @@ async function getOrganisationWithCourse(courseId: string) {
 
 async function addAdminToOrganisation(
   orgId: string,
-  userId: string,
+  userId: string
+  // authUserId: string
 ) {
   const updatedOrg = await Organisation.update({
-    where: { id: orgId },
+    where: { id: orgId /* , admins: { some: { user_id: authUserId } } */ }, //temporary will later require authentication
     data: { admins: { create: { user_id: userId } } },
   });
+  return updatedOrg;
+}
 
+async function removeAdminFromOrganisation(
+  orgId: string,
+  userId: string,
+  authUserId: string
+) {
+  const updatedOrg = await Organisation.update({
+    where: { id: orgId, admins: { some: { user_id: authUserId } } },
+    data: { admins: { deleteMany: { user_id: userId } } },
+  });
   return updatedOrg;
 }
 
@@ -137,4 +149,5 @@ export default {
   getOrganisationsWithAdmin,
   getOrgWithSection,
   getOrgManagementInfo,
+  removeAdminFromOrganisation,
 };

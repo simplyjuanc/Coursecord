@@ -45,7 +45,6 @@ export async function getUnit(unitId: string, session: SessionWithToken) {
   }
 }
 
-
 export async function addUnit(
   unit: Partial<Unit>,
   sectionId: string,
@@ -198,7 +197,6 @@ export async function getCourseData(courseId: string) {
     }
 
     return await courseResponse.json();
-
   } catch (error) {
     console.log(error);
   }
@@ -320,6 +318,50 @@ export async function deleteUserFromCourse(
   try {
     const userResponse = await fetch(
       `${baseUrl}/course/auth/${courseId}/${role}/${userId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: sesion.accessToken,
+        },
+      }
+    );
+
+    return userResponse.ok;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function addAdminToOrganisation(
+  orgId: string,
+  userId: string,
+  sesion: SessionWithToken
+) {
+  try {
+    const userResponse = await fetch(
+      `${baseUrl}/org/auth/${orgId}/admin/${userId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: sesion.accessToken,
+        },
+      }
+    );
+
+    return userResponse.ok;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function removeAdminFromOrganisation(
+  orgId: string,
+  userId: string,
+  sesion: SessionWithToken
+) {
+  try {
+    const userResponse = await fetch(
+      `${baseUrl}/org/auth/${orgId}/admin/${userId}`,
       {
         method: 'DELETE',
         headers: {

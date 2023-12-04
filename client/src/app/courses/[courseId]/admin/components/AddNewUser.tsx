@@ -4,9 +4,13 @@ import { UserSelect } from './UserSelect';
 import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import { useSession } from 'next-auth/react';
-import { addUserToCourse, getUsers } from '@/services/apiClientService';
+import {
+  addAdminToOrganisation,
+  addUserToCourse,
+  getUsers,
+} from '@/services/apiClientService';
 import { useAppDispatch } from '@/store';
-import { addUserToCourse as addUserToCourseReducer } from '@/store/slices/managementSlice';
+import { addAdminToOrg, addUserToCourse as addUserToCourseReducer } from '@/store/slices/managementSlice';
 
 type AddUserProps = {
   courseId: string;
@@ -59,14 +63,26 @@ export default function AddExistingUser({
   async function handleSubmit() {
     if (selectedUser) {
       try {
-        const userAdded = await addUserToCourse(
-          courseId,
-          role,
+        if (!(role === 'admin')) {
+          const userAdded = await addUserToCourse(
+            courseId,
+            role,
+            selectedUser.id,
+            session
+          );
+          dispatch(
+            addUserToCourseReducer({ courseId, role, user: selectedUser })
+          );
+          if (userAdded) closeModal();
+          else throw new Error('Something went wrong!');
+          return;
+        }
+
+        dispatch(addAdminToOrg({ user: selectedUser }))
+        const userAdded = await addAdminToOrganisation(
+          '656b40666c0ea5f66060c942',
           selectedUser.id,
           session
-        );
-        dispatch(
-          addUserToCourseReducer({ courseId, role, user: selectedUser })
         );
         if (userAdded) closeModal();
         else throw new Error('Something went wrong!');

@@ -58,6 +58,19 @@ const managementSlice = createSlice({
 
       state.cachedCourses = { ...state.cachedCourses, [courseId]: course };
     },
+    addAdminToOrg(state, { payload }: PayloadAction<{ user: User }>) {
+      const { user } = payload;
+      state.orgInfo?.admins.push({ user });
+    },
+    removeAdminFromOrg(state, { payload }: PayloadAction<{ userId: string }>) {
+      const { userId } = payload;
+
+      const newAdmins = state.orgInfo!.admins.filter(
+        (admin) => admin.user.id !== userId
+      );
+
+      state.orgInfo!.admins = newAdmins;
+    },
   },
 });
 
@@ -67,6 +80,8 @@ export const {
   updateCourse,
   deleteCourse,
   addUserToCourse,
-  removeUserFromCourse
+  removeUserFromCourse,
+  addAdminToOrg,
+  removeAdminFromOrg,
 } = managementSlice.actions;
 export default managementSlice.reducer;

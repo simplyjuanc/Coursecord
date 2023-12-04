@@ -45,6 +45,7 @@ async function signIn(req: Request, res: Response) {
       newUser.id
     );
     await Course.addStudentToCourse('656b40a56c0ea5f66060c947', newUser.id);
+
     //TEMPORARY^
     res.status(201).send(newUser);
 

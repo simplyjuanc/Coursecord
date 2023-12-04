@@ -45,6 +45,7 @@ export async function getUnit(unitId: string, session: SessionWithToken) {
   }
 }
 
+
 export async function addUnit(
   unit: Partial<Unit>,
   sectionId: string,
@@ -197,6 +198,7 @@ export async function getCourseData(courseId: string) {
     }
 
     return await courseResponse.json();
+
   } catch (error) {
     console.log(error);
   }

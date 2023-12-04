@@ -4,11 +4,17 @@ import { useEffect, useState } from 'react';
 import AddNewUser from './OLD';
 import AddExistingUser from './AddExistingUser';
 import { SessionWithToken, User } from '@/types';
-import { getCourseManagementInfo } from '@/services/apiClientService';
+import {
+  deleteUserFromCourse,
+  getCourseManagementInfo,
+} from '@/services/apiClientService';
 import { useSession } from 'next-auth/react';
 import UserTable from './UserTable';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { addCourse } from '@/store/slices/managementSlice';
+import {
+  addCourse,
+  removeUserFromCourse,
+} from '@/store/slices/managementSlice';
 
 type CourseManagementProps = {
   courseId: string;
@@ -41,10 +47,28 @@ export default function CourseManagement(props: CourseManagementProps) {
     users: { [key: string]: User }[]
   ) {
     setShowNewUser(true);
-    const existingUsers = users.map((user) => user.user);
+    const existingUsers = users.map((user) => user[role]);
+    console.log(users);
     console.log('EXISTING', existingUsers);
     setExistingUsers(existingUsers);
     setRole(role);
+  }
+
+  async function removeUser(role: string, userId: string) {
+    try {
+      dispatch(removeUserFromCourse({ role, userId, courseId }));
+
+      const userDeleted = await deleteUserFromCourse(
+        courseId,
+        role,
+        userId,
+        session as SessionWithToken
+      );
+      if (userDeleted) console.log(`${role} removed from course`);
+      else window.alert('Something went wrong');
+    } catch (error) {
+      console.error('handleDelete - error :>> ', error);
+    }
   }
 
   return (
@@ -78,7 +102,11 @@ export default function CourseManagement(props: CourseManagementProps) {
               ></IconButton>
             </div>
           </div>
-          <UserTable users={courses[courseId].instructors} type='instructor' />
+          <UserTable
+            users={courses[courseId].instructors}
+            type='instructor'
+            removeUser={removeUser}
+          />
 
           <div className='flex items-center my-5 justify-between'>
             <h2 className='text-xl font-semibold'>Students:</h2>
@@ -92,7 +120,11 @@ export default function CourseManagement(props: CourseManagementProps) {
               ></IconButton>
             </div>
           </div>
-          <UserTable users={courses[courseId].students} type='student' />
+          <UserTable
+            users={courses[courseId].students}
+            type='student'
+            removeUser={removeUser}
+          />
         </div>
       )}
     </>

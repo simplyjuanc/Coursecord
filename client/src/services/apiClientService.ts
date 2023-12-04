@@ -310,3 +310,26 @@ export async function addUserToCourse(
     console.log(error);
   }
 }
+
+export async function deleteUserFromCourse(
+  courseId: string,
+  role: string,
+  userId: string,
+  sesion: SessionWithToken
+) {
+  try {
+    const userResponse = await fetch(
+      `${baseUrl}/course/auth/${courseId}/${role}/${userId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: sesion.accessToken,
+        },
+      }
+    );
+
+    return userResponse.ok;
+  } catch (error) {
+    console.log(error);
+  }
+}

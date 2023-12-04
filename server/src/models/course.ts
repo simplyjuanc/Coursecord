@@ -84,6 +84,27 @@ async function addInstructorToCourse(courseId: string, userId: string) {
       instructors: { create: { instructor_id: userId } },
     },
   });
+  return updatedCourse;
+}
+
+async function removeStudentFromCourse(courseId: string, userId: string) {
+  const updatedCourse = await Course.update({
+    where: { id: courseId },
+    data: {
+      students: { deleteMany: { student_id: userId } },
+    },
+  });
+  return updatedCourse;
+}
+
+async function removeInstructorFromCourse(courseId: string, userId: string) {
+  const updatedCourse = await Course.update({
+    where: { id: courseId },
+    data: {
+      instructors: { deleteMany: { instructor_id: userId } },
+    },
+  });
+  return updatedCourse;
 }
 
 async function getCoursesWithStudent(userId: string) {
@@ -192,4 +213,6 @@ export default {
   getCourseManagementInfo,
   createSection,
   addInstructorToCourse,
+  removeInstructorFromCourse,
+  removeStudentFromCourse
 };

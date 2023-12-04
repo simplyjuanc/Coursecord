@@ -19,6 +19,8 @@ router.get('/:courseId', Course.getCourseById);
 
 authRouter.put('/:courseId/instructor/:userId', Course.addInstructorToCourse);
 authRouter.put('/:courseId/student/:userId', Course.addStudentToCourse);
+authRouter.delete('/:courseId/instructor/:userId', Course.removeInstructorFromCourse);
+authRouter.delete('/:courseId/student/:userId', Course.removeStudentFromCourse);
 
 router.get('/:orgId/course', Course.getCoursesByOrganisation); //CAN DEFINITELY BE DELETED
 

@@ -5,6 +5,8 @@ import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import { useSession } from 'next-auth/react';
 import { addUserToCourse, getUsers } from '@/services/apiClientService';
+import { useAppDispatch } from '@/store';
+import { addUserToCourse as addUserToCourseReducer } from '@/store/slices/managementSlice';
 
 type AddUserProps = {
   courseId: string;
@@ -22,6 +24,7 @@ export default function AddExistingUser({
   const [potentialUsers, setPotentialUsers] = useState<User[]>();
   const [selectedUser, setSelectedUser] = useState<User>();
   const session = useSession().data as SessionWithToken;
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     (async () => {
@@ -32,7 +35,7 @@ export default function AddExistingUser({
           const potentialUsers = users.filter(
             (user) => !existingUserIds.includes(user.id)
           );
-          console.log(users, potentialUsers)
+          console.log(users, potentialUsers);
           setPotentialUsers(potentialUsers);
         }
       } catch (e) {
@@ -56,7 +59,15 @@ export default function AddExistingUser({
   async function handleSubmit() {
     if (selectedUser) {
       try {
-        const userAdded = await addUserToCourse(courseId, role,selectedUser.id, session)
+        const userAdded = await addUserToCourse(
+          courseId,
+          role,
+          selectedUser.id,
+          session
+        );
+        dispatch(
+          addUserToCourseReducer({ courseId, role, user: selectedUser })
+        );
         if (userAdded) closeModal();
         else throw new Error('Something went wrong!');
       } catch (e) {
@@ -91,9 +102,6 @@ export default function AddExistingUser({
                     users={potentialUsers}
                     setSelectedUser={setSelectedUser}
                   />
-                </div>
-                <div className='flex flex-row justify-between mx-12'>
-                  <p className='text-xl font-semibold '>Role</p>
                 </div>
               </div>
               <div className='w-1/3 py-3 mx-auto'>

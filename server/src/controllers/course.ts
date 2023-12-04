@@ -127,7 +127,7 @@ async function getCourseManagementInfo(req: Request, res: Response) {
   }
 }
 
- async function addStudentToCourse(req: Request, res: Response) {
+async function addStudentToCourse(req: Request, res: Response) {
   try {
     const { courseId, userId } = req.params;
 
@@ -150,6 +150,34 @@ async function addInstructorToCourse(req: Request, res: Response) {
   }
 }
 
+async function removeStudentFromCourse(req: Request, res: Response) {
+  try {
+    const { courseId, userId } = req.params;
+    const updatedCourse = await Course.removeStudentFromCourse(
+      courseId,
+      userId
+    );
+    res.status(200).send(updatedCourse);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
+async function removeInstructorFromCourse(req: Request, res: Response) {
+  try {
+    const { courseId, userId } = req.params;
+    const updatedCourse = await Course.removeInstructorFromCourse(
+      courseId,
+      userId
+    );
+    res.status(200).send(updatedCourse);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: 'Internal Server Error' });
+  }
+}
+
 export default {
   addCourse,
   getCourses,
@@ -161,5 +189,7 @@ export default {
   getCoursesWithInstructor,
   getCourseManagementInfo,
   addInstructorToCourse,
-  addStudentToCourse
+  addStudentToCourse,
+  removeInstructorFromCourse,
+  removeStudentFromCourse,
 };

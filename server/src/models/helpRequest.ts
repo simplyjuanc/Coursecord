@@ -7,12 +7,14 @@ async function createHelpRequest(data: TCreateHelpRequest) {
     const createdRequest = await HelpRequest.create({
       data: {
         content: data.content,
-        course_id : data.course_id,
+        course_id: data.course_id,
         students: {
-          createMany: {data: data.students.map((student) => ({ student_id: student }))
-        }
-      },
-    }});
+          createMany: {
+            data: data.students.map((student) => ({ student_id: student }))
+          }
+        },
+      }
+    });
     return createdRequest;
 
   } catch (error) {
@@ -22,25 +24,33 @@ async function createHelpRequest(data: TCreateHelpRequest) {
 
 
 async function getHelpRequests(courseId: THelpRequest['course_id']) {
-  console.log('model - getHelpRequests - courseId :>> ', courseId);
   const requests = await HelpRequest.findMany({
     where: { course_id: courseId },
     include: {
-      students: { include: { student: true }},
+      students: { include: { student: true } },
       instructor: true
     }
   });
-  console.log('model - getHelpRequests - requests :>> ', requests);
   return requests;
 }
 
 
 async function updateRequestStatus(id: string, status: THelpRequest['status']) {
   try {
-    const request = await HelpRequest.update({
-      where: { id },
-      data: { status }
-    });
+    // console.log('model - updateRequestStatus - id,status :>> ', id,status);
+    let request;
+    if (status === 'FINISHED') {
+      request = await HelpRequest.update({
+        where: { id },
+        data: { status, finished_at: new Date() }
+      })
+    } else {
+      request = await HelpRequest.update({
+        where: { id },
+        data: { status, finished_at: null }
+      });
+    }
+    // console.log('model - updateRequestStatus - request :>> ', request);
     return request;
   } catch (error) {
     console.error(error);
@@ -50,11 +60,16 @@ async function updateRequestStatus(id: string, status: THelpRequest['status']) {
 
 async function updateRequestInstructor(id: string, instructor_id: THelpRequest['instructor_id']) {
   try {
-    if (!instructor_id) throw new Error("Missing instructor id");
-    const request = await HelpRequest.update({
-      where: { id },
-      data: { instructor_id }
-    });
+    const request = (instructor_id) ?
+      await HelpRequest.update({
+        where: { id },
+        data: { instructor: { connect: { id: instructor_id } } }
+      }) :
+      await HelpRequest.update({
+        where: { id },
+        data: { instructor: { disconnect: true } }
+      });
+
     return request;
   } catch (error) {
     console.error(error);

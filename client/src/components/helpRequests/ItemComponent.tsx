@@ -2,24 +2,38 @@ import React from 'react';
 import Image from 'next/image';
 import { THelpRequestDetails } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
-import { Draggable } from 'react-beautiful-dnd';
-
+import { Draggable } from '@hello-pangea/dnd';
+ 
 export default function ItemComponent({
   item,
-  idx,
+  index,
 }: {
   item: THelpRequestDetails;
-  idx: number;
+  index: number;
 }) {
   return (
-    <Draggable draggableId={item.id} index={idx}>
+    <Draggable draggableId={item.id} index={index}>
       {(provided) => (
         <div
-          className='border-primary-red border-2 rounded-xl select-none p-2 my-4'
+          className='border-primary-red border-2 rounded-xl select-none p-2 my-4 bg-white '
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
+            {item.instructor && (
+              <div className='flex justify-end mr-1'>
+                <Image
+                  src={item.instructor.image || ''}
+                  alt={'Instructor profile picture'}
+                  width={25}
+                  height={25}
+                  className='object-contain rounded-full mr-1 my-auto'
+                />
+                <p className='my-auto text-lg font-medium'>
+                  {item.instructor.name}
+                </p>
+              </div>
+            )}
             <div>
               <p className='font-semibold my-auto'>Students: </p>
               <p>
@@ -28,23 +42,9 @@ export default function ItemComponent({
                   .join(', ')}
               </p>
             </div>
-            <h2 className='py-2 font-medium'>{item.content}</h2>
-            {item.instructor && (
-              <div className='flex'>
-                <Image
-                  src={item.instructor.image || ''}
-                  alt={'Instructor profile picture'}
-                  width={25}
-                  height={25}
-                  className='object-contain rounded-full mr-1 my-auto'
-                />
-                <h1 className='my-auto text-lg font-medium'>
-                  {item.instructor.name}
-                </h1>
-              </div>
-            )}
+            <p className='py-3'>{item.content}</p>
             <div>
-              <h3 className=''>
+              <p className='italic text-sm'>
                 {!item.finished_at
                   ? 'Created ' +
                     formatDistanceToNow(new Date(item.created_at), {
@@ -54,7 +54,7 @@ export default function ItemComponent({
                     formatDistanceToNow(new Date(item.finished_at), {
                       addSuffix: true,
                     })}
-              </h3>
+              </p>
             </div>
         </div>
       )}

@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         if (userRoles) dispatch(setRoles({ roles: userRoles }));
       }
     })();
-  }, [course, courseId, dispatch, session, userId]);
+  }, [courseId, dispatch, session, userId]);
 
   return (
     <div className='flex'>

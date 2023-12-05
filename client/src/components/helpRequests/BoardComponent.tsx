@@ -1,6 +1,6 @@
 import { THelpRequestDetails } from '@/types';
 import React from 'react';
-import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { Droppable } from '@hello-pangea/dnd';
 import { BsThreeDots } from 'react-icons/bs';
 import ItemComponent from './ItemComponent';
 
@@ -11,7 +11,7 @@ type BoardComponentProps = {
 
 export default function BoardComponent({
   status,
-  helpRequests,
+  helpRequests
 }: BoardComponentProps) {
   return (
     <div className='flex-grow flex flex-col '>
@@ -27,15 +27,14 @@ export default function BoardComponent({
       <Droppable droppableId={status}>
         {(provided) => (
           <div
-            className='bg-white w-full max-h-min min-h-[50%] rounded-xl p-6 shadow-xl border-2 border-primary-gray border-opacity-40'
             ref={provided.innerRef}
-            // innerRef={provided.innerRef}
+            className='bg-white w-full max-h-min min-h-[50%] rounded-xl p-6 shadow-xl border-2 border-primary-gray border-opacity-40 grow'
             {...provided.droppableProps}
           >
             {helpRequests.map(
-              (item, idx) =>
+              (item, index) =>
                 item.status === status && (
-                  <ItemComponent key={item.id} item={item} idx={idx} />
+                  <ItemComponent key={item.id} item={item} index={index} />
                 )
             )}
             {provided.placeholder}

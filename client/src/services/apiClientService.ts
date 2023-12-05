@@ -141,6 +141,7 @@ export async function getInstructorsByCourse(
   courseId: string,
 ) {
   try {
+    console.log('getInstructorsByCourse :>> ', courseId);
     const res = await fetch(`${baseUrl}/user/${courseId}/instructors`);
     const data:DbUser[] = await res.json();
     return data;
@@ -362,7 +363,7 @@ export async function deleteUserFromCourse(
   courseId: string,
   role: string,
   userId: string,
-  sesion: SessionWithToken
+  session: SessionWithToken
 ) {
   try {
     const userResponse = await fetch(
@@ -370,7 +371,7 @@ export async function deleteUserFromCourse(
       {
         method: 'DELETE',
         headers: {
-          Authorization: sesion.accessToken,
+          Authorization: session.accessToken,
         },
       }
     );
@@ -384,7 +385,7 @@ export async function deleteUserFromCourse(
 export async function addAdminToOrganisation(
   orgId: string,
   userId: string,
-  sesion: SessionWithToken
+  session: SessionWithToken
 ) {
   try {
     const userResponse = await fetch(
@@ -392,7 +393,7 @@ export async function addAdminToOrganisation(
       {
         method: 'PUT',
         headers: {
-          Authorization: sesion.accessToken,
+          Authorization: session.accessToken,
         },
       }
     );
@@ -406,7 +407,7 @@ export async function addAdminToOrganisation(
 export async function removeAdminFromOrganisation(
   orgId: string,
   userId: string,
-  sesion: SessionWithToken
+  session: SessionWithToken
 ) {
   try {
     const userResponse = await fetch(
@@ -414,7 +415,7 @@ export async function removeAdminFromOrganisation(
       {
         method: 'DELETE',
         headers: {
-          Authorization: sesion.accessToken,
+          Authorization: session.accessToken,
         },
       }
     );

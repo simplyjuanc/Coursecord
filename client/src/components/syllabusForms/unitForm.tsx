@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useAppDispatch } from '@/store';
-import { useSession } from 'next-auth/react';
-import { SessionWithToken } from '@/types';
-import { addUnitToSection, updateUnit } from '@/store/slices/courseSlice';
-import { addUnit } from '@/services/apiClientService';
+import { useState } from "react";
+import { useAppDispatch } from "@/store";
+import { useSession } from "next-auth/react";
+import { SessionWithToken } from "@/types";
+import { addUnitToSection, updateUnit } from "@/store/slices/courseSlice";
+import { addUnit } from "@/services/apiClientService";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:5000";
 
 type UnitFormProps = {
   closeForm: (sectionId: string) => void;
   sectionId: string;
-  setSaving: (saving?: 'saving' | 'done' | 'error') => void;
+  setSaving: (saving?: "saving" | "done" | "error") => void;
 };
 
 export default function UnitForm(props: UnitFormProps) {
@@ -20,25 +20,25 @@ export default function UnitForm(props: UnitFormProps) {
 
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
-  const [title, setTitle] = useState<string>('');
-  const [type, setType] = useState<string>('lesson');
+  const [title, setTitle] = useState<string>("");
+  const [type, setType] = useState<string>("lesson");
 
   async function submitForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    setSaving('saving');
+    setSaving("saving");
     let newUnit = {
-      id: 'placeholder',
+      id: "placeholder",
       title,
-      type: type as 'lesson' | 'excercise' | 'test',
-      markdown_body: '',
-      owner: '656b40666c0ea5f66060c942',
+      type: type as "lesson" | "excercise" | "test",
+      markdown_body: "",
+      owner: "656b40666c0ea5f66060c942",
     };
 
     dispatch(addUnitToSection({ sectionId, course_unit: { unit: newUnit } }));
     try {
       const newUnit = await addUnit(
-        { title, type: type as 'lesson' | 'excercise' | 'test' },
+        { title, type: type as "lesson" | "excercise" | "test" },
         sectionId,
         session as SessionWithToken
       );
@@ -47,23 +47,23 @@ export default function UnitForm(props: UnitFormProps) {
         const unit = { ...newUnit, id: newId };
 
         dispatch(updateUnit({ newUnit: unit }));
-        setSaving('done');
+        setSaving("done");
         setTimeout(() => {
           setSaving(undefined);
         }, 1000);
       } else {
-        setSaving('error');
+        setSaving("error");
         setTimeout(() => {
           setSaving(undefined);
         }, 1000);
       }
 
-      setTitle('');
-      setType('lesson');
+      setTitle("");
+      setType("lesson");
       closeForm(sectionId);
     } catch (error) {
       console.log(error);
-      setSaving('error');
+      setSaving("error");
       setTimeout(() => {
         setSaving(undefined);
       }, 1000);
@@ -71,27 +71,27 @@ export default function UnitForm(props: UnitFormProps) {
   }
 
   return (
-    <form onSubmit={submitForm} className='flex flex-col py-4 items-center'>
-      <label className='self-start'>Name:</label>
+    <form onSubmit={submitForm} className="flex flex-col py-4 items-center">
+      <label className="self-start">Name:</label>
       <input
-        type='text'
+        type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
-        className='border-solid border-primary-2 border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2'
+        className="border-solid border-primary-2 border-opacity-50 border-2 rounded-md h-10 max-w-full my-2 px-2"
       />
       <select
-        className='p-2 mb-2 font-semibold border-solid border-primary-2 border-opacity-30 border-2 rounded-lg'
+        className="p-2 mb-2 font-semibold border-solid border-primary-2 border-opacity-30 border-2 rounded-lg"
         value={type}
         onChange={(e) => setType(e.target.value)}
       >
-        <option value='lesson'>Lesson</option>
-        <option value='excercise'>Excercse</option>
-        <option value='test'>Test</option>
+        <option value="lesson">Lesson</option>
+        <option value="excercise">Excercse</option>
+        <option value="test">Test</option>
       </select>
       <button
-        type='submit'
-        className='bg-primary-1 bg-opacity-20 rounded-lg text-xl w-3/4 h-10 hover:bg-opacity-50 hover:text-white'
+        type="submit"
+        className="bg-primary-1 bg-opacity-20 rounded-lg text-xl w-3/4 h-10 hover:bg-opacity-50 hover:text-white"
       >
         Submit
       </button>

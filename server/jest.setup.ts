@@ -1,7 +1,6 @@
 // jest.setup.ts
 
 import prisma from './src/models';
-import { PrismaClient } from '@prisma/client';
 import {
   adminUser,
   adminUserOrg,
@@ -9,7 +8,7 @@ import {
   instructorUser,
   plebUser,
   studentUser,
-  sections,
+  sectionsNoCourseId as sections,
   units,
 } from './src/mocks/initialDbMocks';
 
@@ -36,7 +35,7 @@ export async function initTestDB() {
   });
 
   await prisma.courseUnit.createMany({
-    data: units.map((unit, index) => ({
+    data: units.map((unit) => ({
       ...unit,
     })),
   });

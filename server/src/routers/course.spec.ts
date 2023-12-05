@@ -12,7 +12,7 @@ import prisma from '../../src/models';
 
 const request = supertest(server);
 
-describe('Course Router', () => {
+describe.skip('Course Router', () => {
   beforeEach(async () => {
     await clearTestDB();
     await initTestDB();

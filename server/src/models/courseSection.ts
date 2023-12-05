@@ -61,8 +61,8 @@ async function removeUnitFromSection(
   return updatedSection;
 }
 
-async function deleteSection(id: string) {
-  const deletedSection = await CourseSection.delete({ where: { id } });
+async function deleteSection(id: string, userId: string) {
+  const deletedSection = await CourseSection.delete({ where: { id, course: {organisation: {admins: {some: {user_id: userId}}}} } });
   return deletedSection;
 }
 

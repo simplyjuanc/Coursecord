@@ -147,14 +147,16 @@ async function createSection(
   courseId: string,
   userId: string
 ) {
-  const newSection = await Course.update({
+  const updatedCourse = await Course.update({
     where: {
       id: courseId,
       organisation: { admins: { some: { user_id: userId } } },
     },
     data: { syllabus: { create: { ...sectionData } } },
+    include: { syllabus: true },
   });
-  return newSection;
+  
+  return updatedCourse.syllabus[updatedCourse.syllabus.length - 1];
 }
 
 async function getCourseManagementInfo(courseId: string, userId: string) {

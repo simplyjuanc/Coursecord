@@ -4,7 +4,7 @@ import { THelpRequestDetails } from '@/types';
 import { formatDistanceToNow } from 'date-fns';
 import { Draggable } from '@hello-pangea/dnd';
  
-export default function ItemComponent({
+export default function BoardItem({
   item,
   index,
 }: {
@@ -15,7 +15,7 @@ export default function ItemComponent({
     <Draggable draggableId={item.id} index={index}>
       {(provided) => (
         <div
-          className='border-primary-red border-2 rounded-xl select-none p-2 my-4 bg-white '
+          className='border-primary-red border-2 rounded-xl select-none p-2 my-4 bg-white hover:scale-105 active:scale-105'
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -24,7 +24,7 @@ export default function ItemComponent({
               <div className='flex justify-end mr-1'>
                 <Image
                   src={item.instructor.image || ''}
-                  alt={'Instructor profile picture'}
+                  alt={item.instructor.name + ' profile picture'}
                   width={25}
                   height={25}
                   className='object-contain rounded-full mr-1 my-auto'

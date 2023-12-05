@@ -48,7 +48,7 @@ export default function Sidebar() {
       <div className='flex'>
         <div
           className={`w-1.5 rounded-tr-2xl rounded-br-2xl bg-primary-1 bg-opacity-${
-            isActive ? '50' : '0'
+            isActive ? '50' : '10'
           }`}
         ></div>
 

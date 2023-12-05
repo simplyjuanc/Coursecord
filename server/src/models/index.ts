@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
 
+const prisma = new PrismaClient();
 
 const Organisation = prisma.organisation;
 const User = prisma.user;
@@ -11,12 +11,6 @@ const CourseSection = prisma.courseSection;
 
 const HelpRequest = prisma.helpRequest;
 
-export {
-  Organisation,
-  Course,
-  User,
-  CourseUnit,
-  HelpRequest,
-  CourseSection
-}
+export { Organisation, Course, User, CourseUnit, HelpRequest, CourseSection };
 
+export default prisma;

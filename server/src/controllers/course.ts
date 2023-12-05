@@ -2,19 +2,19 @@ import { Request, Response } from 'express';
 import Organisation from '../models/organisation';
 import Course from '../models/course';
 import { RequestWithUser } from '../@types/types';
-import User from '../models/user';
 
 async function addCourse(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
     const courseData = req.body;
     const userId = (req as RequestWithUser).user.id;
-
+    console.log ('BEFORE CREATE COURSE')
     const newCourse = await Course.createCourse(
       courseData,
       orgId,
       userId
     );
+    console.log('AFTER CREATE COURSE')
     res.status(201).send(newCourse);
   } catch (error) {
     console.log(error);

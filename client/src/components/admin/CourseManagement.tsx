@@ -18,9 +18,9 @@ import {
 import { set } from 'date-fns';
 
 type CourseManagementProps = {
-  course: { 
-    title: string; 
-    id: string 
+  course: {
+    title: string;
+    id: string;
   };
   showNewUserModal: (
     role: 'student' | 'instructor',
@@ -33,10 +33,7 @@ type CourseManagementProps = {
 };
 
 export default function CourseManagement(props: CourseManagementProps) {
-  const {
-    course,
-    showNewUserModal,
-  } = props;
+  const { course, showNewUserModal } = props;
   console.log('CourseManagement - course :>> ', course);
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
@@ -56,7 +53,6 @@ export default function CourseManagement(props: CourseManagementProps) {
         setActiveCourse(updatedCourse);
       }
     })();
-
   }, [course, courses, dispatch, session]);
 
   async function removeUser(role: string, userId: string) {
@@ -77,56 +73,61 @@ export default function CourseManagement(props: CourseManagementProps) {
   }
 
   return (
-    <>
-      <div className='flex flex-row gap-4 align-middle justify-around'>
-        <h1 className='text-2xl font-bold text-center my-auto drop-shadow-lg'>
-          Course: {course.title} 
-        </h1>
-        <div className='flex flex-col gap-2 align-middle justify-evenly w-1/4'></div>
-      </div>
+    <div className='bg-white w-full flex flex-col flex-none min-h-full max-h-full rounded-xl p-6 shadow-xl border-2 border-primary-gray border-opacity-40 overflow-auto overscroll-contain scrollbar-hide mb-8'>
+      <h1 className='mb-6 mx-4'>
+        <span className='text-xl font-medium'>Course: </span>
+        <span className='text-2xl font-semibold text-center my-auto drop-shadow-sm  text-primary-1 text-opacity-70'>
+          {course.title}
+        </span>
+      </h1>
 
       {activeCourse && (
-        <div className='mt-5 mx-auto'>
+        <div className='flex flex-row flex-nowrap'>
 
-          <div className='flex items-center mb-5 justify-between'>
-            <h2 className='text-xl font-semibold'>Instructors:</h2>
-            <div>
-              <IconButton
-                icon={<MdOutlinePersonAddAlt />}
-                title='Add New User'
-                onClick={() =>
-                  showNewUserModal('instructor', activeCourse.instructors)
-                }
-              ></IconButton>
+
+          <div className='flex flex-col items-center flex-start'>
+            <div className='flex flex-row flex-nowrap justify-around w-full '>
+              <h2 className='text-xl font-semibold my-auto'>Instructors:</h2>
+              <div className=''>
+                <IconButton
+                  icon={<MdOutlinePersonAddAlt />}
+                  title='Add New User'
+                  onClick={() =>
+                    showNewUserModal('instructor', activeCourse.instructors)
+                  }
+                ></IconButton>
+              </div>
             </div>
+
+            <UserTable
+              users={activeCourse.instructors}
+              type='instructor'
+              removeUser={removeUser}
+              />
+
           </div>
 
-          <UserTable
-            users={activeCourse.instructors}
-            type='instructor'
-            removeUser={removeUser}
-          />
-
-          <div className='flex items-center my-5 justify-between'>
-            <h2 className='text-xl font-semibold'>Students:</h2>
-            <div>
-              <IconButton
-                icon={<MdOutlinePersonAddAlt />}
-                title='Add New User'
-                onClick={() =>
-                  showNewUserModal('student', activeCourse.students)
-                }
-              ></IconButton>
+          <div className='flex flex-col items-center flex-start'>
+            <div className='flex flex-row flex-nowrap justify-around w-full '>
+              <h2 className='text-xl font-semibold my-auto'>Students:</h2>
+              <div className=''>
+                <IconButton
+                  icon={<MdOutlinePersonAddAlt />}
+                  title='Add New User'
+                  onClick={() =>
+                    showNewUserModal('student', activeCourse.students)
+                  }
+                ></IconButton>
+              </div>
             </div>
+            <UserTable
+              users={activeCourse.students}
+              type='student'
+              removeUser={removeUser}
+            />
           </div>
-          
-          <UserTable
-            users={activeCourse.students}
-            type='student'
-            removeUser={removeUser}
-          />
         </div>
       )}
-    </>
+    </div>
   );
 }

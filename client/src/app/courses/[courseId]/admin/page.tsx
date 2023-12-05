@@ -47,8 +47,6 @@ export default function AdminTable() {
   ) {
     setShowNewUser(true);
     const existingUsers = users.map((user) => user[role]);
-    console.log(users);
-    console.log('EXISTING', existingUsers);
     setExistingUsers(existingUsers);
     setRole(role);
   }
@@ -64,9 +62,12 @@ export default function AdminTable() {
 // orgInfo?.courses.map((course) => course.id | title),
 
   function handleSelect(e: React.ChangeEvent<HTMLSelectElement>) {
-    if (!e.target.value || !orgInfo) return;
+    if (!orgInfo) return;
+    if (e.target.value === 'undefined') return setCourse(undefined);
+    
     const course = orgInfo.courses.find((course) => course.id === e.target.value)
     if (!course) return;
+    
     setCourse(course);
   }
   
@@ -74,9 +75,11 @@ export default function AdminTable() {
 
   return (
     <section className='flex-grow bg-white h-screen overflow-y-auto'>
+
       <div className='mt-12 max-w-[60vw] mx-auto'>
+        
         <div className='flex w-full items-center mb-4'>
-          <div className='flex justify-between w-full my-8'>
+          <div className='flex justify-between w-full mt-8 mb-6'>
               <h2>
                 <span className='text-2xl font-medium'>Organisation Management: </span>
                 <span className='text-3xl font-semibold text-primary-1 text-opacity-70'>{orgInfo?.name}</span>
@@ -97,16 +100,17 @@ export default function AdminTable() {
           </div>
         </div>
 
-        <div>
-          <h3 className='text-xl font-semibold'>Admins:</h3>
+        <div className='w-2/3 mx-auto my-3'>
+          <h3 className='text-xl font-semibold -mb-4'>Admins:</h3>
           <UserTable removeUser={removeAdmin} users={admins} type='user' />
         </div>
-        <div className='flex mx-auto max-w-[20vw] mb-6'>
-          <h2 className='text-lg my-auto font-semibold mr-4'>Select a course: </h2>
+        <div className='flex ml-auto mb-6 justify-end gap-4'>
+          <h2 className='text-lg my-auto font-semibold mr-4 '>Select a course: </h2>
           <select
-            value={course?.title || '' }
-            className='border-2 border-none rounded-lg py-2 px-4 text-opacity-70'
+            value={course?.title}
+            className='border-2 border-none rounded-lg py-2 px-4 text-opacity-70 text-center w-1/4'
             onChange={handleSelect}
+            placeholder='Course...'
           >
             <option value=''>Course...</option>
             {orgInfo && orgInfo.courses.map((course) => (

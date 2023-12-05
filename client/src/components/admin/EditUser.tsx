@@ -1,7 +1,5 @@
-import { DbUser, SessionWithToken, IRole } from '@/types';
+import { DbUser, SessionWithToken } from '@/types';
 import React, { useEffect, useState } from 'react';
-import { UserSelect } from './UserSelect';
-import { RoleSelect } from './RoleSelect';
 import IconButton from '@/components/buttons/iconButton';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import { useSession } from 'next-auth/react';

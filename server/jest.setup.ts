@@ -1,7 +1,7 @@
 // jest.setup.ts
 
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import { PrismaClient, Organisation } from '@prisma/client';
+import prisma from './src/models';
+import { PrismaClient } from '@prisma/client';
 import {
   adminUser,
   adminUserOrg,
@@ -13,30 +13,19 @@ import {
   units,
 } from './src/mocks/initialDbMocks';
 
-let mongod: MongoMemoryServer;
-let prisma: PrismaClient;
+afterAll(async () => {
+  prisma.$disconnect();
+});
 
-
-beforeAll(async () => {
-  mongod = await MongoMemoryServer.create();
-  const uri = mongod.getUri();
-  console.log('TEST URI', uri);
-  process.env.DATABASE_URL = uri;
-  
-  prisma = new PrismaClient({
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
-      },
-    },
-  });
-  
+export async function initTestDB() {
   await prisma.user.create({ data: adminUser });
   await prisma.user.create({ data: instructorUser });
   await prisma.user.create({ data: studentUser });
   await prisma.user.create({ data: plebUser });
 
-  await prisma.organisation.create({ data: adminUserOrg });
+  await prisma.organisation.create({
+    data: { ...adminUserOrg, admins: { create: { user_id: adminUser.id } } },
+  });
   await prisma.course.create({
     data: {
       ...course1,
@@ -49,28 +38,23 @@ beforeAll(async () => {
   await prisma.courseUnit.createMany({
     data: units.map((unit, index) => ({
       ...unit,
-      section: {
-        create: { data: { section_id: sections[Math.floor(30 / index)] } },
-      },
     })),
   });
-});
 
-afterAll(async () => {
-  if (mongod) {
-    await mongod.stop();
-  }
+  console.log('test db initialised');
+}
 
-  if (prisma) {
-    await prisma.$disconnect();
-  }
-});
-
-export async function initTestDB(prisma: PrismaClient) {}
-
-export async function clearTestDB(prisma: PrismaClient) {
-  await prisma.courseUnit.deleteMany();
+export async function clearTestDB() {
   await prisma.course.deleteMany();
-  await prisma.organisation.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.courseUnit.deleteMany();
+  await prisma.organisation.deleteMany();
+  await prisma.courseSection.deleteMany();
+  await prisma.helpRequest.deleteMany();
+  await prisma.courseSectionUnit.deleteMany();
+  await prisma.courseSection.deleteMany();
+  await prisma.organisationUser.deleteMany();
+  await prisma.courseInstructors.deleteMany();
+  await prisma.courseStudents.deleteMany();
+  console.log('test db cleared');
 }

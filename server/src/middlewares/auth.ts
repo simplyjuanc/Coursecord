@@ -12,7 +12,6 @@ import {
 
 async function requireAuth(req: Request, res: Response, next: NextFunction) {
   try {
-    console.log('AUTH MIDDLEWARE: Env:', process.env.NODE_ENV);
     const bypassUser = await bypassAuth(req);
     if (bypassUser) {
       (req as RequestWithUser).user = bypassUser;
@@ -62,19 +61,21 @@ async function bypassAuth(req: Request) {
   if (!(process.env.NODE_ENV === 'test' && req.headers['x-test-user'])) {
     return null;
   }
-  let user: TUser;
+  let user: TUser | undefined = undefined;
 
   switch (req.headers['x-test-user']) {
     case 'admin':
       user = adminUser;
+      break;
     case 'instructor':
       user = instructorUser;
+      break;
     case 'student':
       user = studentUser;
+      break;
     case 'pleb':
       user = plebUser;
-    default:
-      user = plebUser;
+      break;
   }
 
   return user;

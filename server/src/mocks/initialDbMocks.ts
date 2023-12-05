@@ -125,21 +125,21 @@ export const sections = [
   {
     id: '5f5b4ad57b136f00f63385c8',
     title: 'Introduction to Programming Concepts',
-    course_id: '5f5b4a587b136f00f63385bc',
+    // course_id: '5f5b4a587b136f00f63385bc',
   },
   {
     id: '5f5b4ae07b136f00f63385ca',
     title: 'Advanced Web Development',
-    course_id: '5f5b4a587b136f00f63385bc',
+    // course_id: '5f5b4a587b136f00f63385bc',
   },
   {
     id: '5f5b4aec7b136f00f63385cc',
     title: 'Database Management Systems',
-    course_id: '5f5b4a587b136f00f63385bc',
+    // course_id: '5f5b4a587b136f00f63385bc',
   },
   {
     id: '5f5b4af77b136f00f63385ce',
     title: 'Software Design Patterns',
-    course_id: '5f5b4a587b136f00f63385bc',
+    // course_id: '5f5b4a587b136f00f63385bc',
   },
 ];

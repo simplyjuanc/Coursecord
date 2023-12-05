@@ -86,10 +86,10 @@ const LoginPage: React.FC = () => {
           }
         }
 
-        @keyframes rise {
+        @keyframes rise { 
           0% {
             transform: translateY(100%);
-            opacity: 0;
+            opacity: 0; 
           }
           50% {
             opacity: 0.6;

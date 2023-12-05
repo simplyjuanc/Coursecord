@@ -3,12 +3,12 @@
 import React from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Image from 'next/image';
+import Image from "next/image";
 import googleButtonImage from "../../public/login/googleB.png";
+import Logo from "../../public/login/new logo.png";
 
 const LoginPage: React.FC = () => {
   const { data: session } = useSession();
-  console.log('session', session);
   const router = useRouter();
 
   const handleCourses = () => {
@@ -17,43 +17,106 @@ const LoginPage: React.FC = () => {
 
   const bubbleColor: string = "#1877F2";
 
-  const bubbleStyle = (size: string, left: string, delay: string): React.CSSProperties => ({
+  const bubbleStyle = (
+    size: string,
+    left: string,
+    delay: string
+  ): React.CSSProperties => ({
     width: size,
     height: size,
     backgroundColor: bubbleColor,
-    borderRadius: '50%',
+    borderRadius: "50%",
     opacity: 0.6,
-    position: 'absolute' as 'absolute',
-    bottom: '-150px',
+    position: "absolute",
+    bottom: "-150px",
     left: left,
-    animation: `rise ${Math.random() * (30 - 15) + 15}s ease-in infinite`,
-    animationDelay: delay,
+    animation: `rise ${Math.random() * (20 - 10) + 10}s ease-in infinite`, 
+  animationDelay: `${Math.random() * 1}s`, 
   });
 
   const bubbles = Array.from({ length: 20 }, (_, index) => ({
     size: `${Math.random() * (120 - 20) + 20}px`,
     left: `${Math.random() * 100}%`,
-    delay: `${Math.random() * 5}s`,
+    delay: `${Math.random() * 2}s`,
   }));
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen relative" style={{ backgroundColor: "white" }}>
+    <div
+      className="flex flex-col items-center justify-center min-h-screen relative"
+      style={{
+        overflow: "hidden",
+        backgroundColor: "#FFFFFF",
+      }}
+    >
+      <div className="logo-container absolute top-0 left-1/2 transform -translate-x-1/2 mt-4 w-1/4 md:w-1/6 lg:w-1/8">
+  <Image src={Logo} alt="Logo" width={500} height={500} layout="responsive" />
+</div>  
+
       {bubbles.map((bubble, index) => (
-        <div key={index} style={bubbleStyle(bubble.size, bubble.left, bubble.delay)} />
+        <div
+          key={index}
+          style={bubbleStyle(bubble.size, bubble.left, bubble.delay)}
+        />
       ))}
 
-      <style jsx global>{`
+      <style jsx>{`
+        .gradient-text {
+          background: linear-gradient(
+            90deg,
+            #1e90ff,
+            #4169e1,
+            #0000ff, 
+            #4682b4
+          ); 
+          background-size: 400% auto;
+          -webkit-background-clip: text;
+          color: transparent;
+          animation: gradient 10s ease infinite;
+        }
+
+        @keyframes gradient {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
         @keyframes rise {
-          0% { transform: translateY(100%); opacity: 0; }
-          50% { opacity: 0.6; }
-          100% { transform: translateY(-100vh); opacity: 0; }
+          0% {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          50% {
+            opacity: 0.6;
+          }
+          100% {
+            transform: translateY(-100vh);
+            opacity: 0;
+          } 
         }
       `}</style>
 
       <div className="text-center my-8 z-10">
-        <h1 className="text-5xl font-bold" style={{ color: "#58A6FF" }}>Studying Online is now much easier</h1>
-        <p className="text-xl" style={{ color: "#C9D1D9" }}>Courserecord will help you learn, wherever and whenever you want</p>
+        <h1 className="text-5xl font-bold gradient-text leading-relaxed">
+          Studying Online is now much easier
+        </h1>
+        <p className="text-xl gradient-text">
+          Courserecord will help you learn, wherever and whenever you want
+        </p>
       </div>
+
+      <style jsx>{`
+        .gradient-text {
+          background: linear-gradient(to right, #000033, #000080);
+          -webkit-background-clip: text;
+          color: transparent;
+        }
+      `}</style>
 
       {session ? (
         <button
@@ -64,7 +127,10 @@ const LoginPage: React.FC = () => {
           Courses
         </button>
       ) : (
-        <div onClick={() => signIn("google")} className="cursor-pointer mt-4 z-10">
+        <div
+          onClick={() => signIn("google")}
+          className="cursor-pointer mt-4 z-10"
+        >
           <Image
             src={googleButtonImage}
             alt="Sign in with Google"
@@ -74,23 +140,23 @@ const LoginPage: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 w-full max-w-4xl z-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-16 w-full max-w-4xl z-10">
         <div
-          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48"
+          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48 transform transition duration-500 ease-in-out hover:scale-105"
           style={{ backgroundColor: bubbleColor }}
         >
           <span className="text-2xl md:text-3xl font-semibold">12880+</span>
           <span>STUDENTS</span>
         </div>
         <div
-          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48"
+          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48 transform transition duration-500 ease-in-out hover:scale-105"
           style={{ backgroundColor: bubbleColor }}
         >
           <span className="text-2xl md:text-3xl font-semibold">4580%</span>
           <span>HIRE RATE</span>
         </div>
         <div
-          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48"
+          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48 transform transition duration-500 ease-in-out hover:scale-105"
           style={{ backgroundColor: bubbleColor }}
         >
           <span className="text-2xl md:text-3xl font-semibold">35</span>

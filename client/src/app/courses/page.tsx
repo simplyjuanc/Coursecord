@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { MdWavingHand } from "react-icons/md";
 import axios from "axios";
 import { Course as CourseType, SessionWithToken } from "@/types";
 
 export default function Courses() {
-  const [courses, setCourses] = useState<CourseType | CourseType[]>([]);
+  const [courses, setCourses] = useState<CourseType[]>([]);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -24,7 +24,8 @@ export default function Courses() {
               },
             }
           );
-          setCourses(response.data); // {student_of: [course: {title}]}
+          // Handle both single course object and array of courses
+          setCourses(Array.isArray(response.data) ? response.data : [response.data]);
         } catch (err) {
           console.error("Error fetching courses:", err);
         }
@@ -39,8 +40,12 @@ export default function Courses() {
   };
 
   const CourseComponent = ({ course }: { course: CourseType }) => {
-    const title = course.title || "Untitled Course";
-    const studentCount = Array.isArray(course.students) ? course.students.length : 0;
+    if (!course) {
+      return <p>No course available.</p>;
+    }
+
+    const title = course.title;
+    const studentCount = course.students ? course.students.length : 0;
 
     return (
       <div className="relative bg-white rounded-xl shadow-md hover:bg-gray-50 transition duration-200 ease-in-out">
@@ -71,12 +76,8 @@ export default function Courses() {
   };
 
   const renderCourses = () => {
-    if (!courses || (Array.isArray(courses) && courses.length === 0)) {
-      return <p>No courses available</p>;
-    }
-
-    if (!Array.isArray(courses)) {
-      return <CourseComponent course={courses} />;
+    if (courses.length === 0) {
+      return <p>No courses available.</p>;
     }
 
     return courses.map((course, index) => (

@@ -24,6 +24,9 @@ export default async function RootLayout({
 
   return (
     <html lang='en' className='min-h-screen min-w-full'>
+      <head>
+        <title>Coursecord</title>
+      </head>
       <body className={inter.className}>
         <ReduxProvider>
           <SessionProvider session={session}>

@@ -30,8 +30,8 @@ const LoginPage: React.FC = () => {
     position: "absolute",
     bottom: "-150px",
     left: left,
-    animation: `rise ${Math.random() * (30 - 15) + 15}s ease-in infinite`,
-    animationDelay: delay,
+    animation: `rise ${Math.random() * (20 - 10) + 10}s ease-in infinite`, 
+  animationDelay: `${Math.random() * 1}s`, 
   });
 
   const bubbles = Array.from({ length: 20 }, (_, index) => ({
@@ -45,12 +45,12 @@ const LoginPage: React.FC = () => {
       className="flex flex-col items-center justify-center min-h-screen relative"
       style={{
         overflow: "hidden",
-        backgroundColor: "#C0C0C0", // Silver grey white background color
+        backgroundColor: "#FFFFFF",
       }}
     >
-      <div className="logo-container absolute top-0 left-1/2 transform -translate-x-1/2 mt-4">
-        <Image src={Logo} alt="Logo" width={350} height={350} />
-      </div>
+      <div className="logo-container absolute top-0 left-1/2 transform -translate-x-1/2 mt-4 w-1/4 md:w-1/6 lg:w-1/8">
+  <Image src={Logo} alt="Logo" width={500} height={500} layout="responsive" />
+</div>  
 
       {bubbles.map((bubble, index) => (
         <div
@@ -59,44 +59,50 @@ const LoginPage: React.FC = () => {
         />
       ))}
 
-<style jsx>{`
-  .gradient-text {
-    background: linear-gradient(90deg, #1E90FF, #4169E1, #9370DB);
-    background-size: 300% auto;
-    -webkit-background-clip: text;
-    color: transparent;
-    animation: gradient 5s ease infinite;
-  }
+      <style jsx>{`
+        .gradient-text {
+          background: linear-gradient(
+            90deg,
+            #1e90ff,
+            #4169e1,
+            #0000ff,
+            #4682b4
+          ); 
+          background-size: 400% auto;
+          -webkit-background-clip: text;
+          color: transparent;
+          animation: gradient 10s ease infinite;
+        }
 
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
+        @keyframes gradient {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
 
-  @keyframes rise {
-    0% {
-      transform: translateY(100%);
-      opacity: 0;
-    }
-    50% {
-      opacity: 0.6;
-    }
-    100% {
-      transform: translateY(-100vh);
-      opacity: 0;
-    }
-  }
-`}</style>
+        @keyframes rise {
+          0% {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          50% {
+            opacity: 0.6;
+          }
+          100% {
+            transform: translateY(-100vh);
+            opacity: 0;
+          }
+        }
+      `}</style>
 
       <div className="text-center my-8 z-10">
-        <h1 className="text-5xl font-bold gradient-text">
+        <h1 className="text-5xl font-bold gradient-text leading-relaxed">
           Studying Online is now much easier
         </h1>
         <p className="text-xl gradient-text">
@@ -134,7 +140,7 @@ const LoginPage: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 w-full max-w-4xl z-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-16 w-full max-w-4xl z-10">
         <div
           className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48 transform transition duration-500 ease-in-out hover:scale-105"
           style={{ backgroundColor: bubbleColor }}

@@ -25,9 +25,13 @@ export async function getSyllabus(courseId: string, session: SessionWithToken) {
   }
 }
 
-export async function getUnit(unitId: string, session: SessionWithToken) {
+export async function getUnit(
+  unitId: string,
+  courseId: string,
+  session: SessionWithToken
+) {
   try {
-    const unitResponse = await fetch(`${baseUrl}/unit/${unitId}`, {
+    const unitResponse = await fetch(`${baseUrl}/unit/auth/${courseId}/${unitId}`, {
       method: 'GET',
       headers: {
         Authorization: session.accessToken,
@@ -113,7 +117,6 @@ export async function addSection(
   }
 }
 
-
 export async function getCourseWithRoles(
   courseId: string,
   session: SessionWithToken
@@ -125,42 +128,36 @@ export async function getCourseWithRoles(
   }
 }
 
-export async function getStudentsByCourse(
-  courseId: string
-) {
+export async function getStudentsByCourse(courseId: string) {
   try {
     const res = await fetch(`${baseUrl}/user/${courseId}/students`);
-    const data:DbUser[] = await res.json();
+    const data: DbUser[] = await res.json();
     return data;
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function getInstructorsByCourse(
-  courseId: string,
-) {
+export async function getInstructorsByCourse(courseId: string) {
   try {
     console.log('getInstructorsByCourse :>> ', courseId);
     const res = await fetch(`${baseUrl}/user/${courseId}/instructors`);
-    const data:DbUser[] = await res.json();
+    const data: DbUser[] = await res.json();
     return data;
   } catch (error) {
     console.log(error);
   }
 }
 
-
-async function fetchHelper (url:string, cb:Function) {
-   try {
-     const res = await fetch(url);
-     const data = await res.json();
-     cb(data);
-   } catch (err) {
-     console.log(err)
-   }
+async function fetchHelper(url: string, cb: Function) {
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    cb(data);
+  } catch (err) {
+    console.log(err);
+  }
 }
-
 
 export async function editSection(
   sectionId: string,

@@ -40,6 +40,14 @@ export async function initTestDB() {
     })),
   });
 
+  let i = 0;
+  for (const section of sections) {
+    await prisma.courseSection.update({
+      where: { id: section.id },
+      data: { course_units: { create: { unit_id: units[i].id } } },
+    });
+  }
+
   console.log('test db initialised');
 }
 

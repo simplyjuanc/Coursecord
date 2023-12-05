@@ -30,7 +30,7 @@ export default function UnitForm(props: UnitFormProps) {
     let newUnit = {
       id: 'placeholder',
       title,
-      type: type as 'lesson' | 'excercise' | 'test',
+      type: type as 'lesson' | 'exercise' | 'test',
       markdown_body: '',
       owner: '656b40666c0ea5f66060c942',
     };
@@ -38,7 +38,7 @@ export default function UnitForm(props: UnitFormProps) {
     dispatch(addUnitToSection({ sectionId, course_unit: { unit: newUnit } }));
     try {
       const newUnit = await addUnit(
-        { title, type: type as 'lesson' | 'excercise' | 'test' },
+        { title, type: type as 'lesson' | 'exercise' | 'test' },
         sectionId,
         session as SessionWithToken
       );

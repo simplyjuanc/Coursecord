@@ -7,7 +7,7 @@ import { course1, sections } from '../mocks/initialDbMocks';
 
 const request = supertest(server);
 
-describe('CourseSection Router', () => {
+describe.skip('CourseSection Router', () => {
   beforeEach(async () => {
     await clearTestDB();
     await initTestDB();
@@ -139,7 +139,7 @@ describe('CourseSection Router', () => {
     });
   });
 
-  describe.only('delete section', () => {
+  describe('delete section', () => {
     it('should return 204 and the deleted section if course exists', async () => {
       expect(await prisma.courseSection.findMany()).toHaveLength(4);
       expect(

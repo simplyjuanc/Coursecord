@@ -8,7 +8,7 @@ type CourseTableProps = {
 
 export default function UserTable(props: CourseTableProps) {
   const { users, type, removeUser } = props;
-
+  console.log('users, type, removeUser :>> ', props);
   return (
     <div>
       {users.length === 0 ? (

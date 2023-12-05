@@ -1,10 +1,11 @@
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import IconButton from '@/components/buttons/iconButton';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AddExistingUser from './AddNewUser';
-import { SessionWithToken, User } from '@/types';
+import { Course, SessionWithToken, TCourseManagement, User } from '@/types';
 import {
   deleteUserFromCourse,
+  getCourseData,
   getCourseManagementInfo,
 } from '@/services/apiClientService';
 import { useSession } from 'next-auth/react';
@@ -14,9 +15,13 @@ import {
   addCourse,
   removeUserFromCourse,
 } from '@/store/slices/managementSlice';
+import { set } from 'date-fns';
 
 type CourseManagementProps = {
-  courseId: string;
+  course: { 
+    title: string; 
+    id: string 
+  };
   showNewUserModal: (
     role: 'student' | 'instructor',
     users: { [key: string]: User }[]
@@ -29,32 +34,37 @@ type CourseManagementProps = {
 
 export default function CourseManagement(props: CourseManagementProps) {
   const {
-    courseId,
+    course,
     showNewUserModal,
   } = props;
-
+  console.log('CourseManagement - course :>> ', course);
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const courses = useAppSelector((state) => state.management.cachedCourses);
+  const [activeCourse, setActiveCourse] = useState<TCourseManagement>();
 
   useEffect(() => {
     (async () => {
-      if (!courses[courseId]) {
-        const course = await getCourseManagementInfo(
-          courseId,
-          session as SessionWithToken
-        );
-        dispatch(addCourse(course));
+      if (!courses[course.id]) {
+        const updatedCourse = await getCourseData(course.id);
+        if (!updatedCourse) {
+          console.error('Course not found');
+          return;
+        }
+        console.log('updatedCourse :>> ', updatedCourse);
+        dispatch(addCourse(updatedCourse));
+        setActiveCourse(updatedCourse);
       }
     })();
-  }, []);
+
+  }, [course, courses, dispatch, session]);
 
   async function removeUser(role: string, userId: string) {
     try {
-      dispatch(removeUserFromCourse({ role, userId, courseId }));
+      dispatch(removeUserFromCourse({ role, userId, courseId: course.id }));
 
       const userDeleted = await deleteUserFromCourse(
-        courseId,
+        course.id,
         role,
         userId,
         session as SessionWithToken
@@ -70,13 +80,14 @@ export default function CourseManagement(props: CourseManagementProps) {
     <>
       <div className='flex flex-row gap-4 align-middle justify-around'>
         <h1 className='text-2xl font-bold text-center my-auto drop-shadow-lg'>
-          {courses[courseId]?.title} Course{' '}
+          Course: {course.title} 
         </h1>
         <div className='flex flex-col gap-2 align-middle justify-evenly w-1/4'></div>
       </div>
 
-      {courses[courseId] != null && (
+      {activeCourse && (
         <div className='mt-5 mx-auto'>
+
           <div className='flex items-center mb-5 justify-between'>
             <h2 className='text-xl font-semibold'>Instructors:</h2>
             <div>
@@ -84,13 +95,14 @@ export default function CourseManagement(props: CourseManagementProps) {
                 icon={<MdOutlinePersonAddAlt />}
                 title='Add New User'
                 onClick={() =>
-                  showNewUserModal('instructor', courses[courseId].instructors)
+                  showNewUserModal('instructor', activeCourse.instructors)
                 }
               ></IconButton>
             </div>
           </div>
+
           <UserTable
-            users={courses[courseId].instructors}
+            users={activeCourse.instructors}
             type='instructor'
             removeUser={removeUser}
           />
@@ -102,13 +114,14 @@ export default function CourseManagement(props: CourseManagementProps) {
                 icon={<MdOutlinePersonAddAlt />}
                 title='Add New User'
                 onClick={() =>
-                  showNewUserModal('student', courses[courseId].students)
+                  showNewUserModal('student', activeCourse.students)
                 }
               ></IconButton>
             </div>
           </div>
+          
           <UserTable
-            users={courses[courseId].students}
+            users={activeCourse.students}
             type='student'
             removeUser={removeUser}
           />

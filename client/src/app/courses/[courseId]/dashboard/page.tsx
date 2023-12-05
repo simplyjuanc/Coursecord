@@ -67,7 +67,7 @@ const Dashboard: NextPage = () => {
             <h2 className='text-lg font-semibold mb-2  text-primary-1 text-opacity-80'>
               Instructors
             </h2>
-            <div className='flex gap-4'>
+            <div className='flex gap-4 justify-center'>
               {courseInfo &&
                 courseInfo.instructors.map((instructor) => (
                   <div
@@ -81,7 +81,7 @@ const Dashboard: NextPage = () => {
                         width={32}
                         height={32}
                       />
-                    </div>{' '}
+                    </div>
                     <p className='my-auto font-semibold'>{instructor.instructor.name}</p>
                   </div>
                 ))}
@@ -108,7 +108,7 @@ const Dashboard: NextPage = () => {
           </div>
         </div>
       </div>
-      <div className='container relative py-12 px-16 bg-white shadow-lg shadow-slate-400 my-8 rounded-2xl w-2/5'>
+      <div className='container relative py-12 px-16 bg-white shadow-lg shadow-slate-400 my-8 rounded-2xl w-2/5 overflow-hidden'>
         <Image
           src={'/dashboard-girl-macbook.jpg'}
           alt={'Girl with Macbook'}

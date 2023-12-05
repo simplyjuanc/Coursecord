@@ -1,18 +1,30 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; 
 import { useSession, signOut } from "next-auth/react";
 import { MdWavingHand } from "react-icons/md";
 import axios from "axios";
-import { Course as CourseType, SessionWithToken } from "@/types";
 import Image from "next/image";
 import Logo from "../../../public/login/new logo.png";
+import { Course as CourseType, SessionWithToken } from "@/types";
+import { TbLogout2 } from "react-icons/tb";
 
 export default function Courses() {
   const [studentCourses, setStudentCourses] = useState<CourseType[]>([]);
   const [instructorCourses, setInstructorCourses] = useState<CourseType[]>([]);
   const router = useRouter();
   const { data: session } = useSession();
+
+  useEffect(() => {
+    document.body.style.background = "linear-gradient(45deg, #FFFFFF, #C0C0C0)";
+    document.body.style.backgroundSize = "100% 100%";
+    document.body.style.backgroundRepeat = "no-repeat";
+
+    return () => {
+      document.body.style.background = "";
+      document.body.style.backgroundSize = "";
+    };
+  }, []);
 
   useEffect(() => {
     if (session) {
@@ -106,20 +118,21 @@ export default function Courses() {
   return (
     <div className="relative w-full md:w-3/4 lg:w-1/2 mx-auto pt-10 md:pt-20 lg:pt-40 px-4">
       <div className="fixed top-0 right-0 left-0 p-4 flex justify-between items-center">
-      <div className="ml-1 bg-gradient-to-r from-blue-200 to-blue-300 rounded-md">
-  <Image
-    src={Logo}
-    alt="Company Logo"
-    width={200}
-    height={200}
-    layout="intrinsic"
-  />
-</div>
-<button
+        <div className="ml-1 bg-gradient-to-r from-blue-200 to-blue-300 rounded-md shadow-lg">
+          {" "}
+          <Image
+            src={Logo}
+            alt="Company Logo"
+            width={200}
+            height={200}
+            layout="intrinsic"
+          />
+        </div>
+        <button
   onClick={handleLogout}
-  className="mr-1 bg-gradient-to-r from-blue-200 to-blue-300 text-black rounded-md px-4 py-2"
+  className="mr-1 bg-gradient-to-r from-blue-200 to-blue-300 text-black rounded-md px-4 py-2 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center"
 >
-  Logout
+  Logout <TbLogout2 className="ml-2" />
 </button>
       </div>
       <div className="mt-15">

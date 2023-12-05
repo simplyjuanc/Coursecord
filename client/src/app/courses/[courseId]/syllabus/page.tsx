@@ -158,7 +158,7 @@ export default function Syllabus() {
               setType={(type) =>
                 setUnit((prev) => ({
                   ...prev!,
-                  type: type as 'lesson' | 'excercise' | 'test',
+                  type: type as 'lesson' | 'exercise' | 'test',
                 }))
               }
               saveChanges={saveChanges}

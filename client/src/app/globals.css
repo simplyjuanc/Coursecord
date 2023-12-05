@@ -10,8 +10,15 @@
   margin: 0;
 }
 
+html {
+  height: 100vh;
+  overflow: hidden;
+}
+
 body {
   line-height: 1.5;
+  height: 100vh;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -131,4 +138,20 @@ body {
   100% {
     transform: translateY(-100%);
   }
+}
+
+
+@layer utilities {
+  
+  /* For Webkit-based browsers (Chrome, Safari and Opera) */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* For IE, Edge and Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
 }

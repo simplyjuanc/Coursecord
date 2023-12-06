@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import Organisation from '../models/organisation';
 import Course from '../models/course';
 import { RequestWithUser } from '../@types/types';
 import User from '../models/user';
@@ -87,6 +86,7 @@ async function getCourseManagementInfo(req: Request, res: Response) {
       courseId,
       userId
     );
+    if (!courseManagementInfo) throw new Error('Course not found');
     res.status(200).send(courseManagementInfo);
   } catch (error) {
     console.log(error);

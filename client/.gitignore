@@ -37,3 +37,4 @@ src/app/test-pages/**
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+**/.DS_Store

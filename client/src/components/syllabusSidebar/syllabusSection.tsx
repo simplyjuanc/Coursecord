@@ -40,7 +40,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
 
   const unitIcons = {
     lesson: <RiBook2Line />,
-    excercise: <FaPencilRuler />,
+    exercise: <FaPencilRuler />,
     test: <IoDocumentTextOutline />,
   };
 
@@ -63,10 +63,10 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
     <>
       <div className='flex flex-row-reverse'>
         <div
-          className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-1 bg-opacity-${mode != null ? '50' : '0'}`}
+          className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-1 bg-opacity-${mode != null ? '50' : '10'}`}
         ></div>
 
-        <div className='w-full pr-4 pl-4'>
+        <div className='w-full px-4'>
           <div
             className={
               `flex text-xl p-2 min-w-full rounded-xl` +
@@ -140,15 +140,15 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
               return (
                 <li key={index}>
                   <button
-                    onClick={() => selectUnit(unit.unit)}
+                    onClick={() => selectUnit(unit)}
                     className={`flex items-center text-xl p-2 min-w-full rounded-xl mt-2 ${
-                      selectedUnit === unit.unit.id
+                      selectedUnit === unit.id
                         ? 'bg-primary-1 bg-opacity-10 text-primary-1'
                         : 'hover:bg-primary-1 hover:bg-opacity-5 rounded-xl p-2 w-full'
                     }`}
                   >
-                    {unitIcons[unit.unit.type]}
-                    <div className='ml-2'>{unit.unit.title}</div>
+                    {unitIcons[unit.type]}
+                    <div className='ml-2'>{unit.title}</div>
                   </button>
                 </li>
               );

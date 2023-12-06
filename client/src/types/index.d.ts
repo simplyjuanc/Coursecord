@@ -68,12 +68,13 @@ export interface Section {
 }
 
 export interface CompiledSection extends Section {
-  course_units: { unit: Unit }[];
+  course_units: Unit[];
 }
 
 export interface CourseInfo {
   id: string;
   organisation: { name: string };
+  organisation_id: string | null;
   title: string;
   description: string;
   students: {
@@ -83,6 +84,8 @@ export interface CourseInfo {
     instructor: { id: string; name: string; image: string; email: string };
   }[];
 }
+
+type CourseSectionInfo = Pick<CourseInfo, 'id' | 'title' | 'description' | 'organisation_id'>
 
 //TODO: change this so that emails are only sent to management since they are info that students probably wouldn't want public.
 

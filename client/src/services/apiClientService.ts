@@ -1,9 +1,10 @@
-import { DbUser, Section, SessionWithToken, Unit } from '@/types';
+import { CourseInfo, CourseSectionInfo, DbUser, Section, SessionWithToken, Unit } from '@/types';
 
 const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
 export async function getSyllabus(courseId: string, session: SessionWithToken) {
   try {
+    console.log('getSyllabus - courseId, session.accessToken :>> ', courseId, session.accessToken);
     const syllabusResponse = await fetch(
       `${baseUrl}/section/syllabus/${courseId}`,
       {
@@ -15,8 +16,7 @@ export async function getSyllabus(courseId: string, session: SessionWithToken) {
     );
 
     if (!syllabusResponse.ok) {
-      console.log('Syllabus could not be retrieved');
-      return undefined;
+      throw new Error('Syllabus could not be retrieved');
     }
 
     return await syllabusResponse.json();
@@ -33,11 +33,11 @@ export async function getUnit(unitId: string, session: SessionWithToken) {
         Authorization: session.accessToken,
       },
     });
-
+    console.log('getUnit - unitResponse :>> ', unitResponse);
     if (!unitResponse.ok) {
-      console.log('Unit could not be retrieved');
-      return undefined;
+      throw new Error('Unit could not be retrieved');
     }
+
 
     return await unitResponse.json();
   } catch (error) {
@@ -51,6 +51,7 @@ export async function addUnit(
   session: SessionWithToken
 ) {
   try {
+    console.log('addUnit - unit, sectionId :>> ', unit, sectionId);
     const unitResponse = await fetch(
       `${baseUrl}/unit/auth/org/${'656b40666c0ea5f66060c942'}/${sectionId}`,
       {
@@ -62,11 +63,16 @@ export async function addUnit(
         body: JSON.stringify(unit),
       }
     );
+    console.log('addUnit - unit, sectionId :>> ', unit, sectionId);
 
-    return unitResponse.ok ? await unitResponse.json() : null;
+    if (!unitResponse.ok) {
+      console.log(unitResponse)
+      throw new Error('Unit could not be added')
+    };
+    const data: Unit = await unitResponse.json();
+    return data;
   } catch (error) {
-    console.log(error);
-    return null;
+    console.error(error);
   }
 }
 
@@ -107,7 +113,10 @@ export async function addSection(
       }
     );
 
-    return sectionResponse.ok ? await sectionResponse.json() : null;
+    if (!sectionResponse.ok) throw new Error('Section could not be added');
+
+    const data:CourseSectionInfo  = await sectionResponse.json();
+    return data
   } catch (error) {
     console.log(error);
   }
@@ -130,7 +139,7 @@ export async function getStudentsByCourse(
 ) {
   try {
     const res = await fetch(`${baseUrl}/user/${courseId}/students`);
-    const data:DbUser[] = await res.json();
+    const data: DbUser[] = await res.json();
     return data;
   } catch (error) {
     console.log(error);
@@ -143,7 +152,7 @@ export async function getInstructorsByCourse(
   try {
     console.log('getInstructorsByCourse :>> ', courseId);
     const res = await fetch(`${baseUrl}/user/${courseId}/instructors`);
-    const data:DbUser[] = await res.json();
+    const data: DbUser[] = await res.json();
     return data;
   } catch (error) {
     console.log(error);
@@ -151,14 +160,14 @@ export async function getInstructorsByCourse(
 }
 
 
-async function fetchHelper (url:string, cb:Function) {
-   try {
-     const res = await fetch(url);
-     const data = await res.json();
-     cb(data);
-   } catch (err) {
-     console.log(err)
-   }
+async function fetchHelper(url: string, cb: Function) {
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    cb(data);
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 

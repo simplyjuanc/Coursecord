@@ -25,33 +25,27 @@ export default function SectionForm(props: SectionFormProps) {
   async function submitForm(e: React.FormEvent<HTMLFormElement>) {
     setSaving('saving');
     e.preventDefault();
-    const newSection = {
-      id: 'placeholder',
-      title,
-      course_id: course!.id,
-    };
-
-    dispatch(addSectionReducer({ section: { ...newSection, course_units: [] } }));
-    const addedSection = await addSection(
-      { title }, course!.id,
-      session as SessionWithToken
-    );
-    if (addedSection) {
-      const newId = addedSection.id;
-      const section = { ...newSection, id: newId, course_units: [] };
+    try {
+      const addedSection = await addSection(
+        { title }, 
+        course!.id,
+        session as SessionWithToken
+      );
+      if (!addedSection) throw new Error('Could not add section');      
+      const section = { ...addedSection, course_id:course!.id, course_units: [] };
+      dispatch(addSectionReducer({ section: { ...section} }));
       dispatch(updateSection({ newSection: section }));
       setSaving('done');
-      setTimeout(() => {
-        setSaving(undefined);
-      }, 1000);
-    } else {
+      
+    } catch (error) {
       setSaving('error');
-      setTimeout(() => {
-        setSaving(undefined);
-      }, 1000);
+      
+    } finally {
+      setTimeout(() => setSaving(undefined), 1000);
+      setTitle('');
+      closeForm();      
     }
-    setTitle('');
-    closeForm();
+
   }
 
   return (

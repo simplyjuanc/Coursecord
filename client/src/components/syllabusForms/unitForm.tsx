@@ -7,8 +7,6 @@ import { SessionWithToken } from '@/types';
 import { addUnitToSection, updateUnit } from '@/store/slices/courseSlice';
 import { addUnit } from '@/services/apiClientService';
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
-
 type UnitFormProps = {
   closeForm: (sectionId: string) => void;
   sectionId: string;
@@ -25,48 +23,35 @@ export default function UnitForm(props: UnitFormProps) {
 
   async function submitForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-
     setSaving('saving');
-    let newUnit = {
-      id: 'placeholder',
-      title,
-      type: type as 'lesson' | 'excercise' | 'test',
-      markdown_body: '',
-      owner: '656b40666c0ea5f66060c942',
-    };
 
-    dispatch(addUnitToSection({ sectionId, course_unit: { unit: newUnit } }));
     try {
       const newUnit = await addUnit(
-        { title, type: type as 'lesson' | 'excercise' | 'test' },
+        { 
+          title, 
+          type: type as 'lesson' | 'exercise' | 'test' 
+        },
         sectionId,
         session as SessionWithToken
       );
-      if (newUnit) {
-        const newId = newUnit.id;
-        const unit = { ...newUnit, id: newId };
 
-        dispatch(updateUnit({ newUnit: unit }));
-        setSaving('done');
-        setTimeout(() => {
-          setSaving(undefined);
-        }, 1000);
-      } else {
-        setSaving('error');
-        setTimeout(() => {
-          setSaving(undefined);
-        }, 1000);
-      }
+      if (!newUnit) throw new Error('Could not add unit');
+      console.log('addUnit - newUnit :>> ', newUnit);
 
+      const unit = { ...newUnit, id: newUnit.id };
+      
+      dispatch(updateUnit({ newUnit: unit }));
+      setSaving('done');
+      setTimeout(() => setSaving(undefined), 1000);
+        
+      dispatch(addUnitToSection({ sectionId, course_unit: { unit: newUnit } }));
       setTitle('');
       setType('lesson');
       closeForm(sectionId);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setSaving('error');
-      setTimeout(() => {
-        setSaving(undefined);
-      }, 1000);
+      setTimeout(() => setSaving(undefined), 1000);
     }
   }
 

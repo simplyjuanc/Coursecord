@@ -30,6 +30,9 @@ async function addUnitToSection(
   unitId: string,
   userId: string
 ) {
+
+  console.log('model - addUnitToSection - {sectionId, unitId, userId} :>> ', {sectionId, unitId, userId});
+  
   const updatedSection = await CourseSection.update({
     where: {
       id: sectionId,
@@ -39,7 +42,8 @@ async function addUnitToSection(
       course_units: { create: { unit_id: unitId } },
     },
   });
-
+  
+  console.log('model - addUnitToSection - updatedSection :>> ', updatedSection);
   return updatedSection;
 }
 
@@ -48,6 +52,7 @@ async function removeUnitFromSection(
   unitId: string,
   userId: string
 ) {
+  console.log('model - removeUnitFromSection - sectionId, unitId, userId :>> ', {sectionId, unitId, userId});
   const updatedSection = await CourseSection.update({
     where: {
       id: sectionId,
@@ -57,6 +62,7 @@ async function removeUnitFromSection(
       course_units: { deleteMany: { section_id: sectionId, unit_id: unitId } },
     },
   });
+  console.log('model - removeUnitFromSection - updatedSection :>> ', {updatedSection});
 
   return updatedSection;
 }
@@ -67,15 +73,13 @@ async function deleteSection(id: string) {
 }
 
 async function getSyllabus(courseId: string) {
+  console.log('model - getSyllabus - courseId :>> ', courseId);
   const sections = await CourseSection.findMany({
     where: { course: { id: courseId } },
     include: {
-      course_units: {
-        select: { unit: { select: { id: true, title: true, type: true } } },
-      },
-    },
+      course_units: {select: {unit: true}} }
   });
-
+  console.log('model - getSyllabus - sections[0] :>> ', sections[0]);
   return sections;
 }
 

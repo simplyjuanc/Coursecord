@@ -56,9 +56,10 @@ async function deleteSection(req: Request, res: Response) {
 async function getCourseSyllabus(req: Request, res: Response) {
   try {
     const { courseId } = req.params;
+    console.log('controller - getCourseSyllabus - courseId :>> ', courseId);
 
     const syllabus = await CourseSection.getSyllabus(courseId);
-    console.log(syllabus);
+    console.log('controller - getCourseSyllabus - syllabus :>> ', syllabus);
     res.status(200).send(syllabus);
   } catch (error) {
     console.log(error);

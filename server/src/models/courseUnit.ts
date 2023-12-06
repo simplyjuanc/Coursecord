@@ -41,7 +41,9 @@ async function editCourseUnit(
 }
 
 async function getUnit(id: string) {
-  const unit = await CourseUnit.findUnique({ where: { id } });
+  console.log('model - getUnit - id :>> ', id);
+  const unit = await CourseUnit.findUnique({ where: {id} });
+  console.log('model - getUnit - unit :>> ', unit);
   return unit;
 }
 

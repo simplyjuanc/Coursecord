@@ -65,7 +65,7 @@ const courseSlice = createSlice({
           (section) => section.id === payload.sectionId
         );
         if (section) {
-          section.course_units.push(payload.course_unit);
+          section.course_units.push(payload.course_unit.unit);
         }
       }
     },
@@ -73,7 +73,7 @@ const courseSlice = createSlice({
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.map((section) => {
           const units = section.course_units.map((unit) =>
-            unit.unit.id === payload.newUnit.id ? payload.newUnit : unit
+            unit.id === payload.newUnit.id ? payload.newUnit : unit
           );
 
           return {
@@ -88,7 +88,7 @@ const courseSlice = createSlice({
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.map((section) => {
           const units = section.course_units.filter(
-            (unit) => unit.unit.id !== payload.unitId
+            (unit) => unit.id !== payload.unitId
           );
 
           return {

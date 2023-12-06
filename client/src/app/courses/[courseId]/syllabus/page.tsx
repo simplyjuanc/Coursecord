@@ -41,14 +41,16 @@ export default function Syllabus() {
 
   useEffect(() => {
     if (!courseInfo) {
-      getCourseData(courseId).then((courseInfo) => {
-        dispatch(setCourseInfo({ info: courseInfo }));
-      });
+      getCourseData(courseId)
+        .then((courseInfo) => {
+          dispatch(setCourseInfo({ info: courseInfo }));
+        });
     }
     if (!syllabus.length && session) {
-      getSyllabus(courseId, session as SessionWithToken).then((syllabus) => {
-        dispatch(setSyllabus({ syllabus }));
-      });
+      getSyllabus(courseId, session as SessionWithToken)
+        .then((syllabus) => {
+          dispatch(setSyllabus({ syllabus }));
+        });
     }
   }, []);
 
@@ -117,7 +119,9 @@ export default function Syllabus() {
                 </h2>
               )
             ) : (
-              'Choose a unit to view from the right!'
+              <h2 className='text-xl px-6 py-1 my-6 border-b-primary-1 border-opacity-30 border-b-4 border-b-solid rounded-b align-middle font-medium'>
+                Choose a unit to view from the right!
+              </h2>
             )}
           {isAdmin  &&
           <div className='flex absolute right-1 top-1'>

@@ -1,9 +1,6 @@
 'use client';
 import React from 'react';
 import { MdOutlineRestoreFromTrash } from 'react-icons/md';
-import { SessionWithToken } from '@/types';
-import { useSession } from 'next-auth/react';
-import { deleteUserFromCourse } from '@/services/apiClientService';
 
 type UserRowProps = {
   user: { name: string; email: string; id: string };
@@ -23,7 +20,10 @@ export default function UserRow({
       <div className={`flex flex-row justify-center col-span-1 gap-2 py-2 bg-white border-b border-primary-2 border-opacity-40`}>
         <div
           className='cursor-pointer'
-          onClick={() => removeUser(role, user.id)}
+          onClick={() => {
+            console.log('role, user.id :>> ', role, user.id);
+            removeUser(role, user.id)
+          }}
         >
           <MdOutlineRestoreFromTrash />
         </div>

@@ -78,13 +78,13 @@ const LoginPage: React.FC = () => {
   }
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen relative"
+      className="relative flex flex-col items-center justify-center min-h-screen"
       style={{
         overflow: "hidden",
         backgroundColor: "#FFFFFF",
       }}
     >
-      <div className="logo-container absolute top-0 left-1/2 transform -translate-x-1/2 mt-4 w-1/4 md:w-1/6 lg:w-1/8 z-50">
+      <div className="absolute top-0 z-50 w-1/4 mt-4 transform -translate-x-1/2 logo-container left-1/2 md:w-1/6 lg:w-1/8">
         <Image
           src={Logo}
           alt="Logo"
@@ -164,8 +164,8 @@ const LoginPage: React.FC = () => {
         }
       `}</style>
 
-      <div className="text-center my-8 z-10">
-        <h1 className="text-5xl font-bold gradient-text leading-relaxed">
+      <div className="z-10 my-8 text-center">
+        <h1 className="text-5xl font-bold leading-relaxed gradient-text">
           Studying Online is now much easier
         </h1>
         <p className="text-xl gradient-text">
@@ -184,7 +184,7 @@ const LoginPage: React.FC = () => {
       {session ? (
         <button
           onClick={handleCourses}
-          className="rounded-full shadow-md hover:bg-blue-700 font-bold text-white mt-4 px-6 py-2 z-10"
+          className="z-10 py-3 mt-4 text-lg font-bold text-white rounded-full shadow-md px-7 hover:bg-blue-700"
           style={{ backgroundColor: bubbleColor }}
         >
           Courses
@@ -192,37 +192,37 @@ const LoginPage: React.FC = () => {
       ) : (
         <div
           onClick={() => signIn("google")}
-          className="cursor-pointer mt-4 z-10"
+          className="z-10 mt-4 cursor-pointer"
         >
           <Image
             src={googleButtonImage}
             alt="Sign in with Google"
-            width={200}
-            height={50}
+            width={300}
+            height={75}
           />
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-16 w-full max-w-4xl z-10">
+      <div className="z-10 grid w-full max-w-4xl grid-cols-1 gap-4 mt-16 md:grid-cols-3">
         <div
-          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48 transform transition duration-500 ease-in-out hover:scale-105"
+          className="flex flex-col items-center justify-center w-full h-64 p-4 text-white transition duration-500 ease-in-out transform shadow-lg rounded-2xl md:h-48 hover:scale-105"
           style={{ backgroundColor: bubbleColor }}
         >
-          <span className="text-2xl md:text-3xl font-semibold">12880+</span>
+          <span className="text-2xl font-semibold md:text-3xl">12880+</span>
           <span>STUDENTS</span>
         </div>
         <div
-          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48 transform transition duration-500 ease-in-out hover:scale-105"
+          className="flex flex-col items-center justify-center w-full h-64 p-4 text-white transition duration-500 ease-in-out transform shadow-lg rounded-2xl md:h-48 hover:scale-105"
           style={{ backgroundColor: bubbleColor }}
         >
-          <span className="text-2xl md:text-3xl font-semibold">4580%</span>
+          <span className="text-2xl font-semibold md:text-3xl">4580%</span>
           <span>HIRE RATE</span>
         </div>
         <div
-          className="flex flex-col items-center justify-center p-4 rounded-2xl shadow-lg text-white w-full h-64 md:h-48 transform transition duration-500 ease-in-out hover:scale-105"
+          className="flex flex-col items-center justify-center w-full h-64 p-4 text-white transition duration-500 ease-in-out transform shadow-lg rounded-2xl md:h-48 hover:scale-105"
           style={{ backgroundColor: bubbleColor }}
         >
-          <span className="text-2xl md:text-3xl font-semibold">35</span>
+          <span className="text-2xl font-semibold md:text-3xl">35</span>
           <span>INSTRUCTORS</span>
         </div>
       </div>

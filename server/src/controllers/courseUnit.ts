@@ -21,7 +21,7 @@ async function addCourseUnit(req: Request, res: Response) {
     res.status(201).send({ newUnit, updatedSection });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error:\n', error });
+    res.status(500).send({ message: 'Internal Server Error'});
   }
 }
 
@@ -69,10 +69,10 @@ async function deleteUnit(req: Request, res: Response) {
 
     const deletedUnit = await CourseUnit.deleteCourseUnit(unitId, userId);
 
-    res.status(200).send({ message: `Deleted content:\n ${deletedUnit}` });
+    res.status(200).send(deletedUnit);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error:\n', error });
+    res.status(500).send({ message: 'Internal Server Error' });
   }
 }
 
@@ -83,27 +83,33 @@ async function editUnit(req: Request, res: Response) {
     const userId = (req as RequestWithUser).user.id;
 
     const unitData = req.body;
-    const updatedContent = await CourseUnit.editCourseUnit(
+    const updatedUnit = await CourseUnit.editCourseUnit(
       unitId,
       unitData,
       userId
     );
-    res.status(200).send({ message: `Updated content:\n ${updatedContent}` });
+    res.status(200).send(updatedUnit);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error:\n', error });
+    res.status(500).send({ message: 'Internal Server Error'});
   }
 }
 
 async function getUnit(req: Request, res: Response) {
   try {
-    const { unitId } = req.params;
-    const unit = await CourseUnit.getUnit(unitId);
+    const { courseId, unitId } = req.params;
+    const userId = (req as RequestWithUser).user.id;
+
+    const unit = await CourseUnit.getUnit(unitId, courseId, userId);
+
+    if (!unit) {
+      return res.status(401).send({ message: 'unit can not be accessed' });
+    }
 
     res.status(200).send(unit);
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: 'Internal Server Error:\n', error });
+    res.status(500).send({ message: 'Internal Server Error'});
   }
 }
 

@@ -20,7 +20,7 @@ export default function MarkdownForm(props: MarkdownFormProps) {
 
   const unitIcons = {
     lesson: <RiBook2Line />,
-    excercise: <FaPencilRuler />,
+    exercise: <FaPencilRuler />,
     test: <IoDocumentTextOutline />,
   };
 
@@ -45,7 +45,7 @@ export default function MarkdownForm(props: MarkdownFormProps) {
   }
 
   return (
-    <div className='w-full flex-grow flex flex-col  p-6'>
+    <div className='w-full flex-grow flex flex-col p-6'>
       <div className='w-full flex justify-center my-4 text-xl'>
         <button
           className={`mx-4 border-b-4 rounded-bl-md rounded-br-md border-b-primary-1 ${
@@ -72,10 +72,10 @@ export default function MarkdownForm(props: MarkdownFormProps) {
             className='rounded-lg mr-4 p-1'
           >
             <option value='lesson'>Lesson</option>
-            <option value='excercise'>Excercise</option>
+            <option value='exercise'>Exercise</option>
             <option value='test'>Test</option>
           </select>
-          {unitIcons[type as 'lesson' | 'excercise' | 'test']}
+          {unitIcons[type as 'lesson' | 'exercise' | 'test']}
         </div>
       </div>
       {preview ? (

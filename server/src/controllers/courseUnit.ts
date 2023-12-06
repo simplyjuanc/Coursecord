@@ -5,20 +5,19 @@ import { RequestWithUser } from '../@types/types';
 
 async function addCourseUnit(req: Request, res: Response) {
   try {
+    const userId = (req as RequestWithUser).user.id;
     const { orgId, sectionId } = req.params;
     const unitData = req.body;
-
-    const userId = (req as RequestWithUser).user.id;
-
+    
     const newUnit = await CourseUnit.createCourseUnit(orgId, unitData, userId);
-
-    const updatedSection = await CourseSection.addUnitToSection(
+    
+    await CourseSection.addUnitToSection(
       sectionId,
       newUnit.id,
       userId
-    );
-
-    res.status(201).send({ newUnit, updatedSection });
+      );
+      
+    res.status(201).send(newUnit);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error'});
@@ -28,14 +27,16 @@ async function addCourseUnit(req: Request, res: Response) {
 async function addUnitToSection(req: Request, res: Response) {
   try {
     const { sectionId, unitId } = req.params;
-
     const userId = (req as RequestWithUser).user.id;
 
+    console.log('controller - addUnitToSection - sectionId, unitId, userId :>> ', sectionId, unitId, userId);
     const updatedSection = await CourseSection.addUnitToSection(
       sectionId,
       unitId,
       userId
-    );
+      );
+    console.log('controller - addUnitToSection - updatedSection :>> ', updatedSection);
+    
     res.status(200).send({ updatedSection });
   } catch (error) {
     console.log(error);

@@ -34,7 +34,7 @@ const Dashboard: NextPage = () => {
   };
 
   return (
-    <div className='flex gap-8 justify-between w-full mx-12'>
+    <div className='flex gap-8 justify-between w-full bg-white px-12'>
       <div className='container  py-12 px-16 bg-white shadow-lg shadow-slate-400 my-8 rounded-xl w-3/5'>
         <h1 className='text-3xl font-bold mb-8'>{courseInfo?.title} Home</h1>
 

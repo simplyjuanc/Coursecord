@@ -9,20 +9,15 @@ async function addCourseUnit(req: Request, res: Response) {
     const { orgId, sectionId } = req.params;
     const unitData = req.body;
     
-    console.log('controller - addCourseUnit - userId, orgId, sectionId :>> ', {userId, orgId, sectionId});
-    console.log('controller - addCourseUnit - unitData :>> ', unitData);
-    
     const newUnit = await CourseUnit.createCourseUnit(orgId, unitData, userId);
-    console.log('controller - addCourseUnit - newUnit :>> ', newUnit);
     
-    const updatedSection = await CourseSection.addUnitToSection(
+    await CourseSection.addUnitToSection(
       sectionId,
       newUnit.id,
       userId
       );
-    console.log('controller - addCourseUnit - updatedSection :>> ', updatedSection);
       
-    res.status(201).send({ newUnit, updatedSection });
+    res.status(201).send(newUnit);
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal Server Error'});

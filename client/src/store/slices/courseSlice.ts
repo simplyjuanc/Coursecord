@@ -60,20 +60,27 @@ const courseSlice = createSlice({
         payload,
       }: PayloadAction<{ sectionId: string; course_unit: { unit: Unit } }>
     ) => {
+      const {
+        sectionId,
+        course_unit
+      } = payload;
+
       if (state.syllabus && state.courseInfo) {
         const section = state.syllabus.find(
-          (section) => section.id === payload.sectionId
+          (section) => section.id === sectionId
         );
         if (section) {
-          section.course_units.push(payload.course_unit.unit);
+          section.course_units.push(course_unit);
         }
       }
+
+      console.log('STATE', state.syllabus);
     },
     updateUnit: (state, { payload }: PayloadAction<{ newUnit: Unit }>) => {
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.map((section) => {
           const units = section.course_units.map((unit) =>
-            unit.id === payload.newUnit.id ? payload.newUnit : unit
+            unit.unit.id === payload.newUnit.id ? payload.newUnit : unit
           );
 
           return {
@@ -88,7 +95,7 @@ const courseSlice = createSlice({
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.map((section) => {
           const units = section.course_units.filter(
-            (unit) => unit.id !== payload.unitId
+            (unit) => unit.unit.id !== payload.unitId
           );
 
           return {

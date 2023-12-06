@@ -1,10 +1,22 @@
-import { Course, CourseSectionInfo, DbUser, Section, SessionWithToken, TCourseManagement, Unit } from '@/types';
+import {
+  CourseInfo,
+  CourseSectionInfo,
+  DbUser,
+  Section,
+  SessionWithToken,
+  TCourseManagement,
+  Unit,
+} from '@/types';
 
 const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
 export async function getSyllabus(courseId: string, session: SessionWithToken) {
   try {
-    console.log('getSyllabus - courseId, session.accessToken :>> ', courseId, session.accessToken);
+    console.log(
+      'getSyllabus - courseId, session.accessToken :>> ',
+      courseId,
+      session.accessToken
+    );
     const syllabusResponse = await fetch(
       `${baseUrl}/section/syllabus/${courseId}`,
       {
@@ -14,7 +26,8 @@ export async function getSyllabus(courseId: string, session: SessionWithToken) {
         },
       }
     );
-    if (!syllabusResponse.ok) throw new Error('Syllabus could not be retrieved');
+    if (!syllabusResponse.ok)
+      throw new Error('Syllabus could not be retrieved');
     return await syllabusResponse.json();
   } catch (error) {
     console.log(error);
@@ -27,19 +40,22 @@ export async function getUnit(
   session: SessionWithToken
 ) {
   try {
-    const unitResponse = await fetch(`${baseUrl}/unit/auth/${courseId}/${unitId}`, {
-      method: 'GET',
-      headers: {
-        Authorization: session.accessToken,
-      },
-    });
+    const unitResponse = await fetch(
+      `${baseUrl}/unit/auth/${courseId}/${unitId}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: session.accessToken,
+        },
+      }
+    );
     console.log('getUnit - unitResponse :>> ', unitResponse);
     if (!unitResponse.ok) {
       throw new Error('Unit could not be retrieved');
     }
 
-    const data:Unit = await unitResponse.json();
-    return data
+    const data: Unit = await unitResponse.json();
+    return data;
   } catch (error) {
     console.log(error);
   }
@@ -51,7 +67,7 @@ export async function addUnit(
   session: SessionWithToken
 ) {
   try {
-    console.log('addUnit - unit, sectionId :>> ', unit, sectionId);
+    // console.log('addUnit - unit, sectionId :>> ', unit, sectionId);
     const unitResponse = await fetch(
       `${baseUrl}/unit/auth/org/${'656b40666c0ea5f66060c942'}/${sectionId}`,
       {
@@ -66,9 +82,9 @@ export async function addUnit(
     console.log('addUnit - unit, sectionId :>> ', unit, sectionId);
 
     if (!unitResponse.ok) {
-      console.log(unitResponse)
-      throw new Error('Unit could not be added')
-    };
+      console.log(unitResponse);
+      throw new Error('Unit could not be added');
+    }
     const data: Unit = await unitResponse.json();
     return data;
   } catch (error) {
@@ -115,8 +131,8 @@ export async function addSection(
 
     if (!sectionResponse.ok) throw new Error('Section could not be added');
 
-    const data:CourseSectionInfo  = await sectionResponse.json();
-    return data
+    const data: CourseSectionInfo = await sectionResponse.json();
+    return data;
   } catch (error) {
     console.log(error);
   }
@@ -237,7 +253,7 @@ export async function getCourseData(courseId: string) {
       console.log('Course could not be retrieved');
       return null;
     }
-    const data:Course = await courseResponse.json();
+    const data: CourseInfo = await courseResponse.json();
     return data;
   } catch (error) {
     console.log(error);
@@ -300,7 +316,7 @@ export async function getCourseManagementInfo(
       console.log('Course could not be retrieved');
       return null;
     }
-    const data:TCourseManagement = await courseResponse.json()
+    const data: TCourseManagement = await courseResponse.json();
     return data;
   } catch (error) {
     console.log(error);

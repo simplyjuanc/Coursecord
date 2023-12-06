@@ -20,7 +20,7 @@ export default function MarkdownForm(props: MarkdownFormProps) {
 
   const unitIcons = {
     lesson: <RiBook2Line />,
-    excercise: <FaPencilRuler />,
+    exercise: <FaPencilRuler />,
     test: <IoDocumentTextOutline />,
   };
 
@@ -72,10 +72,10 @@ export default function MarkdownForm(props: MarkdownFormProps) {
             className='rounded-lg mr-4 p-1'
           >
             <option value='lesson'>Lesson</option>
-            <option value='excercise'>Exercise</option>
+            <option value='exercise'>Exercise</option>
             <option value='test'>Test</option>
           </select>
-          {unitIcons[type as 'lesson' | 'excercise' | 'test']}
+          {unitIcons[type as 'lesson' | 'exercise' | 'test']}
         </div>
       </div>
       {preview ? (

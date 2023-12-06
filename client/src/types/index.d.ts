@@ -45,6 +45,7 @@ export type THelpRequestDetails = {
   }[]
   instructor: DbUser | null;
 };
+
 export interface Course {
   id: string;
   organisation: string;
@@ -74,7 +75,7 @@ export interface Section {
 }
 
 export interface CompiledSection extends Section {
-  course_units: Unit[];
+  course_units: {unit: Unit}[];
 }
 
 export interface CourseInfo {

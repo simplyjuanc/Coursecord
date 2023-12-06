@@ -22,11 +22,8 @@ async function addSection(req: Request, res: Response) {
 async function editSection(req: Request, res: Response) {
   try {
     const { sectionId } = req.params;
-
     const userId = (req as RequestWithUser).user.id;
-
     const sectionData = req.body;
-
     const updatedSection = await CourseSection.editSection(
       sectionId,
       sectionData,
@@ -59,7 +56,10 @@ async function getCourseSyllabus(req: Request, res: Response) {
     console.log('controller - getCourseSyllabus - courseId :>> ', courseId);
 
     const syllabus = await CourseSection.getSyllabus(courseId);
+    if (!syllabus) throw new Error('Syllabus not found');
+
     console.log('controller - getCourseSyllabus - syllabus :>> ', syllabus);
+    
     res.status(200).send(syllabus);
   } catch (error) {
     console.log(error);

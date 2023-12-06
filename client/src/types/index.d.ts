@@ -48,6 +48,7 @@ export type THelpRequestDetails = {
 export interface Course {
   id: string;
   organisation: string;
+  organisation_id: string;
   title: string;
   description: string;
   instructors: { instructor: { name: string; email: string; id: string } }[];

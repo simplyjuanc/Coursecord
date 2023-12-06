@@ -14,11 +14,7 @@ export async function getSyllabus(courseId: string, session: SessionWithToken) {
         },
       }
     );
-
-    if (!syllabusResponse.ok) {
-      throw new Error('Syllabus could not be retrieved');
-    }
-
+    if (!syllabusResponse.ok) throw new Error('Syllabus could not be retrieved');
     return await syllabusResponse.json();
   } catch (error) {
     console.log(error);
@@ -42,8 +38,8 @@ export async function getUnit(
       throw new Error('Unit could not be retrieved');
     }
 
-
-    return await unitResponse.json();
+    const data:Unit = await unitResponse.json();
+    return data
   } catch (error) {
     console.log(error);
   }

@@ -100,30 +100,31 @@ export default function Syllabus() {
 
   return (
     <>
-      <section className='flex flex-grow h-screen bg-white'>
-        <div className='flex flex-col w-[60vw] mx-auto h-[95vh] overflow-y-auto bg-white shadow-lg m-auto rounded-xl px-4 border-2 border-primary-2 border-opacity-50'>
-          <div className='flex w-full justify-end'>
-            <h2 className='text-4xl pl-4 py-1 my-4 mx-auto border-l-primary-1 border-opacity-30 border-l-[0.5rem] border-l-solid rounded-tl rounded-bl align-middle font-semibold'>
-              {unit != null ? (
-                editMode ? (
-                  <input
-                    className='rounded-lg p-1 border-primary-2 border-2 border-opacity-100'
-                    onChange={(e) =>
-                      setUnit((prev) => ({ ...prev!, title: e.target.value }))
-                    }
-                    value={unit.title}
-                  />
-                ) : (
-                  <span className='p-1'>{unit.title}</span>
-                )
+      <section className='flex flex-col flex-grow h-screen bg-white'>
+        <div className='flex flex-row flex-nowrap justify-center mx-auto w-[60vw] relative'>
+            {unit != null ? (
+              editMode ? (
+                <input
+                  className='text-3xl px-6 py-1 my-6 rounded-lg p-1 border-primary-2 border border-opacity-40 font-medium text-center'
+                  onChange={(e) =>
+                    setUnit((prev) => ({ ...prev!, title: e.target.value }))
+                  }
+                  value={unit.title}
+                />
               ) : (
-                'Choose a unit to view from the right!'
-              )}
-            </h2>
-            {isAdmin && saving != null && (
+                <h2 className='text-3xl px-6 py-1 my-6 border-b-primary-1 border-opacity-30 border-b-[0.5rem] border-b-solid rounded-b align-middle font-semibold'>
+                  {unit.title}
+                </h2>
+              )
+            ) : (
+              'Choose a unit to view from the right!'
+            )}
+          {isAdmin  &&
+          <div className='flex absolute right-1 top-1'>
+            {saving != null && (
               <Spinner active={saving === 'saving'} />
             )}
-            {isAdmin && editMode && (
+            {editMode && (
               <>
                 <button
                   onClick={deleteUnit}
@@ -139,7 +140,7 @@ export default function Syllabus() {
                 </button>
               </>
             )}
-            {isAdmin && unit != null && (
+            {unit != null && (
               <button
                 onClick={() => setEditMode((prev) => !prev)}
                 className='mx-4 my-6 max-h-min bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
@@ -148,19 +149,15 @@ export default function Syllabus() {
               </button>
             )}
           </div>
+        }
+        </div>
+        <div className='flex flex-col w-[60vw] mx-auto min-h-[85vh] overflow-y-auto bg-white shadow-md rounded-xl px-4 border border-primary-2 border-opacity-10'>
           {unit != null && editMode ? (
             <MarkdownForm
               text={unit.markdown_body}
               type={unit.type}
-              setText={(text) =>
-                setUnit((prev) => ({ ...prev!, markdown_body: text }))
-              }
-              setType={(type) =>
-                setUnit((prev) => ({
-                  ...prev!,
-                  type: type as 'lesson' | 'exercise' | 'test',
-                }))
-              }
+              setText={(text) => setUnit((prev) => ({ ...prev!, markdown_body: text }))}
+              setType={(type) => setUnit((prev) => ({...prev!, type: type as 'lesson' | 'exercise' | 'test',}))}
               saveChanges={saveChanges}
             />
           ) : (

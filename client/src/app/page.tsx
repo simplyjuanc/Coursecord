@@ -20,7 +20,8 @@ const LoginPage: React.FC = () => {
   const bubbleStyle = (
     size: string,
     left: string,
-    delay: string
+    delay: string,
+    bottom: string
   ): React.CSSProperties => ({
     width: size,
     height: size,
@@ -28,18 +29,53 @@ const LoginPage: React.FC = () => {
     borderRadius: "50%",
     opacity: 0.6,
     position: "absolute",
-    bottom: "-150px",
+    bottom: bottom,
     left: left,
-    animation: `rise ${Math.random() * (20 - 10) + 10}s ease-in infinite`, 
-  animationDelay: `${Math.random() * 1}s`, 
+    animation: `rise ${Math.random() * (20 - 10) + 10}s ease-in infinite`,
+    animationDelay: delay,
   });
 
   const bubbles = Array.from({ length: 20 }, (_, index) => ({
     size: `${Math.random() * (120 - 20) + 20}px`,
     left: `${Math.random() * 100}%`,
-    delay: `${Math.random() * 2}s`,
+    delay: `0s`,
+    bottom: "-150px",
   }));
 
+  const initialBubbles = Array.from({ length: 10 }, (_, index) => ({
+    size: `${Math.random() * (120 - 20) + 20}px`,
+    left: `${Math.random() * 100}%`,
+    delay: `0s`,
+    bottom: `${Math.random() * 100}vh`,
+  }));
+
+  // In your render method
+  {
+    bubbles.map((bubble, index) => (
+      <div
+        key={index}
+        style={bubbleStyle(
+          bubble.size,
+          bubble.left,
+          bubble.delay,
+          bubble.bottom
+        )}
+      />
+    ));
+  }
+  {
+    initialBubbles.map((bubble, index) => (
+      <div
+        key={index + bubbles.length}
+        style={bubbleStyle(
+          bubble.size,
+          bubble.left,
+          bubble.delay,
+          bubble.bottom
+        )}
+      />
+    ));
+  }
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen relative"
@@ -48,17 +84,44 @@ const LoginPage: React.FC = () => {
         backgroundColor: "#FFFFFF",
       }}
     >
-      <div className="logo-container absolute top-0 left-1/2 transform -translate-x-1/2 mt-4 w-1/4 md:w-1/6 lg:w-1/8">
-  <Image src={Logo} alt="Logo" width={500} height={500} layout="responsive" />
-</div>  
+      <div className="logo-container absolute top-0 left-1/2 transform -translate-x-1/2 mt-4 w-1/4 md:w-1/6 lg:w-1/8 z-50">
+        <Image
+          src={Logo}
+          alt="Logo"
+          width={500}
+          height={500}
+          layout="responsive"
+        />
+      </div>
 
       {bubbles.map((bubble, index) => (
         <div
           key={index}
-          style={bubbleStyle(bubble.size, bubble.left, bubble.delay)}
+          style={{
+            ...bubbleStyle(
+              bubble.size,
+              bubble.left,
+              bubble.delay,
+              bubble.bottom
+            ),
+            zIndex: 10,
+          }}
         />
       ))}
-
+      {initialBubbles.map((bubble, index) => (
+        <div
+          key={index + bubbles.length}
+          style={{
+            ...bubbleStyle(
+              bubble.size,
+              bubble.left,
+              bubble.delay,
+              bubble.bottom
+            ),
+            zIndex: 10,
+          }}
+        />
+      ))}
       <style jsx>{`
         .gradient-text {
           background: linear-gradient(
@@ -67,7 +130,7 @@ const LoginPage: React.FC = () => {
             #4169e1,
             #0000ff, 
             #4682b4
-          ); 
+          );
           background-size: 400% auto;
           -webkit-background-clip: text;
           color: transparent;
@@ -97,7 +160,7 @@ const LoginPage: React.FC = () => {
           100% {
             transform: translateY(-100vh);
             opacity: 0;
-          } 
+          }
         }
       `}</style>
 

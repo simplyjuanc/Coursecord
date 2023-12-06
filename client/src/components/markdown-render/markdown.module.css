@@ -2,7 +2,7 @@
   font-size: 2rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  border-left-color: rgba(255, 0, 0, 0.3);
+  border-left-color: rgba(0, 165, 255, 0.3);
   border-left-width: 0.5rem;
   padding-left: 1rem;
   border-top-left-radius: 5px;
@@ -90,6 +90,8 @@
   border-radius: 5px;
   font-style: italic;
   background-color: rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  max-width: fit-content;
 }
 
 .markdown iframe {

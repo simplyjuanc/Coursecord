@@ -128,7 +128,7 @@ const LoginPage: React.FC = () => {
             90deg,
             #1e90ff,
             #4169e1,
-            #0000ff,
+            #0000ff, 
             #4682b4
           );
           background-size: 400% auto;

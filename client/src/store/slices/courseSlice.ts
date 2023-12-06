@@ -76,18 +76,20 @@ const courseSlice = createSlice({
 
       console.log('STATE', state.syllabus);
     },
-    updateUnit: (state, { payload }: PayloadAction<{ newUnit: Unit }>) => {
+    updateUnit: (state, { payload }: PayloadAction<{ id: string, newUnit: Unit }>) => {
+      const {id, newUnit} = payload;
       if (state.syllabus && state.courseInfo) {
         const newSyllabus = state.syllabus.map((section) => {
           const units = section.course_units.map((unit) =>
-            unit.unit.id === payload.newUnit.id ? payload.newUnit : unit
+            unit.unit.id === id ? {unit: newUnit} : unit
           );
 
           return {
             ...section,
-            units,
+            course_units: units,
           };
         });
+        console.log('update',newSyllabus);
         return { ...state, syllabus: newSyllabus };
       }
     },
@@ -100,9 +102,10 @@ const courseSlice = createSlice({
 
           return {
             ...section,
-            units,
+            course_units: units,
           };
         });
+        console.log('delete', newSyllabus);
         return { ...state, syllabus: newSyllabus };
       }
     },

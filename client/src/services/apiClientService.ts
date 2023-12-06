@@ -111,6 +111,21 @@ export async function editUnit(unit: Unit, session: SessionWithToken) {
   }
 }
 
+export async function deleteUnit(unitId: string, session: SessionWithToken) {
+  try {
+    const unitResponse = await fetch(`${baseUrl}/unit/auth/${unitId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: session.accessToken,
+      },
+    });
+
+    return unitResponse.ok;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function addSection(
   section: Partial<Section>,
   course_id: string,

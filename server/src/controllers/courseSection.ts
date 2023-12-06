@@ -57,8 +57,6 @@ async function getCourseSyllabus(req: Request, res: Response) {
 
     const syllabus = await CourseSection.getSyllabus(courseId);
     if (!syllabus) throw new Error('Syllabus not found');
-
-    console.log('controller - getCourseSyllabus - syllabus :>> ', syllabus);
     
     res.status(200).send(syllabus);
   } catch (error) {

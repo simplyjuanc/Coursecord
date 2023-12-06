@@ -1,6 +1,5 @@
 'use client';
 import { CompiledSection, SessionWithToken, Unit } from '../../types';
-import { CgAlbum } from 'react-icons/cg';
 import { CgAddR } from 'react-icons/cg';
 import { useState } from 'react';
 import IconButton from '../buttons/iconButton';
@@ -42,17 +41,17 @@ export default function SyllabusSidebar(props: SyllabusSidebarProps) {
   }
 
   return (
-    <div className='h-screen min-h-full min-w-max bg-white shadow-xl relative box-border flex flex-col'>
-      <div className='flex p-4'>
-        <h2 className='my-auto text-2xl text-primary-2 font-semibold w-[12vw]'>
+    <div className='h-screen min-h-full min-w-max bg-white shadow-xl relative flex flex-col w-1/6'>
+      <div className='flex p-4 px-4'>
+        <h2 className='my-auto text-2xl text-primary-2 font-semibold w-[12vw] '>
           {courseName}
         </h2>
-        <div className='w-10 h-10 rounded-full bg-primary-1 bg-opacity-50 ml-4'></div>
+        <div className='w-10 h-10 rounded-full bg-primary-1 bg-opacity-50'></div>
       </div>
-      <div className='py-12 overflow-y-auto'>
+      <div className='mt-6 overflow-y-auto'>
         <ul>
-          {sections.map((section, index) => (
-            <li key={index} className='pt-4'>
+          {sections.map((section) => (
+            <li key={section.id} className='pt-4'>
               <SyllabusSection
                 setSaving={setSaving}
                 isAdmin={isAdmin}

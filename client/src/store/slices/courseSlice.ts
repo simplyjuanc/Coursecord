@@ -60,14 +60,21 @@ const courseSlice = createSlice({
         payload,
       }: PayloadAction<{ sectionId: string; course_unit: { unit: Unit } }>
     ) => {
+      const {
+        sectionId,
+        course_unit
+      } = payload;
+
       if (state.syllabus && state.courseInfo) {
         const section = state.syllabus.find(
-          (section) => section.id === payload.sectionId
+          (section) => section.id === sectionId
         );
         if (section) {
-          section.course_units.push(payload.course_unit);
+          section.course_units.push(course_unit);
         }
       }
+
+      console.log('STATE', state.syllabus);
     },
     updateUnit: (state, { payload }: PayloadAction<{ newUnit: Unit }>) => {
       if (state.syllabus && state.courseInfo) {

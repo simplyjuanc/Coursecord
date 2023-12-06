@@ -30,7 +30,7 @@ export default function Syllabus() {
 
   const isAdmin = useAppSelector((state) => state.user.roles.admin);
   const courseInfo = useAppSelector((state) => state.course.courseInfo);
-  const syllabus: CompiledSection[] | undefined = useAppSelector(
+  const syllabus: CompiledSection[] = useAppSelector(
     (state) => state.course.syllabus
   );
   const cachedUnits = useAppSelector((state) => state.course.cachedUnits);
@@ -42,11 +42,12 @@ export default function Syllabus() {
   useEffect(() => {
     if (!courseInfo) {
       getCourseData(courseId).then((courseInfo) => {
-        dispatch(setCourseInfo({ info: courseInfo }));
+        if (courseInfo) dispatch(setCourseInfo({ info: courseInfo }));
       });
     }
     if (!syllabus.length && session) {
       getSyllabus(courseId, session as SessionWithToken).then((syllabus) => {
+        console.log('SYLLABUS', syllabus);
         dispatch(setSyllabus({ syllabus }));
       });
     }
@@ -57,7 +58,11 @@ export default function Syllabus() {
     setEditMode(false);
 
     if (!cachedUnits[unitInfo.id]) {
-      const unit = await getUnit(unitInfo.id, courseId, session as SessionWithToken);
+      const unit = await getUnit(
+        unitInfo.id,
+        courseId,
+        session as SessionWithToken
+      );
       setUnit(unit);
     } else {
       setUnit(cachedUnits[unitInfo.id]);
@@ -67,6 +72,7 @@ export default function Syllabus() {
   async function saveChanges() {
     setEditMode(false);
     setSaving('saving');
+    console.log('unit :>> ', unit);
     const unitEdited = await editUnit(unit!, session as SessionWithToken);
     if (unitEdited) {
       dispatch(
@@ -100,54 +106,58 @@ export default function Syllabus() {
 
   return (
     <>
-      <section className='flex flex-grow h-screen bg-white'>
-        <div className='flex flex-col w-[60vw] mx-auto h-[95vh] overflow-y-auto bg-white shadow-lg m-auto rounded-xl px-4 border-2 border-primary-2 border-opacity-50'>
-          <div className='flex w-full justify-end'>
-            <h2 className='text-4xl pl-4 py-1 my-4 mx-auto border-l-primary-1 border-opacity-30 border-l-[0.5rem] border-l-solid rounded-tl rounded-bl align-middle font-semibold'>
-              {unit != null ? (
-                editMode ? (
-                  <input
-                    className='rounded-lg p-1 border-primary-2 border-2 border-opacity-100'
-                    onChange={(e) =>
-                      setUnit((prev) => ({ ...prev!, title: e.target.value }))
-                    }
-                    value={unit.title}
-                  />
-                ) : (
-                  <span className='p-1'>{unit.title}</span>
-                )
-              ) : (
-                'Choose a unit to view from the right!'
-              )}
+      <section className='flex flex-col flex-grow h-screen bg-white'>
+        <div className='flex flex-row flex-nowrap justify-center mx-auto w-[60vw] relative'>
+          {unit != null ? (
+            editMode ? (
+              <input
+                className='text-3xl px-6 py-1 my-6 rounded-lg p-1 border-primary-2 border border-opacity-40 font-medium text-center'
+                onChange={(e) =>
+                  setUnit((prev) => ({ ...prev!, title: e.target.value }))
+                }
+                value={unit.title}
+              />
+            ) : (
+              <h2 className='text-3xl px-6 py-1 my-6 border-b-primary-1 border-opacity-30 border-b-[0.5rem] border-b-solid rounded-b align-middle font-semibold'>
+                {unit.title}
+              </h2>
+            )
+          ) : (
+            <h2 className='text-xl px-6 py-1 my-6 border-b-primary-1 border-opacity-30 border-b-4 border-b-solid rounded-b align-middle font-medium'>
+              Choose a unit to view from the right!
             </h2>
-            {isAdmin && saving != null && (
-              <Spinner active={saving === 'saving'} />
-            )}
-            {isAdmin && editMode && (
-              <>
+          )}
+          {isAdmin && (
+            <div className='flex absolute right-1 top-1'>
+              {saving != null && <Spinner active={saving === 'saving'} />}
+              {editMode && (
+                <>
+                  <button
+                    onClick={deleteUnit}
+                    className='mx-4 my-6 bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
+                  >
+                    <RiDeleteBin4Line />
+                  </button>
+                  <button
+                    onClick={saveChanges}
+                    className='mx-4 my-6 bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
+                  >
+                    <AiOutlineSave />
+                  </button>
+                </>
+              )}
+              {unit != null && (
                 <button
-                  onClick={deleteUnit}
-                  className='mx-4 my-6 bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
+                  onClick={() => setEditMode((prev) => !prev)}
+                  className='mx-4 my-6 max-h-min bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
                 >
-                  <RiDeleteBin4Line />
+                  <MdOutlineEdit />
                 </button>
-                <button
-                  onClick={saveChanges}
-                  className='mx-4 my-6 bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
-                >
-                  <AiOutlineSave />
-                </button>
-              </>
-            )}
-            {isAdmin && unit != null && (
-              <button
-                onClick={() => setEditMode((prev) => !prev)}
-                className='mx-4 my-6 max-h-min bg-primary-1 bg-opacity-30 aspect-square rounded-xl text-2xl p-2 hover:bg-primary-1 hover:bg-opacity-50'
-              >
-                <MdOutlineEdit />
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          )}
+        </div>
+        <div className='flex flex-col w-[60vw] mx-auto min-h-[85vh] overflow-y-auto bg-white shadow-md rounded-xl px-4 border border-primary-2 border-opacity-10'>
           {unit != null && editMode ? (
             <MarkdownForm
               text={unit.markdown_body}

@@ -40,7 +40,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
 
   const unitIcons = {
     lesson: <RiBook2Line />,
-    excercise: <FaPencilRuler />,
+    exercise: <FaPencilRuler />,
     test: <IoDocumentTextOutline />,
   };
 
@@ -49,7 +49,7 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
   }
 
   async function editSection() {
-    if (!editTitle) return;
+    if (!editTitle) return setMode(undefined);
 
     dispatch(updateSection({ newSection: { ...section, title: editTitle } }));
     await api.editSection(
@@ -57,16 +57,17 @@ export default function SyllabusSection(props: SyllabusSectionProps) {
       { title: editTitle },
       session as SessionWithToken
     );
+    setMode(undefined);
   }
 
   return (
     <>
       <div className='flex flex-row-reverse'>
         <div
-          className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-1 bg-opacity-${mode != null ? '50' : '0'}`}
+          className={`w-1.5 rounded-tl-2xl rounded-bl-2xl bg-primary-1 bg-opacity-${mode != null ? '50' : '10'}`}
         ></div>
 
-        <div className='w-full pr-4 pl-4'>
+        <div className='w-full px-4'>
           <div
             className={
               `flex text-xl p-2 min-w-full rounded-xl` +

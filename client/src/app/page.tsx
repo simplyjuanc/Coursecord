@@ -49,7 +49,6 @@ const LoginPage: React.FC = () => {
     bottom: `${Math.random() * 100}vh`,
   }));
 
-  // In your render method
   {
     bubbles.map((bubble, index) => (
       <div

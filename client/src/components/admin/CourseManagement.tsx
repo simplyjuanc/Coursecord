@@ -34,16 +34,16 @@ type CourseManagementProps = {
 
 export default function CourseManagement(props: CourseManagementProps) {
   const { course, showNewUserModal } = props;
-  console.log('CourseManagement - course :>> ', course);
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const courses = useAppSelector((state) => state.management.cachedCourses);
-  const [activeCourse, setActiveCourse] = useState<TCourseManagement>();
-
+  const [activeCourse, setActiveCourse] = useState<Course>();
+  // console.log('CourseManagement - course :>> ', course);
+  
   useEffect(() => {
     (async () => {
       if (!courses[course.id]) {
-        const updatedCourse = await getCourseData(course.id);
+        const updatedCourse = await getCourseManagementInfo(course.id, session as SessionWithToken);
         if (!updatedCourse) {
           console.error('Course not found');
           return;
@@ -57,6 +57,7 @@ export default function CourseManagement(props: CourseManagementProps) {
 
   async function removeUser(role: string, userId: string) {
     try {
+      console.log('removeUser - role, userId :>> ', role, userId);
       dispatch(removeUserFromCourse({ role, userId, courseId: course.id }));
 
       const userDeleted = await deleteUserFromCourse(
@@ -72,22 +73,24 @@ export default function CourseManagement(props: CourseManagementProps) {
     }
   }
 
+
+  console.log('activeCourse :>> ', activeCourse);
+
   return (
-    <div className='bg-white w-full flex flex-col flex-none min-h-full max-h-full rounded-xl p-6 shadow-xl border-2 border-primary-gray border-opacity-40 overflow-auto overscroll-contain scrollbar-hide mb-8'>
-      <h1 className='mb-6 mx-4'>
+    <div className='flex flex-col flex-none w-full max-h-full min-h-full p-6 mb-8 overflow-auto bg-white border-2 shadow-xl rounded-xl border-primary-gray border-opacity-40 overscroll-contain scrollbar-hide'>
+      <h1 className='mx-4 mb-6'>
         <span className='text-xl font-medium'>Course: </span>
-        <span className='text-2xl font-semibold text-center my-auto drop-shadow-sm  text-primary-1 text-opacity-70'>
-          {course.title}
+        <span className='my-auto text-2xl font-semibold text-center drop-shadow-sm text-primary-1 text-opacity-70'>
+          { course.title }
         </span>
       </h1>
 
       {activeCourse && (
         <div className='flex flex-row flex-nowrap'>
 
-
           <div className='flex flex-col items-center flex-start'>
-            <div className='flex flex-row flex-nowrap justify-around w-full '>
-              <h2 className='text-xl font-semibold my-auto'>Instructors:</h2>
+            <div className='flex flex-row justify-around w-full flex-nowrap '>
+              <h2 className='my-auto text-xl font-semibold'>Instructors:</h2>
               <div className=''>
                 <IconButton
                   icon={<MdOutlinePersonAddAlt />}
@@ -108,8 +111,8 @@ export default function CourseManagement(props: CourseManagementProps) {
           </div>
 
           <div className='flex flex-col items-center flex-start'>
-            <div className='flex flex-row flex-nowrap justify-around w-full '>
-              <h2 className='text-xl font-semibold my-auto'>Students:</h2>
+            <div className='flex flex-row justify-around w-full flex-nowrap '>
+              <h2 className='my-auto text-xl font-semibold'>Students:</h2>
               <div className=''>
                 <IconButton
                   icon={<MdOutlinePersonAddAlt />}

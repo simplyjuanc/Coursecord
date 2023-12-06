@@ -90,9 +90,11 @@ async function getUserCourses(userId: string) {
 
 async function getInstructorsByCourse(courseId: string) {
   try {
+    console.log('model - getInstructorsByCourse - courseId :>> ', courseId);
     const instructors = await User.findMany({
-      where: { instructor_of: { some: { id: courseId } } },
+      where: { instructor_of: { some: { course_id: courseId }}}
     });
+    console.log('model - getInstructorsByCourse - instructors :>> ', instructors);
     return instructors;
   } catch (error) {
     console.log(error);
@@ -103,6 +105,7 @@ async function getInstructorsByCourse(courseId: string) {
 async function isCourseInstructor(userId: string, courseId: string) {
   try {
     const instructors = await getInstructorsByCourse(courseId);
+    console.log('model - isCourseInstructor - instructors :>> ', instructors);
     if (!instructors?.length) throw new Error("No instructors found");
     return instructors.some((instructor) => instructor.id === userId);
   } catch (error) {

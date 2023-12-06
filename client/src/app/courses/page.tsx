@@ -82,17 +82,17 @@ export default function Courses() {
     return (
       <div
         onClick={() => handleJoinCourse(course.id)}
-        className="relative bg-gradient-to-r from-blue-200 to-blue-300 rounded-xl shadow-lg hover:shadow-lg transition-all duration-200 m-4 p-4 border-2 border-transparent hover:border-yellow-500 transform hover:scale-110 cursor-pointer w-full sm:w-64 h-64 sm:h-64 flex items-center justify-center"
+        className="relative flex items-center justify-center w-full h-64 p-4 m-4 transition-all duration-200 transform border-2 border-transparent shadow-lg cursor-pointer bg-gradient-to-r from-blue-200 to-blue-300 rounded-xl hover:shadow-lg hover:border-yellow-500 hover:scale-110 sm:w-64 sm:h-64"
       >
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 mx-2 mt-2 bg-myColor3 bg-opacity-50 text-center rounded-xl flex items-center justify-center">
+          <div className="flex items-center justify-center w-16 h-16 mx-2 mt-2 text-center bg-opacity-50 bg-myColor3 rounded-xl">
             <h1 className="text-2xl font-bold text-myColor4">
               {course.title && typeof course.title === "string" ? course.title[0].toUpperCase() : ""}
             </h1>
           </div>
           <div className="p-2 text-center">
             <h2 className="text-lg font-bold text-myColor5">{course.title}</h2>
-            <h3 className="font-light pb-1 w-full text-sm text-myColor6">
+            <h3 className="w-full pb-1 text-sm font-light text-myColor6">
               {course.description}
             </h3>
           </div>
@@ -102,7 +102,7 @@ export default function Courses() {
   };
 
   const renderNoCoursesAvailable = () => (
-    <div className="text-center text-xl mt-10">
+    <div className="mt-10 text-xl text-center">
       No courses available.
     </div>
   );
@@ -132,9 +132,9 @@ export default function Courses() {
   };
 
   return (
-    <div className="relative w-full md:w-3/4 lg:w-1/2 mx-auto pt-10 md:pt-20 lg:pt-40 px-4">
-      <div className="fixed top-0 right-0 left-0 p-4 flex justify-between items-center">
-        <div className="ml-1 bg-gradient-to-r from-blue-200 to-blue-300 rounded-md shadow-lg">
+    <div className="relative w-full px-4 pt-10 mx-auto md:w-3/4 lg:w-1/2 md:pt-20 lg:pt-40">
+      <div className="fixed top-0 left-0 right-0 flex items-center justify-between p-4">
+        <div className="ml-1 rounded-md shadow-lg bg-gradient-to-r from-blue-200 to-blue-300">
           <Image
             src={Logo}
             alt="Company Logo"
@@ -145,13 +145,13 @@ export default function Courses() {
         </div>
         <button
           onClick={handleLogout}
-          className="mr-1 bg-gradient-to-r from-blue-200 to-blue-300 text-black rounded-md px-4 py-2 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center"
+          className="flex items-center px-4 py-2 mr-1 text-black transition-all duration-200 transform rounded-md shadow-lg bg-gradient-to-r from-blue-200 to-blue-300 hover:shadow-xl hover:scale-105"
         >
           Logout <TbLogout2 className="ml-2" />
         </button>
       </div>
 
-      <div className="flex justify-center space-x-4 py-6">
+      <div className="flex justify-center py-6 space-x-4">
         <button
           onClick={() => handleCourseTypeSelection("student")}
           className={`px-4 py-2 rounded-md ${selectedCourseType === "student" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
@@ -167,13 +167,13 @@ export default function Courses() {
       </div>
 
       <div className="mt-15">
-        <div className="flex text-4xl md:text-5xl lg:text-6xl font-semibold pb-12">
+        <div className="flex justify-center py-12 text-4xl font-semibold md:text-5xl lg:text-6xl">
           <div className="pr-6">
             <MdWavingHand className="fill-primary-1" />
           </div>
           <h1>Welcome back</h1>
         </div>
-        <div className="flex overflow-x-scroll hide-scrollbar">
+        <div className="flex justify-center overflow-x-scroll hide-scrollbar">
           {selectedCourseType === "student" ? renderStudentCourses() : renderInstructorCourses()}
         </div>
       </div>

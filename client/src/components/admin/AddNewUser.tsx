@@ -91,8 +91,8 @@ export default function AddExistingUser({
   }
 
   return (
-    <div className='absolute top-0 left-0 flex items-center justify-center w-full h-full bg-opacity-50 bg-slate-100 z-10'>
-      <div className='fixed w-1/3 p-8 bg-white rounded-lg shadow-lg h-1/3 z-20'>
+    <div className='absolute top-0 left-0 z-10 flex items-center justify-center w-full h-full bg-opacity-50 bg-slate-100'>
+      <div className='fixed z-20 w-1/3 p-8 bg-white rounded-lg shadow-lg h-1/4'>
         <div>
           <div
             className='absolute text-xl cursor-pointer right-6 top-4'
@@ -101,25 +101,22 @@ export default function AddExistingUser({
             X
           </div>
           <h1 className='mx-auto mt-2 mb-6 text-2xl font-semibold text-center'>
-            Add Existing User
+            Add New User
           </h1>
           {!potentialUsers || !potentialUsers.length ? (
-            <p>No new users found!</p>
+            <p className='text-center mt-14'>No additional users found!</p>
           ) : (
             <>
               <div className='flex flex-col gap-6 px-6 my-8 justify-evenly'>
-                <div className='flex flex-row justify-between mx-12'>
+                <div className='flex flex-row justify-between mx-16'>
                   <p className='text-xl font-semibold'>User</p>
                   <UserSelect
                     users={potentialUsers}
                     setSelectedUser={setSelectedUser}
                   />
                 </div>
-                <div className='flex flex-row justify-between mx-12'>
-                  <p className='text-xl font-semibold '>Role</p>
-                </div>
               </div>
-              <div className='w-1/3 py-3 mx-auto'>
+              <div className='w-1/3 py-3 mx-auto my-6'>
                 <IconButton
                   icon={<MdOutlinePersonAddAlt />}
                   title='Submit'

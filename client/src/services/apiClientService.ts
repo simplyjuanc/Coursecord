@@ -1,6 +1,7 @@
 import {
+  Course,
   CourseInfo,
-  CourseSectionInfo,
+
   DbUser,
   Section,
   SessionWithToken,
@@ -131,7 +132,7 @@ export async function addSection(
 
     if (!sectionResponse.ok) throw new Error('Section could not be added');
 
-    const data: CourseSectionInfo = await sectionResponse.json();
+    const data: Section = await sectionResponse.json();
     return data;
   } catch (error) {
     console.log(error);
@@ -312,11 +313,8 @@ export async function getCourseManagementInfo(
       }
     );
 
-    if (!courseResponse.ok) {
-      console.log('Course could not be retrieved');
-      return null;
-    }
-    const data: TCourseManagement = await courseResponse.json();
+    if (!courseResponse.ok)  throw new Error('Course could not be retrieved');
+    const data: Course = await courseResponse.json();
     return data;
   } catch (error) {
     console.log(error);

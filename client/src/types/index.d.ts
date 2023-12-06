@@ -1,4 +1,5 @@
 import { Session, User } from 'next-auth';
+import { type } from 'os';
 
 export interface SessionWithToken extends Session {
   accessToken: string;
@@ -52,6 +53,10 @@ export interface Course {
   instructors: { instructor: { name: string; email: string; id: string } }[];
   students: { student: { name: string; email: string; id: string } }[];
 }
+
+
+export type TCourseManagement = Pick<Course, "id" | "instructors" | "students"> 
+
 
 export interface Unit {
   id: string;
@@ -139,3 +144,4 @@ export interface User {
   name: string;
   email: string;
 }
+

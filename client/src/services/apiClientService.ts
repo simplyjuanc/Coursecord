@@ -1,4 +1,4 @@
-import { DbUser, Section, SessionWithToken, Unit } from '@/types';
+import { Course, DbUser, Section, SessionWithToken, TCourseManagement, Unit } from '@/types';
 
 const baseUrl = process.env.API_URL || 'http://localhost:5000';
 
@@ -149,15 +149,6 @@ export async function getInstructorsByCourse(courseId: string) {
   }
 }
 
-async function fetchHelper(url: string, cb: Function) {
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    cb(data);
-  } catch (err) {
-    console.log(err);
-  }
-}
 
 export async function editSection(
   sectionId: string,
@@ -242,8 +233,8 @@ export async function getCourseData(courseId: string) {
       console.log('Course could not be retrieved');
       return null;
     }
-
-    return await courseResponse.json();
+    const data:Course = await courseResponse.json();
+    return data;
   } catch (error) {
     console.log(error);
   }
@@ -305,8 +296,8 @@ export async function getCourseManagementInfo(
       console.log('Course could not be retrieved');
       return null;
     }
-
-    return await courseResponse.json();
+    const data:TCourseManagement = await courseResponse.json()
+    return data;
   } catch (error) {
     console.log(error);
     return null;

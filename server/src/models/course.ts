@@ -26,10 +26,10 @@ async function getCourseById(id: string) {
     include: {
       organisation: { select: { name: true } },
       instructors: {
-        select: { instructor: { select: { name: true, image: true } } },
+        select: { instructor: { select: { name: true, image: true, email: true } } },
       },
       students: {
-        select: { student: { select: { name: true, image: true } } },
+        select: { student: { select: { name: true, image: true, email: true } } },
       },
     },
   });

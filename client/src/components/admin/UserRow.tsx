@@ -16,10 +16,11 @@ export default function UserRow({
   role,
   removeUser,
 }: UserRowProps): React.JSX.Element {
+  const isAdmin = !(role === 'student' || role === 'instructor');
 
   return (
     <>
-      <div className='flex flex-row justify-center col-span-1 gap-2 py-2 bg-white border-b border-primary-2 border-opacity-40'>
+      <div className={`flex flex-row justify-center col-span-1 gap-2 py-2 bg-white border-b border-primary-2 border-opacity-40`}>
         <div
           className='cursor-pointer'
           onClick={() => removeUser(role, user.id)}
@@ -27,10 +28,10 @@ export default function UserRow({
           <MdOutlineRestoreFromTrash />
         </div>
       </div>
-      <div className='col-span-2 py-2 text-center bg-white border-b border-primary-2 border-opacity-40'>
+      <div className={`col-span-2 py-2 text-${isAdmin ? 'center' : 'left'} pl-4 text-${isAdmin ? 'sm' : 'xs'} bg-white border-b border-primary-2 border-opacity-40 overflow-hidden`}>
         {user.name}
       </div>
-      <div className='col-span-2 py-2 text-center bg-white border-b border-primary-2 border-opacity-40'>
+      <div className={`col-span-2 py-2 text-${isAdmin ? 'center' : 'left'} pl-4 text-${isAdmin ? 'sm' : 'xs'} bg-white border-b border-primary-2 border-opacity-40 overflow-hidden`}>
         {user.email}
       </div>
     </>

@@ -1,20 +1,13 @@
 import { Request, Response } from 'express';
 import Course from '../models/course';
 import { RequestWithUser } from '../@types/types';
-import User from '../models/user';
 
 async function addCourse(req: Request, res: Response) {
   try {
     const { orgId } = req.params;
-    const { title, description } = req.body;
+    const courseData = req.body;
     const userId = (req as RequestWithUser).user.id;
-
-    //TODO: edit this so that admins can do it
-    if (!(await User.userIsOrgOwner(userId, orgId))) {
-      return res.status(401).send({ message: 'Unauthorised' });
-    }
-
-    const newCourse = await Course.createCourse(title, description, orgId);
+    const newCourse = await Course.createCourse(courseData, orgId, userId);
     res.status(201).send(newCourse);
   } catch (error) {
     console.log(error);
@@ -86,7 +79,10 @@ async function getCourseManagementInfo(req: Request, res: Response) {
       courseId,
       userId
     );
-    if (!courseManagementInfo) throw new Error('Course not found');
+    if (!courseManagementInfo)
+      return res
+        .status(401)
+        .send({ message: 'Unable to view course management info' });
     res.status(200).send(courseManagementInfo);
   } catch (error) {
     console.log(error);
@@ -97,8 +93,8 @@ async function getCourseManagementInfo(req: Request, res: Response) {
 async function addStudentToCourse(req: Request, res: Response) {
   try {
     const { courseId, userId } = req.params;
-
-    const updatedCourse = await Course.addStudentToCourse(courseId, userId);
+    const authUserId = (req as RequestWithUser).user.id;
+    const updatedCourse = await Course.addStudentToCourse(courseId, userId, authUserId);
     res.status(200).send(updatedCourse);
   } catch (error) {
     console.log(error);
@@ -109,7 +105,12 @@ async function addStudentToCourse(req: Request, res: Response) {
 async function addInstructorToCourse(req: Request, res: Response) {
   try {
     const { courseId, userId } = req.params;
-    const updatedCourse = await Course.addInstructorToCourse(courseId, userId);
+    const authUserId = (req as RequestWithUser).user.id;
+    const updatedCourse = await Course.addInstructorToCourse(
+      courseId,
+      userId,
+      authUserId
+    );
     res.status(200).send(updatedCourse);
   } catch (error) {
     console.log(error);
@@ -120,9 +121,11 @@ async function addInstructorToCourse(req: Request, res: Response) {
 async function removeStudentFromCourse(req: Request, res: Response) {
   try {
     const { courseId, userId } = req.params;
+    const authUserId = (req as RequestWithUser).user.id;
     const updatedCourse = await Course.removeStudentFromCourse(
       courseId,
-      userId
+      userId,
+      authUserId
     );
     res.status(200).send(updatedCourse);
   } catch (error) {
@@ -134,9 +137,11 @@ async function removeStudentFromCourse(req: Request, res: Response) {
 async function removeInstructorFromCourse(req: Request, res: Response) {
   try {
     const { courseId, userId } = req.params;
+    const authUserId = (req as RequestWithUser).user.id;
     const updatedCourse = await Course.removeInstructorFromCourse(
       courseId,
-      userId
+      userId,
+      authUserId
     );
     res.status(200).send(updatedCourse);
   } catch (error) {

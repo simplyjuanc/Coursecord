@@ -7,7 +7,6 @@ const authRouter = Router();
 
 router.use('/auth', Auth.requireAuth, authRouter);
 
-
 //TODO: add client side functionality for this
 router.get('/', Course.getCourses);
 

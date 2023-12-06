@@ -59,7 +59,7 @@ export default function Syllabus() {
     setEditMode(false);
 
     if (!cachedUnits[unitInfo.id]) {
-      const unit = await getUnit(unitInfo.id, session as SessionWithToken);
+      const unit = await getUnit(unitInfo.id, courseId, session as SessionWithToken);
       setUnit(unit);
     } else {
       setUnit(cachedUnits[unitInfo.id]);

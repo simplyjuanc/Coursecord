@@ -25,9 +25,13 @@ export async function getSyllabus(courseId: string, session: SessionWithToken) {
   }
 }
 
-export async function getUnit(unitId: string, session: SessionWithToken) {
+export async function getUnit(
+  unitId: string,
+  courseId: string,
+  session: SessionWithToken
+) {
   try {
-    const unitResponse = await fetch(`${baseUrl}/unit/${unitId}`, {
+    const unitResponse = await fetch(`${baseUrl}/unit/auth/${courseId}/${unitId}`, {
       method: 'GET',
       headers: {
         Authorization: session.accessToken,
@@ -133,9 +137,7 @@ export async function getCourseWithRoles(
   }
 }
 
-export async function getStudentsByCourse(
-  courseId: string
-) {
+export async function getStudentsByCourse(courseId: string) {
   try {
     const res = await fetch(`${baseUrl}/user/${courseId}/students`);
     const data: DbUser[] = await res.json();
@@ -145,9 +147,7 @@ export async function getStudentsByCourse(
   }
 }
 
-export async function getInstructorsByCourse(
-  courseId: string,
-) {
+export async function getInstructorsByCourse(courseId: string) {
   try {
     console.log('getInstructorsByCourse :>> ', courseId);
     const res = await fetch(`${baseUrl}/user/${courseId}/instructors`);

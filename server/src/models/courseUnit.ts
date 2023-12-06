@@ -1,17 +1,17 @@
 import { CourseUnitInfo } from '../@types/types';
 import { CourseUnit, Organisation } from './index';
 
-
 async function createCourseUnit(
   organisation_id: string,
   courseUnitData: CourseUnitInfo,
   userId: string
 ) {
-  const newCourseUnit = await Organisation.update({
+  const updatedOrg = await Organisation.update({
     where: { id: organisation_id, admins: { some: { user_id: userId } } },
     data: { course_units: { create: { ...courseUnitData } } },
+    include: { course_units: true },
   });
-  return newCourseUnit;
+  return updatedOrg.course_units[updatedOrg.course_units.length - 1];
 }
 
 async function deleteCourseUnit(unitId: string, userId: string) {
@@ -40,10 +40,30 @@ async function editCourseUnit(
   return updatedCourseUnit;
 }
 
-async function getUnit(id: string) {
-  console.log('model - getUnit - id :>> ', id);
-  const unit = await CourseUnit.findUnique({ where: {id} });
-  console.log('model - getUnit - unit :>> ', unit);
+async function getUnit(unitId: string, courseId: string, userId: string) {
+  console.log('UNIT ID', unitId, 'COURSE ID', courseId, 'USER ID', userId)
+  const unit = await CourseUnit.findUnique({
+    where: {
+      id: unitId,
+      organisation: {
+        courses: {
+          some: {
+            AND: [
+              { id: courseId },
+              {
+                OR: [
+                  { students: { some: { student_id: userId } } },
+                  { instructors: { some: { instructor_id: userId } } },
+                  { organisation: { admins: { some: { user_id: userId } } } },
+                ],
+              },
+              { syllabus: { some: { course_units: { some: { unit_id: unitId } } } } },
+            ],
+          },
+        },
+      },
+    },
+  });
   return unit;
 }
 

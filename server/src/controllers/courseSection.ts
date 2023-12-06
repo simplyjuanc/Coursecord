@@ -45,7 +45,7 @@ async function deleteSection(req: Request, res: Response) {
 
     const userId = (req as RequestWithUser).user.id;
 
-    const deletedSection = await CourseSection.deleteSection(sectionId);
+    const deletedSection = await CourseSection.deleteSection(sectionId, userId);
     res.status(204).send(deletedSection);
   } catch (error) {
     console.log(error);

@@ -1,13 +1,18 @@
 import { Course as TCourse } from '@prisma/client';
-import { Course } from './index';
+import { Course, Organisation } from './index';
 import { CourseSectionInfo } from '../@types/types';
 
-
-async function createCourse(title: string, description: string, orgId: string) {
-  const course = await Course.create({
-    data: { title, description, organisation_id: orgId },
+async function createCourse(
+  courseData: { title: string; description: string },
+  orgId: string,
+  userId: string
+) {
+  const updatedOrg = await Organisation.update({
+    where: { id: orgId, admins: { some: { user_id: userId } } },
+    data: { courses: { create: courseData } },
+    include: { courses: true },
   });
-  return course;
+  return updatedOrg.courses[updatedOrg.courses.length - 1];
 }
 
 async function getCourses() {
@@ -56,9 +61,16 @@ async function deleteCourse(courseId: string, userId: string) {
   return deletedCourse;
 }
 
-async function addStudentToCourse(courseId: string, userId: string) {
+async function addStudentToCourse(
+  courseId: string,
+  userId: string,
+  authUserId: string
+) {
   const updatedCourse = await Course.update({
-    where: { id: courseId },
+    where: {
+      id: courseId,
+      organisation: { admins: { some: { user_id: authUserId } } },
+    },
     data: {
       students: { create: { student_id: userId } },
     },
@@ -66,9 +78,16 @@ async function addStudentToCourse(courseId: string, userId: string) {
   return updatedCourse;
 }
 
-async function addInstructorToCourse(courseId: string, userId: string) {
+async function addInstructorToCourse(
+  courseId: string,
+  userId: string,
+  authUserId: string
+) {
   const updatedCourse = await Course.update({
-    where: { id: courseId },
+    where: {
+      id: courseId,
+      organisation: { admins: { some: { user_id: authUserId } } },
+    },
     data: {
       instructors: { create: { instructor_id: userId } },
     },
@@ -76,9 +95,9 @@ async function addInstructorToCourse(courseId: string, userId: string) {
   return updatedCourse;
 }
 
-async function removeStudentFromCourse(courseId: string, userId: string) {
+async function removeStudentFromCourse(courseId: string, userId: string, authUserId: string) {
   const updatedCourse = await Course.update({
-    where: { id: courseId },
+    where: { id: courseId, organisation: { admins: { some: { user_id: authUserId } } } },
     data: {
       students: { deleteMany: { student_id: userId } },
     },
@@ -86,9 +105,16 @@ async function removeStudentFromCourse(courseId: string, userId: string) {
   return updatedCourse;
 }
 
-async function removeInstructorFromCourse(courseId: string, userId: string) {
+async function removeInstructorFromCourse(
+  courseId: string,
+  userId: string,
+  authUserId: string
+) {
   const updatedCourse = await Course.update({
-    where: { id: courseId },
+    where: {
+      id: courseId,
+      organisation: { admins: { some: { user_id: authUserId } } },
+    },
     data: {
       instructors: { deleteMany: { instructor_id: userId } },
     },
@@ -121,21 +147,28 @@ async function createSection(
   courseId: string,
   userId: string
 ) {
-  const newSection = await Course.update({
+  const updatedCourse = await Course.update({
     where: {
       id: courseId,
       organisation: { admins: { some: { user_id: userId } } },
     },
     data: { syllabus: { create: { ...sectionData } } },
+    include: { syllabus: true },
   });
-  return newSection;
+  
+  return updatedCourse.syllabus[updatedCourse.syllabus.length - 1];
 }
 
 async function getCourseManagementInfo(courseId: string, userId: string) {
   const course = await Course.findUnique({
-    where: { id: courseId },
+    where: {
+      id: courseId,
+      organisation: { admins: { some: { user_id: userId } } },
+    },
     select: {
       id: true,
+      title: true,
+      description: true,
       instructors: {
         select: {
           instructor: {
@@ -176,5 +209,5 @@ export default {
   addStudentToCourse,
   addInstructorToCourse,
   removeInstructorFromCourse,
-  removeStudentFromCourse
+  removeStudentFromCourse,
 };

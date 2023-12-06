@@ -13,7 +13,7 @@ datasource db {
 model Organisation {
   id           String             @id @default(auto()) @map("_id") @db.ObjectId
   name         String             @unique
-  owner        User               @relation(fields: [owner_id], references: [id], onUpdate: Cascade)
+  owner        User               @relation(fields: [owner_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   owner_id     String             @db.ObjectId
   courses      Course[]           @relation
   course_units CourseUnit[]       @relation
@@ -41,11 +41,11 @@ model Course {
   id              String              @id @default(auto()) @map("_id") @db.ObjectId
   title           String
   description     String
-  organisation    Organisation        @relation(fields: [organisation_id], references: [id], onUpdate: Cascade)
+  organisation    Organisation        @relation(fields: [organisation_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   organisation_id String              @db.ObjectId
   instructors     CourseInstructors[] @relation
   students        CourseStudents[]    @relation
-  syllabus        CourseSection[]     @relation
+  syllabus        CourseSection[]     @relation 
   help_requests   HelpRequest[]       @relation
 }
 
@@ -53,7 +53,7 @@ model CourseSection {
   id           String              @id @default(auto()) @map("_id") @db.ObjectId
   title        String
   course_units CourseSectionUnit[] @relation
-  course       Course              @relation(fields: [course_id], references: [id], onUpdate: Cascade)
+  course       Course              @relation(fields: [course_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   course_id    String              @db.ObjectId
 }
 
@@ -62,14 +62,14 @@ model CourseUnit {
   title           String
   type            String
   markdown_body   String              @default("")
-  organisation    Organisation        @relation(fields: [organisation_id], references: [id], onUpdate: Cascade)
+  organisation    Organisation        @relation(fields: [organisation_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   organisation_id String              @db.ObjectId
   section         CourseSectionUnit[] @relation
 }
 
 model HelpRequest {
   id            String                @id @default(auto()) @map("_id") @db.ObjectId
-  course        Course                @relation(fields: [course_id], references: [id], onUpdate: Cascade)
+  course        Course                @relation(fields: [course_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   course_id     String                @db.ObjectId
   students      HelpRequestStudents[] @relation
   instructor    User?                 @relation(fields: [instructor_id], references: [id])
@@ -84,41 +84,41 @@ model HelpRequest {
 
 model OrganisationUser {
   id              String       @id @default(auto()) @map("_id") @db.ObjectId
-  organisation    Organisation @relation(fields: [organisation_id], references: [id])
+  organisation    Organisation @relation(fields: [organisation_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   organisation_id String       @db.ObjectId
-  user            User         @relation(fields: [user_id], references: [id])
+  user            User         @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   user_id         String       @db.ObjectId
 }
 
 model CourseInstructors {
   id            String @id @default(auto()) @map("_id") @db.ObjectId
-  course        Course @relation(fields: [course_id], references: [id])
+  course        Course @relation(fields: [course_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   course_id     String @db.ObjectId
-  instructor    User   @relation(fields: [instructor_id], references: [id])
+  instructor    User   @relation(fields: [instructor_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   instructor_id String @db.ObjectId
 }
 
 model CourseStudents {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
-  course     Course @relation(fields: [course_id], references: [id])
+  course     Course @relation(fields: [course_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   course_id  String @db.ObjectId
-  student    User   @relation(fields: [student_id], references: [id])
+  student    User   @relation(fields: [student_id], references: [id],  onUpdate: Cascade, onDelete: Cascade)
   student_id String @db.ObjectId
 }
 
 model CourseSectionUnit {
   id         String        @id @default(auto()) @map("_id") @db.ObjectId
-  section    CourseSection @relation(fields: [section_id], references: [id])
+  section    CourseSection @relation(fields: [section_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   section_id String        @db.ObjectId
-  unit       CourseUnit    @relation(fields: [unit_id], references: [id])
+  unit       CourseUnit    @relation(fields: [unit_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   unit_id    String        @db.ObjectId
 }
 
 model HelpRequestStudents {
   id              String      @id @default(auto()) @map("_id") @db.ObjectId
-  help_request    HelpRequest @relation(fields: [help_request_id], references: [id])
+  help_request    HelpRequest @relation(fields: [help_request_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   help_request_id String      @db.ObjectId
-  student         User        @relation(fields: [student_id], references: [id])
+  student         User        @relation(fields: [student_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
   student_id      String      @db.ObjectId
 }
 

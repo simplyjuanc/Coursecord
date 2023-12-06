@@ -24,13 +24,17 @@ export default function UnitForm(props: UnitFormProps) {
   async function submitForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving('saving');
+    let newUnit = {
+      id: 'placeholder',
+      title,
+      type: type as 'lesson' | 'exercise' | 'test',
+      markdown_body: '',
+      owner: '656b40666c0ea5f66060c942',
+    };
 
     try {
       const newUnit = await addUnit(
-        { 
-          title, 
-          type: type as 'lesson' | 'exercise' | 'test' 
-        },
+        { title, type: type as 'lesson' | 'exercise' | 'test' },
         sectionId,
         session as SessionWithToken
       );

@@ -44,7 +44,7 @@ async function signIn(req: Request, res: Response) {
       '656b40666c0ea5f66060c942',
       newUser.id
     );
-    await Course.addStudentToCourse('656b40a56c0ea5f66060c947', newUser.id);
+    await Course.addStudentToCourse('656b40a56c0ea5f66060c947', newUser.id, '656b3ffac1a9577cad4a1c08');
 
     //TEMPORARY^
     res.status(201).send(newUser);

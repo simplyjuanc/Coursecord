@@ -34,16 +34,16 @@ type CourseManagementProps = {
 
 export default function CourseManagement(props: CourseManagementProps) {
   const { course, showNewUserModal } = props;
-  console.log('CourseManagement - course :>> ', course);
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const courses = useAppSelector((state) => state.management.cachedCourses);
-  const [activeCourse, setActiveCourse] = useState<TCourseManagement>();
-
+  const [activeCourse, setActiveCourse] = useState<Course>();
+  // console.log('CourseManagement - course :>> ', course);
+  
   useEffect(() => {
     (async () => {
       if (!courses[course.id]) {
-        const updatedCourse = await getCourseData(course.id);
+        const updatedCourse = await getCourseManagementInfo(course.id, session as SessionWithToken);
         if (!updatedCourse) {
           console.error('Course not found');
           return;
@@ -87,7 +87,6 @@ export default function CourseManagement(props: CourseManagementProps) {
 
       {activeCourse && (
         <div className='flex flex-row flex-nowrap'>
-
 
           <div className='flex flex-col items-center flex-start'>
             <div className='flex flex-row justify-around w-full flex-nowrap '>

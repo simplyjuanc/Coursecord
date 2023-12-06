@@ -155,7 +155,7 @@ async function createSection(
     data: { syllabus: { create: { ...sectionData } } },
     include: { syllabus: true },
   });
-  
+
   return updatedCourse.syllabus[updatedCourse.syllabus.length - 1];
 }
 
@@ -171,28 +171,16 @@ async function getCourseManagementInfo(courseId: string, userId: string) {
       description: true,
       instructors: {
         select: {
-          instructor: {
-            select: {
-              name: true,
-              email: true,
-              id: true,
-            },
-          },
+          instructor: true
         },
       },
       students: {
         select: {
-          student: {
-            select: {
-              name: true,
-              email: true,
-              id: true,
-            },
-          },
-        },
-      },
-    },
-  });
+          student: true
+        }
+      }
+    }
+  })
   return course;
 }
 

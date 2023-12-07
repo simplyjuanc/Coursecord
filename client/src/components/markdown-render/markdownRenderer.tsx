@@ -6,7 +6,7 @@ import MarkdownStyle from './markdown.module.css';
 export default function Markdown({ markdown }: { markdown: string }) {
   return (
     <div className=' flex justify-center w-full p-8'>
-      <div className='pr-12'>
+      <div className='flex justify-center'>
         <ReactMarkdown
           className={MarkdownStyle.markdown}
           rehypePlugins={[rehypeRaw]}

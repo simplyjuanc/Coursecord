@@ -24,7 +24,7 @@ export default function UnitForm(props: UnitFormProps) {
   async function submitForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaving('saving');
-    let newUnit = {
+    const newUnit = {
       id: 'placeholder',
       title,
       type: type as 'lesson' | 'exercise' | 'test',
@@ -43,7 +43,7 @@ export default function UnitForm(props: UnitFormProps) {
 
       if (!newUnit) throw new Error('Could not add unit');
 
-      dispatch(updateUnit({ newUnit }));
+      dispatch(updateUnit({ id: 'placeholder', newUnit }));
       setSaving('done');
 
       setTitle('');

@@ -8,7 +8,6 @@ import { AiOutlineSave } from 'react-icons/ai';
 import { RiDeleteBin4Line } from 'react-icons/ri';
 import Markdown from '@/components/markdown-render/markdownRenderer';
 import MarkdownForm from '@/components/syllabusForms/markdownForm';
-import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import {
   deleteUnit as deleteUnitReducer,
@@ -17,9 +16,9 @@ import {
   updateUnit,
 } from '@/store/slices/courseSlice';
 import Spinner from '@/components/spinner/spinner';
-import { editUnit, getSyllabus, getUnit } from '@/services/apiClientService';
 import { getCourseData } from '@/services/apiClientService';
 import { useParams } from 'next/navigation';
+import * as api from '@/services/apiClientService';
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:5000';
 
@@ -46,7 +45,7 @@ export default function Syllabus() {
       });
     }
     if (!syllabus.length && session) {
-      getSyllabus(courseId, session as SessionWithToken).then((syllabus) => {
+      api.getSyllabus(courseId, session as SessionWithToken).then((syllabus) => {
         console.log('SYLLABUS', syllabus);
         dispatch(setSyllabus({ syllabus }));
       });
@@ -58,7 +57,7 @@ export default function Syllabus() {
     setEditMode(false);
 
     if (!cachedUnits[unitInfo.id]) {
-      const unit = await getUnit(
+      const unit = await api.getUnit(
         unitInfo.id,
         courseId,
         session as SessionWithToken
@@ -73,10 +72,11 @@ export default function Syllabus() {
     setEditMode(false);
     setSaving('saving');
     console.log('unit :>> ', unit);
-    const unitEdited = await editUnit(unit!, session as SessionWithToken);
+    const unitEdited = await api.editUnit(unit!, session as SessionWithToken);
     if (unitEdited) {
       dispatch(
         updateUnit({
+          id: unit!.id,
           newUnit: unit!,
         })
       );
@@ -95,11 +95,7 @@ export default function Syllabus() {
   async function deleteUnit() {
     dispatch(deleteUnitReducer({ unitId: unit!.id }));
     setUnit(undefined);
-    await axios.delete(`${baseUrl}/unit/${unit!.id}`, {
-      headers: {
-        Authorization: (session as SessionWithToken)!.accessToken,
-      },
-    });
+    const deleted = await api.deleteUnit(unit!.id, session as SessionWithToken);
   }
 
   if (!unit && editMode) setEditMode(false);

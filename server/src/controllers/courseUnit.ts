@@ -29,14 +29,12 @@ async function addUnitToSection(req: Request, res: Response) {
     const { sectionId, unitId } = req.params;
     const userId = (req as RequestWithUser).user.id;
 
-    console.log('controller - addUnitToSection - sectionId, unitId, userId :>> ', sectionId, unitId, userId);
     const updatedSection = await CourseSection.addUnitToSection(
       sectionId,
       unitId,
       userId
       );
-    console.log('controller - addUnitToSection - updatedSection :>> ', updatedSection);
-    
+
     res.status(200).send({ updatedSection });
   } catch (error) {
     console.log(error);

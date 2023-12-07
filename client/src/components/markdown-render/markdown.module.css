@@ -1,8 +1,21 @@
+.markdown {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: "Roboto", sans-serif;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: rgb(0, 0, 0);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  max-width: 80%;
+}
+
 .markdown h1 {
   font-size: 2rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  border-left-color: rgba(255, 0, 0, 0.3);
+  border-left-color: rgba(0, 165, 255, 0.3);
   border-left-width: 0.5rem;
   padding-left: 1rem;
   border-top-left-radius: 5px;
@@ -13,15 +26,15 @@
 .markdown h2 {
   font-size: 1.75rem;
   margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   font-weight: 500;
-
+  margin-bottom: 1rem;
 }
 
 .markdown h3 {
   font-size: 1.5rem;
   margin-top: 0.35rem;
-  margin-bottom: 0.35rem;
+  margin-bottom: 1rem;
   font-weight: 500;
 }
 
@@ -56,6 +69,8 @@
 
 .markdown p {
   font-size: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .markdown ul {
@@ -90,8 +105,16 @@
   border-radius: 5px;
   font-style: italic;
   background-color: rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  max-width: fit-content;
 }
 
 .markdown iframe {
   margin: 1rem auto;
+}
+
+.markdown img {
+  margin: 1rem auto;
+  max-width: 40%;
+  max-height: 100%;
 }

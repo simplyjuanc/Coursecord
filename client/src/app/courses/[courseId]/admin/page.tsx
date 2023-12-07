@@ -59,7 +59,6 @@ export default function AdminTable() {
       session as SessionWithToken
     );
   }
-// orgInfo?.courses.map((course) => course.id | title),
 
   function handleSelect(e: React.ChangeEvent<HTMLSelectElement>) {
     if (!orgInfo) return;
@@ -107,7 +106,7 @@ export default function AdminTable() {
         <div className='flex ml-auto mb-6 justify-end gap-4'>
           <h2 className='text-lg my-auto font-semibold mr-4 '>Select a course: </h2>
           <select
-            value={course?.title}
+            value={''}
             className='border-2 border-none rounded-lg py-2 px-4 text-opacity-70 text-center w-1/4'
             onChange={handleSelect}
             placeholder='Course...'

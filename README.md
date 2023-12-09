@@ -3,6 +3,7 @@ Coursecord is an e-learning management system fully written in Typescript, where
 
 At its current MVP level, courses are created as a managed service, but future development steps include the ability to create courses on demand, as well as refining user management.
 
+<img width="800" alt="Screenshot 2023-12-09 at 13 55 10" src="https://github.com/simplyjuanc/Coursecord/assets/37302562/672bd6a9-2611-4d35-b229-89942a8e29d7">
 
 ## Current Features
 - Multiple roles (admin, instructor, student)
